@@ -4,7 +4,7 @@ import { useState } from "react";
 export default function App() {
   return (
     <div className="top">
-      <h1>地震可視化マップ</h1>
+      <h1>日本人の移動可視化サイトマップ</h1>
     </div>
   );
 }
