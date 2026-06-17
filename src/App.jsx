@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { useState, useEffect, useRef } from "react";
-import { travelData } from "./travelData";
+import { travelData } from "./travelData-purpose-of-travel";
+import { transportationData } from "./travelData-transportation";
 import { feature } from "topojson-client";
 
 const MapName = [
@@ -14,19 +15,57 @@ const transportation = [
 ]
 
 export default function App() {
-  const [size] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight
-  });
-
-  const width = size.width;
-  const height = size.height;
+  const width = window.innerWidth-200;
+  const height = window.innerHeight;
   
   const [Scale , setScale] = useState(1);
   const [Map , setMap] = useState(MapName[0]);
   const [traffic, setTraffic] = useState(transportation[0]);
   const [mapData, setMapData] = useState(null);
   const [bounds, setBounds] = useState(null);
+  const [active, setActive] = useState(() => {
+    
+    if(traffic === "移動目的") {
+      return {
+        代_全機関_仕事: false,
+        代_全機関_観光: false,
+        代_全機関_私用: false,
+        代_全機関_その他: false,
+        代_全機関_不明: false,
+        代_全機関_全目的: false,
+      };
+    } else {
+      return {
+        代_航空: false,
+        代_鉄道: false,
+        代_船: false,
+        代_バス: false,
+        代_乗用車等: false,
+        代_全機関: false,
+      }
+    }
+  });
+
+  const file = traffic === "移動目的" ? travelData : transportationData;
+
+  const dataColor = 
+  traffic === "移動目的" ? 
+  {
+    "代_全機関_仕事": "lightgreen",
+    "代_全機関_観光": "plum",
+    "代_全機関_私用": "lightsalmon",
+    "代_全機関_その他": "pink",
+    "代_全機関_不明": "black",
+    "代_全機関_全目的": "lightblue",
+  } : 
+  {
+    "代_航空": "red",
+    "代_鉄道": "blue",
+    "代_船": "green",
+    "代_バス": "yellow",
+    "代_乗用車等": "black",
+    "代_全機関": "pink",
+  };
 
   const svgRef = useRef();
   const zoomRef = useRef();
@@ -162,11 +201,7 @@ export default function App() {
 
   }
 
-  const from =
-  projectionRef.current?.([139.7671, 35.6812]);
-
-  const to =
-  projectionRef.current?.([141.3469, 43.0642]);
+  const label=Array.from(new Set(file.map(({purpose})=>purpose)))
 
   return (
     <div className="top">
@@ -220,7 +255,7 @@ export default function App() {
             <g ref={layerRef}></g>
             
             <g id="lineLayer">
-              {projectionRef.current && travelData.map((item,i) => {
+              {projectionRef.current && file.map((item,i) => {
                 const from = projectionRef.current(item.fromCoord);
                 const to = projectionRef.current(item.toCoord);
 
@@ -232,13 +267,41 @@ export default function App() {
                   y1={from[1]}
                   x2={to[0]}
                   y2={to[1]}
-                  stroke="gray"
-                  strokeWidth="0.01"
+                  stroke={dataColor[item.purpose]}
+                  opacity={active[item.purpose] ? 0 : 1}
                   />
                 );
               })}
             </g>
           </g>
+        </svg>
+
+        <svg width="200" height={height} >
+          {label.map((name, i) => (
+            <g 
+            transform={`translate(0, ${35*i+30})`}
+            className={active[name] ? "fade" : ""}
+            onClick={() => setActive({
+                ...active,//スプレッド構文(上書き処理に利用できる)
+                [name]: !active[name]
+            })}
+            >
+              <rect
+              x="10"
+              width="9"
+              height="9"
+              fill={dataColor[name]}
+              />
+
+              <text 
+              className = "legend"
+              x="30"
+              y="8"
+              >
+                  {name}
+              </text>
+            </g>
+          ))}
         </svg>
 
       </div>

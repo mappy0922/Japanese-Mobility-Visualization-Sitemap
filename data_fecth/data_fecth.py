@@ -69,6 +69,7 @@ coords = {
 # =========================
 # Excelファイル
 # =========================
+"""
 holiday_file = "./data_fecth/000991451.xls"
 weekday_file = "./data_fecth/000991452.xls"
 
@@ -128,6 +129,89 @@ for sheet in holiday_xls.sheet_names:
                 weekday_people = 0
 
             people = holiday_people + weekday_people
+
+            if people <= 0:
+                continue
+
+            travelData.append({
+                "from": str(origin),
+                "to": str(destination),
+                "people": people,
+                "purpose": purpose,
+
+                # 経度・緯度追加
+                "fromCoord": coords.get(str(origin)),
+                "toCoord": coords.get(str(destination))
+            })
+
+# =========================
+# JSファイル出力
+# =========================
+with open(
+    "travelData.js",
+    "w",
+    encoding="utf-8"
+) as f:
+
+    f.write(
+        "export const travelData = "
+        + json.dumps(
+            travelData,
+            ensure_ascii=False,
+            indent=2
+        )
+        + ";"
+    )
+
+print("件数:", len(travelData))
+print("travelData.js を生成しました")
+"""
+
+traffic_file = "./data_fecth/000991438.xls"
+
+travelData = []
+
+traffic_xls = pd.ExcelFile(traffic_file)
+
+# =========================
+# 全シート処理
+# =========================
+for sheet in traffic_xls.sheet_names:
+
+    traffic_df = pd.read_excel(
+        traffic_file,
+        sheet_name=sheet,
+        header=None
+    )
+
+    purpose = sheet
+
+    # 目的地一覧
+    destinations = traffic_df.iloc[8, 2:50]
+
+    # 出発地一覧
+    for row in range(9, 57):
+
+        origin = traffic_df.iloc[row, 1]
+
+        if pd.isna(origin):
+            continue
+
+        for col in range(2, 50):
+
+            destination = destinations.iloc[col - 2]
+
+            if pd.isna(destination):
+                continue
+
+            traffic_people = traffic_df.iloc[row, col]
+
+            try:
+                traffic_people = int(float(traffic_people))
+            except:
+                traffic_people = 0
+
+            people = traffic_people
 
             if people <= 0:
                 continue
