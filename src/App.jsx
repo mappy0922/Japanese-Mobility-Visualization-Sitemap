@@ -1,7 +1,10 @@
 import * as d3 from "d3";
 import { useState, useEffect, useRef } from "react";
-import { travelData } from "./travelData-purpose-of-travel";
-import { transportationData } from "./travelData-transportation";
+import { travelData1990 } from "./PurposeTravel1990"
+import { transportationData1990 } from "./TransportationTravel1990"
+import { travelData2010 } from "./PurposeTravel2010";
+import { transportationData2010 } from "./TransportationTravel2010";
+import { coords } from "./coords"
 import { feature } from "topojson-client";
 
 const MapName = [
@@ -14,6 +17,16 @@ const transportation = [
   "移動手段"
 ]
 
+const yearSelection = [
+  "1990年度",
+  "1995年度",
+  "2000年度",
+  "2005年度",
+  "2010年度",
+]
+
+const coord = Object.keys(coords);
+
 export default function App() {
   const width = window.innerWidth-200;
   const height = window.innerHeight;
@@ -21,6 +34,7 @@ export default function App() {
   const [Scale , setScale] = useState(1);
   const [Map , setMap] = useState(MapName[0]);
   const [traffic, setTraffic] = useState(transportation[0]);
+  const [year, setYear] = useState(yearSelection[0]);
   const [mapData, setMapData] = useState(null);
   const [bounds, setBounds] = useState(null);
   const [active, setActive] = useState(() => {
@@ -35,36 +49,75 @@ export default function App() {
         代_全機関_全目的: false,
       };
     } else {
-      return {
-        代_航空: false,
-        代_鉄道: false,
-        代_船: false,
-        代_バス: false,
-        代_乗用車等: false,
-        代_全機関: false,
+      if(year === "1990年度") {
+        return {
+          航空_全目的: false,
+          鉄道_全目的: false,
+          船_全目的: false,
+          バス_全目的: false,
+          乗用車_全目的: false,
+          全機関_全目的: false,
+        }
+      } else {
+        return {
+          航空: false,
+          鉄道: false,
+          船: false,
+          バス: false,
+          乗用車等: false,
+          全機関: false,
+        }
       }
     }
   });
 
-  const file = traffic === "移動目的" ? travelData : transportationData;
+  let file = [];
+  if(traffic === "移動目的") {
+    if(year === "1990年度") {
+      file = travelData1990;
+    } 
+    if(year === "2010年度") {
+      file = travelData2010;
+    }
+  } else {
+    if(year === "1990年度") {
+      file = transportationData1990;
+    } 
+    if(year === "2010年度") {
+      file = transportationData2010;
+    }
+  }
 
-  const dataColor = 
-  traffic === "移動目的" ? 
-  {
-    "代_全機関_仕事": "lightgreen",
-    "代_全機関_観光": "plum",
-    "代_全機関_私用": "lightsalmon",
-    "代_全機関_その他": "pink",
-    "代_全機関_不明": "black",
-    "代_全機関_全目的": "lightblue",
-  } : 
-  {
-    "代_航空": "red",
-    "代_鉄道": "blue",
-    "代_船": "green",
-    "代_バス": "yellow",
-    "代_乗用車等": "black",
-    "代_全機関": "pink",
+  let dataColor = {};
+  if (traffic === "移動目的") {  
+    dataColor = {
+      "代_全機関_仕事": "blue",
+      "代_全機関_観光": "orange",
+      "代_全機関_私用": "purple",
+      "代_全機関_その他": "gray",
+      "代_全機関_不明": "black",
+      "代_全機関_全目的": "lightblue",
+    }
+  } else {
+    if(year === "1990年度") {
+      dataColor = {
+        "航空_全目的": "blue",
+        "鉄道_全目的": "red",
+        "船_全目的": "lightblue",
+        "バス_全目的": "yellow",
+        "乗用車_全目的": "purple",
+        "全機関_全目的": "gray",
+      }
+    } else {
+      dataColor = {
+        "航空": "blue",
+        "鉄道": "red",
+        "船": "lightblue",
+        "バス": "yellow",
+        "乗用車等": "purple",
+        "全機関": "gray",
+      }
+    }
   };
 
   const svgRef = useRef();
@@ -201,7 +254,21 @@ export default function App() {
 
   }
 
-  const label=Array.from(new Set(file.map(({purpose})=>purpose)))
+  const label=Array.from(new Set(file.map(({purpose})=>purpose)));
+
+  const sampledFile = Object.values(
+    file.reduce((groups, item) => {
+      if (!groups[item.purpose]) {
+        groups[item.purpose] = [];
+      }
+
+      if (groups[item.purpose].length < 100) {
+        groups[item.purpose].push(item);
+      }
+
+      return groups;
+    }, {})
+  ).flat();
 
   return (
     <div className="top">
@@ -214,6 +281,23 @@ export default function App() {
         </div>
 
         <div className="control">
+          <div className="item">
+            <label>年度選択</label>
+            <select
+                className="Select"
+                value={year}
+                onChange={(e) => {
+                  setYear(e.target.value);
+                }}
+            >
+                {yearSelection.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+            </select>
+          </div>
+          
           <div className="item">
             <label>地図選択</label>
             <select
@@ -255,20 +339,58 @@ export default function App() {
             <g ref={layerRef}></g>
             
             <g id="lineLayer">
-              {projectionRef.current && file.map((item,i) => {
+              {projectionRef.current && sampledFile.map((item,i) => {
                 const from = projectionRef.current(item.fromCoord);
                 const to = projectionRef.current(item.toCoord);
 
+                if(!from || !to) {
+                  return null;
+                }
+
+                const mx = (from[0] + to[0]) / 2;
+                const my = (from[1] + to[1]) / 2;
+
+                const dx = to[0] - from[0];
+                const dy = to[1] - from[1];
+
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                const nx = dy / dist;
+                const ny = dx / dist;
+
+                const curveHeight = dist * 2;
+
+                const cx = mx + nx * curveHeight;
+                const cy = my + ny * curveHeight;
+
+                const d = `
+                M ${from[0]} ${from[1]}
+                Q ${cx} ${cy}
+                  ${to[0]} ${to[1]}
+                `;
+
                 return (
-                  <line
+                  <path
                   key={i}
                   className="Number-of-people-moving"
-                  x1={from[0]}
-                  y1={from[1]}
-                  x2={to[0]}
-                  y2={to[1]}
+                  d={d}
+                  fill="none"
                   stroke={dataColor[item.purpose]}
-                  opacity={active[item.purpose] ? 0 : 1}
+                  strokeWidth={Math.log10(item.people+1)}
+                  strokeOpacity={active[item.purpose] ? 0 : 0.25}
+                  />
+                );
+              })}
+
+              {projectionRef.current && coord.map((item,i) => {
+                const position = projectionRef.current(coords[item]);
+                return (
+                  <circle
+                  key={i}
+                  cx={position[0]}
+                  cy={position[1]}
+                  r="1.5"
+                  fill="black"
                   />
                 );
               })}

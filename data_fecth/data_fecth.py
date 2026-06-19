@@ -70,8 +70,8 @@ coords = {
 # Excelファイル
 # =========================
 """
-holiday_file = "./data_fecth/000991451.xls"
-weekday_file = "./data_fecth/000991452.xls"
+holiday_file = "./data_fecth/2010年度/000991451.xls"
+weekday_file = "./data_fecth/2010年度/000991452.xls"
 
 travelData = []
 
@@ -98,17 +98,17 @@ for sheet in holiday_xls.sheet_names:
     purpose = sheet
 
     # 目的地一覧
-    destinations = holiday_df.iloc[8, 2:50]
+    destinations = holiday_df.iloc[8, 2:52]
 
     # 出発地一覧
-    for row in range(9, 57):
+    for row in range(9, 59):
 
         origin = holiday_df.iloc[row, 1]
 
         if pd.isna(origin):
             continue
 
-        for col in range(2, 50):
+        for col in range(2, 52):
 
             destination = destinations.iloc[col - 2]
 
@@ -167,7 +167,7 @@ print("件数:", len(travelData))
 print("travelData.js を生成しました")
 """
 
-traffic_file = "./data_fecth/000991438.xls"
+traffic_file = "./data_fecth/1990年度/000991446.xls"
 
 travelData = []
 
@@ -187,17 +187,17 @@ for sheet in traffic_xls.sheet_names:
     purpose = sheet
 
     # 目的地一覧
-    destinations = traffic_df.iloc[8, 2:50]
+    destinations = traffic_df.iloc[7, 2:52]
 
     # 出発地一覧
-    for row in range(9, 57):
+    for row in range(8, 58):
 
         origin = traffic_df.iloc[row, 1]
 
         if pd.isna(origin):
             continue
 
-        for col in range(2, 50):
+        for col in range(2, 52):
 
             destination = destinations.iloc[col - 2]
 
