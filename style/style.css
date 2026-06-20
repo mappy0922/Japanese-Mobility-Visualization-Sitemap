@@ -59,10 +59,21 @@ h1 {
 
 .legend {
     font-size: 12px;
+    cursor: pointer;
 }
 
-.Number-of-people-moving {
+.Number-of-people-moving-line {
     transition: all 0.7s;
+}
+
+.Number-of-people-moving-circle{
+    cursor: pointer;
+}
+
+.Number-of-people-moving-circle:active {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(2);
 }
 
 button {

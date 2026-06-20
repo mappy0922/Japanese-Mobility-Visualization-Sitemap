@@ -35,6 +35,7 @@ export default function App() {
   const [Map , setMap] = useState(MapName[0]);
   const [traffic, setTraffic] = useState(transportation[0]);
   const [year, setYear] = useState(yearSelection[0]);
+  const [prefecture, setPrefecture] = useState(coord[0]);
   const [mapData, setMapData] = useState(null);
   const [bounds, setBounds] = useState(null);
   const [active, setActive] = useState(() => {
@@ -256,19 +257,16 @@ export default function App() {
 
   const label=Array.from(new Set(file.map(({purpose})=>purpose)));
 
-  const sampledFile = Object.values(
-    file.reduce((groups, item) => {
-      if (!groups[item.purpose]) {
-        groups[item.purpose] = [];
-      }
+  const destinationPoeple = {};
+  for(const item of file) {
+    if(!destinationPoeple[item.to]) {
+      destinationPoeple[item.to] = 0;
+    }
 
-      if (groups[item.purpose].length < 100) {
-        groups[item.purpose].push(item);
-      }
+    destinationPoeple[item.to] += item.people;
+  }
 
-      return groups;
-    }, {})
-  ).flat();
+  console.log(destinationPoeple);
 
   return (
     <div className="top">
@@ -339,7 +337,7 @@ export default function App() {
             <g ref={layerRef}></g>
             
             <g id="lineLayer">
-              {projectionRef.current && sampledFile.map((item,i) => {
+              {projectionRef.current && file.map((item,i) => {
                 const from = projectionRef.current(item.fromCoord);
                 const to = projectionRef.current(item.toCoord);
 
@@ -369,29 +367,48 @@ export default function App() {
                   ${to[0]} ${to[1]}
                 `;
 
-                return (
-                  <path
-                  key={i}
-                  className="Number-of-people-moving"
-                  d={d}
-                  fill="none"
-                  stroke={dataColor[item.purpose]}
-                  strokeWidth={Math.log10(item.people+1)}
-                  strokeOpacity={active[item.purpose] ? 0 : 0.25}
-                  />
-                );
+                if(prefecture === item.from) {
+                  return (
+                    <path
+                    key={i}
+                    className="Number-of-people-moving-line"
+                    d={d}
+                    fill="none"
+                    stroke={dataColor[item.purpose]}
+                    strokeWidth={Math.log10(item.people+1)/Scale}
+                    strokeOpacity={active[item.purpose] ? 0 : 0.5}
+                    />
+                  );
+                }
               })}
 
               {projectionRef.current && coord.map((item,i) => {
                 const position = projectionRef.current(coords[item]);
+                const people = destinationPoeple[item] || 0;
                 return (
-                  <circle
-                  key={i}
-                  cx={position[0]}
-                  cy={position[1]}
-                  r="1.5"
-                  fill="black"
-                  />
+                  <g>
+                    <circle
+                    key={i}
+                    className="Number-of-people-moving-circle"
+                    cx={position[0]}
+                    cy={position[1]}
+                    r={Math.log10(people+1)/Scale}
+                    fill="black"
+                    onClick={() => setPrefecture(item)}
+                    />
+
+                    {Scale >= 2 && (
+                      <text
+                      key={i}
+                      x={position[0]+2}
+                      y={position[1]-2}
+                      fontSize={8/(Scale/2)}
+                      fill="black"
+                      >
+                        {item}
+                      </text>
+                    )}
+                  </g>
                 );
               })}
             </g>
@@ -424,6 +441,16 @@ export default function App() {
               </text>
             </g>
           ))}
+
+          <g>
+            <text
+            x="10"
+            y="300"
+            >
+              表示出発地点名 : {prefecture}
+            </text>
+          </g>
+
         </svg>
 
       </div>
