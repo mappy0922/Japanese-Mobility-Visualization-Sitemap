@@ -25,12 +25,22 @@ const yearSelection = [
   "2010年度",
 ]
 
+const circleSize = [
+  100000,
+  50000,
+  10000,
+  1000,
+  "それ以外",
+]
+
 const coord = Object.keys(coords);
 
 export default function App() {
   const width = window.innerWidth-200;
   const height = window.innerHeight;
   
+  const [mapWidth, setMapWidth] = useState(width);
+  const [legend_judge, setLegend_judge] = useState(true);
   const [Scale , setScale] = useState(1);
   const [Map , setMap] = useState(MapName[0]);
   const [traffic, setTraffic] = useState(transportation[0]);
@@ -121,6 +131,21 @@ export default function App() {
     }
   };
 
+  const judge = (people , judge) => {
+    const size = Math.log10(people+1);
+    if(people >= judge[0]) {
+      return size*1.8;
+    } else if (people >= judge[1]) {
+      return size*1.5;
+    } else if (people >= judge[2]) {
+      return size*1.2;
+    } else if (people >= judge[3]) {
+      return size*0.8;
+    } else {
+      return size*0.5;
+    }
+  };
+
   const circleColor = (people) => {
     if(people >= 100000) {
       return "deeppink";
@@ -169,8 +194,8 @@ export default function App() {
 
     const projection = 
     Map === "日本地図" 
-    ? d3.geoMercator().fitSize([width,height], mapData)
-    : d3.geoMercator().fitWidth(width, mapData);
+    ? d3.geoMercator().fitSize([mapWidth,height], mapData)
+    : d3.geoMercator().fitWidth(mapWidth, mapData);
 
     projectionRef.current = projection;
 
@@ -192,7 +217,7 @@ export default function App() {
           .attr("class","world-copy")
           .attr(
             "transform",
-            `translate(${i*width},0)`
+            `translate(${i*mapWidth},0)`
           )
           .selectAll("path")
           .data(mapData.features)
@@ -202,7 +227,7 @@ export default function App() {
           .attr("stroke", "black");
       });
     }
-  }, [mapData]);
+  }, [mapData, mapWidth]);
 
   useEffect(() => {
     if(!bounds) {
@@ -223,7 +248,7 @@ export default function App() {
       const displayMargin = (k>1) ? 300*k : 0; 
 
       const minX = -((bounds[1][0]+bounds[0][0])/2)*k-displayMargin;
-      const maxX = width-((bounds[1][0]+bounds[0][0])/2)*k+displayMargin;
+      const maxX = mapWidth-((bounds[1][0]+bounds[0][0])/2)*k+displayMargin;
 
       const minY = -((bounds[1][1]+bounds[0][1])/2-45)*k-displayMargin;
       const maxY = height-((bounds[1][1]+bounds[0][1])/2)*k+displayMargin;
@@ -244,7 +269,7 @@ export default function App() {
 
     svg.call(zoom);
 
-  }, [Map,bounds]);
+  }, [Map,bounds,mapWidth]);
 
   const zoomIn = () => {
     const svg = d3.select(svgRef.current);
@@ -269,7 +294,9 @@ export default function App() {
 
   }
 
-  const label=Array.from(new Set(file.map(({purpose})=>purpose)));
+  const filterData = file.filter((item) => prefecture === item.from);
+
+  const label=Array.from(new Set(filterData.map(({purpose})=>purpose)));
 
   const destinationPoeple = {};
   for(const item of file) {
@@ -280,8 +307,6 @@ export default function App() {
     destinationPoeple[item.to] += item.people;
   }
 
-  console.log(destinationPoeple);
-
   return (
     <div className="top">
       <h1>日本人の移動可視化サイトマップ</h1>
@@ -290,6 +315,20 @@ export default function App() {
           <div>現在の倍率 : {Scale}倍</div>
           <button onClick={zoomIn}>+</button>
           <button onClick={zoomOut}>-</button>
+        </div>
+
+        <div className="legend_menu">
+          <button onClick={() => {
+            if(legend_judge) { 
+              setMapWidth(window.innerWidth);
+              setLegend_judge(false);
+            } else {
+              setMapWidth(window.innerWidth-200);
+              setLegend_judge(true);
+            }
+          }}>
+            {legend_judge ? "×" : "←"}
+          </button>
         </div>
 
         <div className="control">
@@ -346,14 +385,16 @@ export default function App() {
           </div>
         </div>
 
-        <svg ref={svgRef} width={width} height={height} >
+        <svg ref={svgRef} width={mapWidth} height={height}>
           <g  id="imageLayer">
             <g ref={layerRef}></g>
             
             <g id="lineLayer">
-              {projectionRef.current && file.map((item,i) => {
+              {projectionRef.current && filterData.map((item,i) => {
                 const from = projectionRef.current(item.fromCoord);
                 const to = projectionRef.current(item.toCoord);
+
+                const line_judge = [5000, 2500, 1000, 100]
 
                 if(!from || !to) {
                   return null;
@@ -367,10 +408,10 @@ export default function App() {
 
                 const dist = Math.sqrt(dx*dx + dy*dy);
 
-                const nx = dy / dist;
-                const ny = dx / dist;
+                const nx = i % 2 == 0 ? dy / dist : -dy / dist;
+                const ny = i % 2 == 1 ? dx / dist : -dx / dist;
 
-                const curveHeight = dist * 2;
+                const curveHeight = dist * 2
 
                 const cx = mx + nx * curveHeight;
                 const cy = my + ny * curveHeight;
@@ -381,38 +422,37 @@ export default function App() {
                   ${to[0]} ${to[1]}
                 `;
 
-                if(prefecture === item.from) {
-                  return (
-                    <path
-                    key={i}
-                    className="Number-of-people-moving-line"
-                    d={d}
-                    fill="none"
-                    stroke={dataColor[item.purpose]}
-                    strokeWidth={Math.log10(item.people+1)/Scale}
-                    strokeOpacity={active[item.purpose] ? 0 : 0.5}
-                    />
-                  );
-                }
+                
+                return (
+                  <path
+                  key={i}
+                  className="Number-of-people-moving-line"
+                  d={d}
+                  fill="none"
+                  stroke={dataColor[item.purpose]}
+                  strokeWidth={judge(item.people, line_judge)/Scale}
+                  strokeOpacity={active[item.purpose] ? 0 : 0.5}
+                  />
+                );
+                
               })}
 
               {projectionRef.current && coord.map((item,i) => {
                 const position = projectionRef.current(coords[item]);
+                const circle_judge = [100000, 50000, 10000, 1000];
                 return (
-                  <g>
+                  <g key={i}>
                     <circle
-                    key={i}
                     className="Number-of-people-moving-circle"
                     cx={position[0]}
                     cy={position[1]}
-                    r={Math.log10(destinationPoeple[item]+1)/Scale}
+                    r={judge(destinationPoeple[item], circle_judge)/Scale}
                     fill={circleColor(destinationPoeple[item])}
                     onClick={() => setPrefecture(item)}
                     />
 
                     {Scale >= 2 && (
                       <text
-                      key={i}
                       className="prefecture"
                       x={position[0]+2}
                       y={position[1]-2}
@@ -427,12 +467,31 @@ export default function App() {
               })}
             </g>
           </g>
+
+          <g>
+            <text
+            x="0"
+            y="130"
+            fill="none"
+            stroke="black"
+            >
+              表示出発地点名 : {prefecture}
+            </text>
+          </g>
+
         </svg>
 
-        <svg width="200" height={height} >
+        <svg width="200" height={height} className={`Legend_all ${!legend_judge ? "hide" : ""}`}>
+          <text
+          x="5"
+          y="20"
+          fontSize={12}
+          >
+            {traffic === "移動目的" ? "・目的別" : "・手段別"}
+          </text>
           {label.map((name, i) => (
             <g 
-            transform={`translate(0, ${35*i+30})`}
+            transform={`translate(0, ${35*i+35})`}
             className={active[name] ? "fade" : ""}
             onClick={() => setActive({
                 ...active,//スプレッド構文(上書き処理に利用できる)
@@ -456,14 +515,34 @@ export default function App() {
             </g>
           ))}
 
-          <g>
-            <text
-            x="10"
-            y="300"
+          <text
+          x="5"
+          y="260"
+          fontSize={12}
+          >
+            ・来客者数
+          </text>
+          {circleSize.map((name,i) => (
+            <g
+            key={i}
+            transform={`translate(0, ${35*i+40})`}
             >
-              表示出発地点名 : {prefecture}
-            </text>
-          </g>
+              <circle
+              cx="15"
+              cy="240"
+              r="5"
+              fill={circleColor(name)}
+              />
+
+              <text
+              x="35"
+              y="245"
+              fontSize={12}
+              >
+                {i < 4 ? `${name}人以上` : `${name}`}
+              </text>
+            </g>
+          ))}
 
         </svg>
 
