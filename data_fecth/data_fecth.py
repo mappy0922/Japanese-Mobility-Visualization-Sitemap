@@ -167,7 +167,7 @@ print("件数:", len(travelData))
 print("travelData.js を生成しました")
 """
 
-traffic_file = "./data_fecth/1990年度/000991446.xls"
+traffic_file = "./data_fecth/2000年度/000991448.xls"
 
 travelData = []
 

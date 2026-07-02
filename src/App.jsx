@@ -1,10 +1,14 @@
 import * as d3 from "d3";
 import { useState, useEffect, useRef } from "react";
-import { travelData1990 } from "./PurposeTravel1990"
-import { transportationData1990 } from "./TransportationTravel1990"
+import { travelData1990 } from "./PurposeTravel1990";
+import { transportationData1990 } from "./TransportationTravel1990";
+import { travelData1995 } from "./PurposeTravel1995"; 
+import { transportationData1995 } from "./TransportationTravel1995";
+import { travelData2000 } from "./PurposeTravel2000";
+import { trasnportationData2000 } from "./TransportationTravel2000";
 import { travelData2010 } from "./PurposeTravel2010";
 import { transportationData2010 } from "./TransportationTravel2010";
-import { coords } from "./coords"
+import { coords } from "./coords";
 import { feature } from "topojson-client";
 
 const MapName = [
@@ -36,10 +40,13 @@ const circleSize = [
 const coord = Object.keys(coords);
 
 export default function App() {
-  const width = window.innerWidth-200;
-  const height = window.innerHeight;
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+  const height = windowSize.height;
   
-  const [mapWidth, setMapWidth] = useState(width);
+  const [mapWidth, setMapWidth] = useState(window.innerWidth - 200);
   const [legend_judge, setLegend_judge] = useState(true);
   const [Scale , setScale] = useState(1);
   const [Map , setMap] = useState(MapName[0]);
@@ -60,7 +67,7 @@ export default function App() {
         代_全機関_全目的: false,
       };
     } else {
-      if(year === "1990年度") {
+      if(year === "1990年度" || year === "1995年度" || year === "2000年度") {
         return {
           航空_全目的: false,
           鉄道_全目的: false,
@@ -82,11 +89,51 @@ export default function App() {
     }
   });
 
+  const handleReset = () => {
+    if (traffic === "移動目的") {
+      setActive({
+        代_全機関_仕事: false,
+        代_全機関_観光: false,
+        代_全機関_私用: false,
+        代_全機関_その他: false,
+        代_全機関_不明: false,
+        代_全機関_全目的: false,
+      });
+    } else {
+      if (year === "1990年度" || year === "1995年度" || year === "2000年度") {
+        setActive({
+          航空_全目的: false,
+          鉄道_全目的: false,
+          船_全目的: false,
+          バス_全目的: false,
+          乗用車_全目的: false,
+          全機関_全目的: false,
+        });
+      } else {
+        setActive({
+          航空: false,
+          鉄道: false,
+          船: false,
+          バス: false,
+          乗用車等: false,
+          全機関: false,
+        });
+      }
+    }
+  };
+
+
   let file = [];
   if(traffic === "移動目的") {
     if(year === "1990年度") {
       file = travelData1990;
     } 
+    if(year === "1995年度") {
+      file = travelData1995;
+    }
+    if(year === "2000年度") {
+      file = travelData2000;
+    }
     if(year === "2010年度") {
       file = travelData2010;
     }
@@ -94,6 +141,12 @@ export default function App() {
     if(year === "1990年度") {
       file = transportationData1990;
     } 
+    if(year === "1995年度") {
+      file = transportationData1995;
+    }
+    if(year === "2000年度") {
+      file = trasnportationData2000;
+    }
     if(year === "2010年度") {
       file = transportationData2010;
     }
@@ -110,7 +163,7 @@ export default function App() {
       "代_全機関_全目的": "lightblue",
     }
   } else {
-    if(year === "1990年度") {
+    if(year === "1990年度" || year === "1995年度" || year === "2000年度") {
       dataColor = {
         "航空_全目的": "blue",
         "鉄道_全目的": "red",
@@ -165,6 +218,27 @@ export default function App() {
   const resetRef = useRef();
   const layerRef = useRef();
   const projectionRef = useRef();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+
+      setMapWidth(
+        legend_judge
+          ? window.innerWidth - 200
+          : window.innerWidth
+      );
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [legend_judge]);
 
   useEffect(() => {
     if (Map === "日本地図") {
@@ -261,7 +335,10 @@ export default function App() {
         "transform",
         `translate(${displayX},${displayY}) scale(${k})`
       );
-      setScale(Number(k.toFixed(1)));
+    })
+
+    .on("end", (event) => {
+      setScale(Number(event.transform.k.toFixed(1)));
     });
 
     zoomRef.current = zoom;
@@ -319,15 +396,18 @@ export default function App() {
 
         <div className="legend_menu">
           <button onClick={() => {
-            if(legend_judge) { 
-              setMapWidth(window.innerWidth);
-              setLegend_judge(false);
-            } else {
-              setMapWidth(window.innerWidth-200);
-              setLegend_judge(true);
-            }
+            setLegend_judge(prev => !prev);
           }}>
             {legend_judge ? "×" : "←"}
+          </button>
+        </div>
+
+        <div className="legend_reset">
+          <button 
+          className={`Legend_all ${!legend_judge ? "hide" : ""}`}
+          onClick={handleReset}
+          >
+            凡例をリセットする
           </button>
         </div>
 
@@ -411,7 +491,7 @@ export default function App() {
                 const nx = i % 2 == 0 ? dy / dist : -dy / dist;
                 const ny = i % 2 == 1 ? dx / dist : -dx / dist;
 
-                const curveHeight = dist * 2
+                const curveHeight = dist * 2;
 
                 const cx = mx + nx * curveHeight;
                 const cy = my + ny * curveHeight;
@@ -517,7 +597,7 @@ export default function App() {
 
           <text
           x="5"
-          y="260"
+          y="300"
           fontSize={12}
           >
             ・来客者数
@@ -525,7 +605,7 @@ export default function App() {
           {circleSize.map((name,i) => (
             <g
             key={i}
-            transform={`translate(0, ${35*i+40})`}
+            transform={`translate(0, ${35*i+80})`}
             >
               <circle
               cx="15"
