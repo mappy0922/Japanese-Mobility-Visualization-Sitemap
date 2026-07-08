@@ -20,8 +20,10 @@ export default function SvgMap({
   setMousePos,
   setPrefecture,
   setIsInformation,
+  setLineInformation,
 
   isInformation,
+  lineInformation,
 
   prefecture,
 }) {
@@ -66,6 +68,7 @@ export default function SvgMap({
 
                 
                     return (
+                        <>
                         <path
                         key={i}
                         className="Number-of-people-moving-line"
@@ -74,13 +77,31 @@ export default function SvgMap({
                         stroke={dataColor[item.purpose]}
                         strokeWidth={judge(item.people, line_judge)/Scale}
                         strokeOpacity={active[item.purpose] ? 0 : 0.5}
-                        onMouseMove={(e)=>{
+                        onClick={(e) => {
                             setMousePos({
                                 x:e.nativeEvent.offsetX,
                                 y:e.nativeEvent.offsetY
                             });
+                            setLineInformation(item);
                         }}
                         />
+
+
+                        <path
+                        d={d}
+                        fill="none"
+                        stroke="transparent"
+                        strokeWidth={15}   // 当たり判定だけ太く
+                        pointerEvents="stroke"
+                        onClick={(e) => {
+                            setMousePos({
+                                x: e.nativeEvent.offsetX,
+                                y: e.nativeEvent.offsetY,
+                            });
+                            setLineInformation(item);
+                        }}
+                        />
+                        </>
                     );
                 })}
 
@@ -96,7 +117,14 @@ export default function SvgMap({
                             r={judge(destinationPoeple[item], circle_judge)/Scale}
                             fill={circleColor(destinationPoeple[item])}
                             onClick={() => setPrefecture(item)}
+                            onMouseMove={(e)=>{
+                                setMousePos({
+                                    x:e.nativeEvent.offsetX,
+                                    y:e.nativeEvent.offsetY
+                                });
+                            }}
                             onMouseEnter={() => setIsInformation(item)}
+                            onMouseLeave={() => setIsInformation(null)}
                             />
 
                             {Scale >= 2 && (

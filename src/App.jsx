@@ -43,6 +43,22 @@ const circleSize = [
 
 const coord = Object.keys(coords);
 
+const createFavoriteState = () => {
+  const init = {};
+
+  yearSelection.forEach(y => {
+    init[y] = {};
+
+    transportation.forEach(t => {
+      init[y][t] = Object.fromEntries(
+        coord.map(name => [name, false])
+      );
+    });
+  });
+
+  return init;
+};
+
 export default function App() {
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
@@ -51,19 +67,14 @@ export default function App() {
   const height = windowSize.height;
   
   const [userName, setUserName] = useState("");
-  const [isFovarite, setIsFavorite] = useState(() => {
+  const [isFavorite, setIsFavorite] = useState(() => {
     const saved = localStorage.getItem("isFavorite");
-
-    if(saved) {
-      return JSON.parse(saved);
-    }
-    return Object.fromEntries(
-      coord.map(name => [name, false])
-    );
+    return saved ? JSON.parse(saved) : createFavoriteState();
   });
   const [isLogin, setIsLogin] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
+  const [lineInformation, setLineInformation] = useState(null);
   const [isInformation, setIsInformation] = useState(null);
   const [legend_judge, setLegend_judge] = useState(true);
   const [mousePos, setMousePos] = useState({x:0,y:0});
@@ -388,9 +399,9 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(
       "isFavorite",
-      JSON.stringify(isFovarite)
+      JSON.stringify(isFavorite)
     );
-  }, [isFovarite]);
+  }, [isFavorite]);
 
   useEffect(() => {
     localStorage.setItem(
@@ -422,18 +433,26 @@ export default function App() {
 
   }
 
-  const favoriteManagement = (name, nextFavorite) => {
+  const favoriteManagement = (year, traffic, name, nextFavorite) => {
     if(nextFavorite) {
       setFavoriteArr(prev => [
         ...prev,
         {
+          年代: year,
+          交通行動: traffic,
           県名: name,
           来客者数: `${destinationPoeple[name]}人`
         }
       ]);
     } else {
       setFavoriteArr(prev =>
-        prev.filter(item => item["県名"] !== name)
+        prev.filter(item => 
+          !(
+          item["年代"] === year &&
+          item["交通行動"] === traffic &&
+          item["県名"] === name  
+          )
+        )
       );
     }
   };
@@ -484,7 +503,10 @@ export default function App() {
         <div className="account">
           <button
           className="accountButton"
-          onClick={() => setShowMenu(!showMenu)}
+          onClick={() => {
+            setShowMenu(!showMenu);
+            (showLegend ? setShowLegend(!showLegend) : "");
+          }}
           >
             👤
           </button>
@@ -497,7 +519,7 @@ export default function App() {
                 <div>ようこそ!{userName}さん</div>
                 <button onClick={() => {
                   logout();
-                  setIsFavorite(false);}}>ログアウト</button>
+                  setIsFavorite(createFavoriteState());}}>ログアウト</button>
                 </>
               ) : (
                 <>
@@ -511,7 +533,10 @@ export default function App() {
         <div className="Legend">
           <button
           className="legendButton"
-          onClick={() => setShowLegend(!showLegend)}
+          onClick={() => {
+            setShowLegend(!showLegend);
+            (showMenu ? setShowMenu(!showMenu) : "");
+          }}
           >
             ≡
           </button>
@@ -622,8 +647,10 @@ export default function App() {
           setMousePos={setMousePos}
           setPrefecture={setPrefecture}
           setIsInformation={setIsInformation}
+          setLineInformation={setLineInformation}
 
           isInformation={isInformation}
+          lineInformation={lineInformation}
 
           prefecture={prefecture}
         />
@@ -631,10 +658,11 @@ export default function App() {
         {isInformation && (
           <div
           className="informationBox"
+          onMouseEnter={() => setIsInformation(isInformation)}
           onMouseLeave={() => setIsInformation(null)}
           style={{
-            left: mousePos.x + 10,
-            top: mousePos.y + 10,
+            left: mousePos.x+3,
+            top: mousePos.y+3,
           }}
           >
             <div>
@@ -653,18 +681,48 @@ export default function App() {
                 return;
               }
 
-              const nextFavorite = !isFovarite[isInformation];
+              const nextFavorite = !isFavorite[year][traffic][isInformation];
 
               setIsFavorite(prev => ({
                 ...prev,
-                [isInformation]: nextFavorite,
+                [year]: {
+                  ...prev[year],
+                  [traffic]: {
+                    ...prev[year][traffic],
+                    [isInformation]: nextFavorite,
+                  },
+                },
               }));
 
-              favoriteManagement(isInformation, nextFavorite);
+              favoriteManagement(year, traffic, isInformation, nextFavorite);
             }}
             >
-              {!isFovarite[isInformation] ? "お気に入り登録する" : "お気に入り解除"}
+              {!isFavorite[year][traffic][isInformation] ? "お気に入り登録する" : "お気に入り解除"}
             </button>
+          </div>
+        )}
+
+        {lineInformation && (
+          <div
+          className="informationBox2"
+          style={{
+            left: mousePos.x,
+            top: mousePos.y,
+          }}
+          >
+            <div>
+              移動方向: {lineInformation.from} ～ {lineInformation.to}
+            </div>
+
+            <div>
+              移動人数: {lineInformation.people}人
+            </div>
+
+            <div>
+              {traffic === "移動目的" ? `目的: ${lineInformation.purpose}` : `交通手段: ${lineInformation.purpose}`}
+            </div>
+
+            <button onClick={() => setLineInformation(null)}> ×</button>
           </div>
         )}
 
