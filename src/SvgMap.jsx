@@ -91,7 +91,7 @@ export default function SvgMap({
                         d={d}
                         fill="none"
                         stroke="transparent"
-                        strokeWidth={15}   // 当たり判定だけ太く
+                        strokeWidth={5}   // 当たり判定だけ太く
                         pointerEvents="stroke"
                         onClick={(e) => {
                             setMousePos({
