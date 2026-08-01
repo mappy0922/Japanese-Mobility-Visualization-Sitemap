@@ -116,7 +116,7 @@ h1 {
 }
 
 .Legend_all.hide {
-    transform: translateX(200px);
+    transform: translateX(300px);
 }
 
 button {
@@ -195,5 +195,109 @@ button {
     margin-top: 7px;
     color: white;
     background: black;
+}
+
+.guideOverlay{
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,.55);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    z-index:9999;
+}
+
+.guideModal{
+    width:700px;
+    max-width:90%;
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:35px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+    animation:popup .25s;
+}
+
+@keyframes popup{
+    from{
+        transform:scale(.9);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+.guideModal h2{
+    margin-top:0;
+    text-align:center;
+}
+
+.guideModal p,
+.guideModal li{
+    font-size:18px;
+    line-height:1.8;
+}
+
+.guideImage{
+    width:100%;
+    margin:20px 0;
+    border-radius:10px;
+}
+
+.guideButtons{
+    display:flex;
+    justify-content:space-between;
+}
+
+.guideButtons button{
+    padding:10px 25px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.legendPanel{
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    overflow: hidden;
+
+    transition:
+        width 0.5s ease,
+        opacity 0.5s ease;
+
+    opacity: 1;
+}
+
+.legendPanel.open{
+    width: 300px;
+    opacity: 1;
+}
+
+.legendPanel.close{
+    width: 0;
+    opacity: 0;
+}
+
+.mapArea{
+    transition: width .35s ease;
+    overflow: hidden;
+}
+
+.mapArea.full{
+    width:100%;
+}
+
+.mapArea.shrink{
+    width:calc(100% - 300px);
 }
 

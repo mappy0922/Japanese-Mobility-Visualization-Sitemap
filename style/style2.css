@@ -3,6 +3,7 @@ body {
     margin: 0px;
     padding: 0px;
     cursor: auto;
+    background-color: blanchedalmond;
 }
 
 h1 {
@@ -21,7 +22,8 @@ h2 {
 .box3,
 .box4,
 .box5,
-.box6{
+.box6,
+.box7{
     background: yellowgreen;
     border: 3px solid black;
     border-radius: 10px;             /* 角丸 */
