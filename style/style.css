@@ -97,11 +97,11 @@ h1 {
 }
 
 .Number-of-people-moving-line,
-.prefecture  {
+.prefecture {
     transition: all 0.7s;
 }
 
-.Number-of-people-moving-circle{
+.Number-of-people-moving-circle {
     cursor: pointer;
 }
 
@@ -135,7 +135,7 @@ button {
     position: fixed;
     top: 5px;
     right: 70px;
-    z-index: 100;   
+    z-index: 100;
 }
 
 .accountButton,
@@ -197,74 +197,78 @@ button {
     background: black;
 }
 
-.guideOverlay{
+.guideOverlay {
     position: fixed;
     inset: 0;
 
-    background: rgba(0,0,0,.55);
+    background: rgba(0, 0, 0, .55);
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    z-index:9999;
+    z-index: 9999;
 }
 
-.guideModal{
-    width:700px;
-    max-width:90%;
+.guideModal {
+    position: relative;
+    width: 700px;
+    max-width: 90%;
 
-    background:white;
+    background: white;
 
-    border-radius:16px;
+    border-radius: 16px;
 
-    padding:35px;
+    padding: 35px;
 
-    box-shadow:0 15px 40px rgba(0,0,0,.3);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, .3);
 
-    animation:popup .25s;
+    animation: popup .25s;
 }
 
-@keyframes popup{
-    from{
-        transform:scale(.9);
-        opacity:0;
+@keyframes popup {
+    from {
+        transform: scale(.9);
+        opacity: 0;
     }
-    to{
-        transform:scale(1);
-        opacity:1;
+
+    to {
+        transform: scale(1);
+        opacity: 1;
     }
 }
 
-.guideModal h2{
-    margin-top:0;
-    text-align:center;
+.guideModal h2 {
+    margin-top: 0;
+    text-align: center;
 }
 
 .guideModal p,
-.guideModal li{
-    font-size:18px;
-    line-height:1.8;
+.guideModal li {
+    font-size: 18px;
+    line-height: 1.8;
 }
 
-.guideImage{
-    width:100%;
-    margin:20px 0;
-    border-radius:10px;
+.guideImage {
+    width: 100%;
+    margin: 20px 0;
+    border-radius: 10px;
 }
 
-.guideButtons{
-    display:flex;
-    justify-content:space-between;
+.guideButtons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
 }
 
-.guideButtons button{
-    padding:10px 25px;
-    font-size:16px;
-    cursor:pointer;
+.guideButtons button {
+    padding: 10px 25px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
-.legendPanel{
+.legendPanel {
     position: absolute;
     top: 0;
     right: 0;
@@ -278,26 +282,25 @@ button {
     opacity: 1;
 }
 
-.legendPanel.open{
+.legendPanel.open {
     width: 300px;
     opacity: 1;
 }
 
-.legendPanel.close{
+.legendPanel.close {
     width: 0;
     opacity: 0;
 }
 
-.mapArea{
+.mapArea {
     transition: width .35s ease;
     overflow: hidden;
 }
 
-.mapArea.full{
-    width:100%;
+.mapArea.full {
+    width: 100%;
 }
 
-.mapArea.shrink{
-    width:calc(100% - 300px);
+.mapArea.shrink {
+    width: calc(100% - 300px);
 }
-

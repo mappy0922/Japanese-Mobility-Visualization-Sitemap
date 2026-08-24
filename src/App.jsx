@@ -80,7 +80,10 @@ export default function App() {
   const [selectedLabel, setSelectedLabel] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [prefectureCenter, setPrefectureCenter] = useState({});
-  const [guideStep, setGuideStep] = useState(0);
+  const [guideStep, setGuideStep] = useState(() => {
+    const seen = localStorage.getItem("guideSeen");
+    return seen ? -1 : 0;
+  });
   const [showLegend, setShowLegend] = useState(false);
   const [lineInformation, setLineInformation] = useState(null);
   const [isInformation, setIsInformation] = useState(null);
@@ -141,6 +144,7 @@ export default function App() {
     : windowSize.width - LEGEND_WIDTH;
 
   const closeGuide = () => {
+    localStorage.setItem("guideSeen", "true");
     setGuideStep(-1);
   };
 
@@ -918,6 +922,14 @@ export default function App() {
             <div className="legendMenu"
               onMouseLeave={() => setShowLegend(!showLegend)}>
               <>
+                <button
+                  onClick={() => {
+                    setGuideStep(0);
+                  }}
+                >
+                  チュートリアル
+                </button>
+
                 <button onClick={() => (window.open('./index2.html', '_blank'))}>
                   使い方
                 </button>
@@ -1194,6 +1206,24 @@ export default function App() {
       {guideStep >= 0 && (
         <div className="guideOverlay">
           <div className="guideModal">
+            <button
+              onClick={closeGuide}
+              style={{
+                position: "absolute",
+                top: "12px",
+                right: "12px",
+                width: "32px",
+                height: "32px",
+                border: "none",
+                borderRadius: "50%",
+                background: "#f0f0f0",
+                cursor: "pointer",
+                fontSize: "18px",
+                fontWeight: "bold",
+              }}
+            >
+              ×
+            </button>
 
             {guideStep === 0 && (
               <>
@@ -1281,7 +1311,10 @@ export default function App() {
               )}
 
               {guideStep < 2 ? (
-                <button onClick={() => setGuideStep(guideStep + 1)}>
+                <button
+                  onClick={() => setGuideStep(guideStep + 1)}
+                  style={{ marginLeft: "auto" }}
+                >
                   次へ →
                 </button>
               ) : (
