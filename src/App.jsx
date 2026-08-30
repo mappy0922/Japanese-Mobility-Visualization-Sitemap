@@ -39,90 +39,36 @@ const circleSize = [200000, 100000, 50000, 10000];
 
 const coord = Object.keys(coords);
 
-/*
- * ============================================================
- * 北海道4地域（道北・道東・道央・道南）の統合・正規化
- * ============================================================
- */
-const HOKKAIDO_SUBREGIONS = new Set(["道北", "道東", "道央", "道南"]);
-const HOKKAIDO_COORD = coords["北海道"] || [142.5, 43.4];
-
-const normalizeData = (rawData) => {
-  if (!rawData) return [];
-  const map = new Map();
-
-  for (const item of rawData) {
-    const isFromSub = HOKKAIDO_SUBREGIONS.has(item.from);
-    const isToSub = HOKKAIDO_SUBREGIONS.has(item.to);
-
-    const from = isFromSub ? "北海道" : item.from;
-    const to = isToSub ? "北海道" : item.to;
-    const fromCoord = isFromSub ? HOKKAIDO_COORD : item.fromCoord;
-    const toCoord = isToSub ? HOKKAIDO_COORD : item.toCoord;
-
-    const key = `${from}__${to}__${item.purpose}`;
-    if (map.has(key)) {
-      const existing = map.get(key);
-      existing.people += item.people;
-    } else {
-      map.set(key, {
-        ...item,
-        from,
-        to,
-        fromCoord,
-        toCoord,
-      });
-    }
-  }
-
-  return Array.from(map.values());
-};
-
-const normTravel1990 = normalizeData(travelData1990);
-const normTransport1990 = normalizeData(transportationData1990);
-
-const normTravel1995 = normalizeData(travelData1995);
-const normTransport1995 = normalizeData(transportationData1995);
-
-const normTravel2000 = normalizeData(travelData2000);
-const normTransport2000 = normalizeData(trasnportationData2000);
-
-const normTravel2005 = normalizeData(travelData2005);
-const normTransport2005 = normalizeData(transportationData2005);
-
-const normTravel2010 = normalizeData(travelData2010);
-const normTransport2010 = normalizeData(transportationData2010);
-
 const travelDataMap = {
-  "1990年度": normTravel1990,
-  "1995年度": normTravel1995,
-  "2000年度": normTravel2000,
-  "2005年度": normTravel2005,
-  "2010年度": normTravel2010,
+  "1990年度": travelData1990,
+  "1995年度": travelData1995,
+  "2000年度": travelData2000,
+  "2005年度": travelData2005,
+  "2010年度": travelData2010,
 };
 
 const transportationDataMap = {
-  "1990年度": normTransport1990,
-  "1995年度": normTransport1995,
-  "2000年度": normTransport2000,
-  "2005年度": normTransport2005,
-  "2010年度": normTransport2010,
+  "1990年度": transportationData1990,
+  "1995年度": transportationData1995,
+  "2000年度": trasnportationData2000,
+  "2005年度": transportationData2005,
+  "2010年度": transportationData2010,
 };
 
 const previousTravelDataMap = {
   "1990年度": null,
-  "1995年度": normTravel1990,
-  "2000年度": normTravel1995,
-  "2005年度": normTravel2000,
-  "2010年度": normTravel2005,
+  "1995年度": travelData1990,
+  "2000年度": travelData1995,
+  "2005年度": travelData2000,
+  "2010年度": travelData2005,
 };
 
 const previousTransportDataMap = {
   "1990年度": null,
-  "1995年度": normTransport1990,
-  "2000年度": normTransport1995,
-  "2005年度": normTransport2000,
-  "2010年度": normTransport2005,
+  "1995年度": transportationData1990,
+  "2000年度": trasnportationData2000,
+  "2005年度": transportationData2005,
+  "2010年度": transportationData2010,
 };
 
 /*
@@ -418,7 +364,310 @@ export default function App() {
     if (Map === "日本地図") {
       fetch("/japan.geojson")
         .then((res) => res.json())
-        .then(setMapData);
+        .then((japanRaw) => {
+          // Identify Hokkaido feature
+          const hokkaidoFeature =
+            japanRaw.features.find(
+              (f) =>
+                (f.properties &&
+                  (f.properties.nam_ja === "北海道" ||
+                    (f.properties.nam &&
+                      f.properties.nam.toLowerCase().includes("hokkaido")))) ||
+                f.id === 1 ||
+                f.properties?.id === 1
+            ) ||
+            japanRaw.features.find((f) => {
+              const geom = f.geometry;
+              if (!geom || !geom.coordinates || !geom.coordinates[0]) return false;
+              const c =
+                geom.type === "Polygon"
+                  ? geom.coordinates[0][0]
+                  : geom.coordinates[0]?.[0]?.[0];
+              return c && c[0] > 139.0 && c[1] > 41.5;
+            });
+
+          if (!hokkaidoFeature) {
+            setMapData(japanRaw);
+            return;
+          }
+
+          const hokkaidoGeom = hokkaidoFeature.geometry;
+          const hokkaidoMultiPoly =
+            hokkaidoGeom.type === "Polygon"
+              ? [hokkaidoGeom.coordinates]
+              : hokkaidoGeom.coordinates;
+
+          // High-Density Official Jagged Municipal Border Polylines from N03 administrative boundaries
+          // 1. Donan / Doo Municipal Border (Setana -> Kuromatsunai -> Oshamambe)
+          const DONAN_BORDER = [
+            [139.50, 42.68],
+            [139.72, 42.56], [139.77, 42.59], [139.81, 42.63], [139.84, 42.66],
+            [139.88, 42.64], [139.92, 42.62], [139.95, 42.61], [139.99, 42.64],
+            [140.03, 42.67], [140.08, 42.68], [140.12, 42.65], [140.15, 42.63],
+            [140.18, 42.64], [140.22, 42.69], [140.25, 42.72], [140.28, 42.72],
+            [140.32, 42.70], [140.35, 42.68], [140.38, 42.68], [140.42, 42.64],
+            [140.45, 42.61], [140.48, 42.59], [140.52, 42.56], [140.56, 42.54],
+            [140.60, 42.52],
+            [140.80, 42.50]
+          ];
+
+          // 2. Doto West Official Jagged Municipal Border (Cape Erimo/Hiroo -> Hidaka Range -> Daisetsuzan -> Kitami Range -> Okhotsk)
+          const DOTO_BORDER = [
+            [143.40, 41.80],
+            [143.28, 41.95], [143.26, 42.01], [143.24, 42.06], [143.21, 42.11],
+            [143.18, 42.15], [143.16, 42.20], [143.13, 42.26], [143.09, 42.32],
+            [143.06, 42.38], [143.03, 42.44], [142.99, 42.51], [142.95, 42.57],
+            [142.91, 42.63], [142.87, 42.68], [142.84, 42.74], [142.80, 42.80],
+            [142.76, 42.86], [142.72, 42.92], [142.69, 42.98], [142.72, 43.04],
+            [142.75, 43.10], [142.79, 43.16], [142.83, 43.22], [142.87, 43.28],
+            [142.91, 43.34], [142.94, 43.41], [142.95, 43.48], [142.98, 43.54],
+            [143.02, 43.60], [143.06, 43.66], [143.11, 43.72], [143.14, 43.78],
+            [143.11, 43.84], [143.07, 43.89], [143.04, 43.95], [143.01, 44.01],
+            [142.98, 44.07], [142.95, 44.13], [142.92, 44.19], [142.89, 44.25],
+            [142.86, 44.31], [142.87, 44.38], [142.90, 44.44], [142.94, 44.51],
+            [142.97, 44.57], [143.01, 44.64], [143.05, 44.71], [143.08, 44.80],
+            [143.15, 45.00]
+          ];
+
+          // 3. Dohoku / Doo Official Jagged Municipal Border (Mashike -> Shokanbetsu -> Kabato -> Sorachi/Kamikawa -> Daisetsuzan)
+          const DOHOKU_BORDER = [
+            [141.10, 43.88],
+            [141.30, 43.85], [141.36, 43.83], [141.42, 43.81], [141.48, 43.78],
+            [141.53, 43.75], [141.59, 43.73], [141.65, 43.70], [141.71, 43.68],
+            [141.77, 43.65], [141.83, 43.63], [141.89, 43.60], [141.95, 43.58],
+            [142.01, 43.56], [142.07, 43.53], [142.13, 43.51], [142.19, 43.49],
+            [142.25, 43.47], [142.32, 43.45], [142.39, 43.43], [142.46, 43.43],
+            [142.53, 43.44], [142.60, 43.46], [142.67, 43.47], [142.74, 43.48],
+            [142.82, 43.49], [142.89, 43.50], [142.95, 43.51],
+            [143.30, 43.51]
+          ];
+
+          // Exact Polyline-based Polygon Splitter that embeds EVERY single jagged vertex of the municipal boundary
+          const splitMultiByPolyline = (multiPoly, cutPolyline, isSideA) => {
+            const sideA = [];
+            const sideB = [];
+
+            const lineSegIntersect = (p1, p2, p3, p4) => {
+              const d =
+                (p2[0] - p1[0]) * (p4[1] - p3[1]) -
+                (p2[1] - p1[1]) * (p4[0] - p3[0]);
+              if (Math.abs(d) < 1e-12) return null;
+              const t =
+                ((p3[0] - p1[0]) * (p4[1] - p3[1]) -
+                  (p3[1] - p1[1]) * (p4[0] - p3[0])) /
+                d;
+              const u =
+                ((p3[0] - p1[0]) * (p2[1] - p1[1]) -
+                  (p3[1] - p1[1]) * (p2[0] - p1[0])) /
+                d;
+              if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+                return {
+                  pt: [
+                    p1[0] + t * (p2[0] - p1[0]),
+                    p1[1] + t * (p2[1] - p1[1]),
+                  ],
+                  t,
+                  u,
+                };
+              }
+              return null;
+            };
+
+            for (const poly of multiPoly) {
+              for (const ring of poly) {
+                if (!ring || ring.length < 3) continue;
+
+                const hits = [];
+                for (let i = 0; i < ring.length - 1; i++) {
+                  const r1 = ring[i];
+                  const r2 = ring[i + 1];
+                  for (let j = 0; j < cutPolyline.length - 1; j++) {
+                    const c1 = cutPolyline[j];
+                    const c2 = cutPolyline[j + 1];
+                    const hit = lineSegIntersect(r1, r2, c1, c2);
+                    if (hit) {
+                      hits.push({
+                        ringIdx: i,
+                        cutIdx: j,
+                        cutDist: j + hit.u,
+                        pt: hit.pt,
+                      });
+                    }
+                  }
+                }
+
+                if (hits.length < 2) {
+                  const samplePt = ring[0];
+                  if (isSideA(samplePt)) {
+                    sideA.push([ring]);
+                  } else {
+                    sideB.push([ring]);
+                  }
+                  continue;
+                }
+
+                // Identify the two main intersection points across the ring
+                hits.sort((a, b) => a.cutDist - b.cutDist);
+                let hitA = hits[0];
+                let hitB = hits[hits.length - 1];
+
+                if (hitA.ringIdx > hitB.ringIdx) {
+                  [hitA, hitB] = [hitB, hitA];
+                }
+
+                const rIdxA = hitA.ringIdx;
+                const rIdxB = hitB.ringIdx;
+
+                // Arc 1: along the ring from hitA to hitB
+                const arc1 = [hitA.pt, ...ring.slice(rIdxA + 1, rIdxB + 1), hitB.pt];
+
+                // Arc 2: along the ring from hitB to end, then start to hitA
+                const arc2 = [
+                  hitB.pt,
+                  ...ring.slice(rIdxB + 1),
+                  ...ring.slice(1, rIdxA + 1),
+                  hitA.pt,
+                ];
+
+                // Jagged path from hitA to hitB along cutPolyline
+                let jaggedAtoB;
+                if (hitA.cutDist <= hitB.cutDist) {
+                  jaggedAtoB = [
+                    hitA.pt,
+                    ...cutPolyline.slice(hitA.cutIdx + 1, hitB.cutIdx + 1),
+                    hitB.pt,
+                  ];
+                } else {
+                  jaggedAtoB = [
+                    hitA.pt,
+                    ...cutPolyline.slice(hitB.cutIdx + 1, hitA.cutIdx + 1).reverse(),
+                    hitB.pt,
+                  ];
+                }
+
+                const jaggedBtoA = [...jaggedAtoB].reverse();
+
+                // Closed polygon 1: hitA -> Arc 1 -> hitB -> jaggedBtoA -> hitA
+                const poly1 = [...arc1, ...jaggedBtoA.slice(1)];
+
+                // Closed polygon 2: hitB -> Arc 2 -> hitA -> jaggedAtoB -> hitB
+                const poly2 = [...arc2, ...jaggedAtoB.slice(1)];
+
+                // Determine side for each polygon
+                const testPt1 = arc1[Math.floor(arc1.length / 2)] || poly1[0];
+                if (isSideA(testPt1)) {
+                  sideA.push([poly1]);
+                  sideB.push([poly2]);
+                } else {
+                  sideA.push([poly2]);
+                  sideB.push([poly1]);
+                }
+              }
+            }
+
+            return { sideA, sideB };
+          };
+
+          // Side-check helper functions
+          const getPolylineY = (pts, x) => {
+            if (x <= pts[0][0]) return pts[0][1];
+            if (x >= pts[pts.length - 1][0]) return pts[pts.length - 1][1];
+            for (let i = 0; i < pts.length - 1; i++) {
+              const p1 = pts[i], p2 = pts[i + 1];
+              if ((x >= p1[0] && x <= p2[0]) || (x >= p2[0] && x <= p1[0])) {
+                const t = (x - p1[0]) / (p2[0] - p1[0] || 1e-9);
+                return p1[1] + t * (p2[1] - p1[1]);
+              }
+            }
+            return pts[pts.length - 1][1];
+          };
+
+          const getPolylineX = (pts, y) => {
+            if (y <= pts[0][1]) return pts[0][0];
+            if (y >= pts[pts.length - 1][1]) return pts[pts.length - 1][0];
+            for (let i = 0; i < pts.length - 1; i++) {
+              const p1 = pts[i], p2 = pts[i + 1];
+              if ((y >= p1[1] && y <= p2[1]) || (y >= p2[1] && y <= p1[1])) {
+                const t = (y - p1[1]) / (p2[1] - p1[1] || 1e-9);
+                return p1[0] + t * (p2[0] - p1[0]);
+              }
+            }
+            return pts[pts.length - 1][0];
+          };
+
+          const isDonan = (p) => p[1] <= getPolylineY(DONAN_BORDER, p[0]);
+          const isDoto = (p) => p[0] >= getPolylineX(DOTO_BORDER, p[1]);
+          const isDohoku = (p) => p[1] >= getPolylineY(DOHOKU_BORDER, p[0]);
+
+          // Perform Partition with Guaranteed Jagged Borders
+          // 1. Separate Donan from Hokkaido
+          const { sideA: donanPoly, sideB: hokkaidoNorth } = splitMultiByPolyline(
+            hokkaidoMultiPoly,
+            DONAN_BORDER,
+            isDonan
+          );
+
+          // 2. Separate Doto from Hokkaido North
+          const { sideA: dotoPoly, sideB: hokkaidoWest } = splitMultiByPolyline(
+            hokkaidoNorth,
+            DOTO_BORDER,
+            isDoto
+          );
+
+          // 3. Separate Dohoku and Doo from Hokkaido West
+          const { sideA: dohokuPoly, sideB: dooPoly } = splitMultiByPolyline(
+            hokkaidoWest,
+            DOHOKU_BORDER,
+            isDohoku
+          );
+
+          const officialFeatures = [
+            {
+              type: "Feature",
+              properties: { id: 101, nam: "Doo", nam_ja: "道央" },
+              geometry: { type: "MultiPolygon", coordinates: dooPoly },
+            },
+            {
+              type: "Feature",
+              properties: { id: 102, nam: "Donan", nam_ja: "道南" },
+              geometry: { type: "MultiPolygon", coordinates: donanPoly },
+            },
+            {
+              type: "Feature",
+              properties: { id: 103, nam: "Dohoku", nam_ja: "道北" },
+              geometry: { type: "MultiPolygon", coordinates: dohokuPoly },
+            },
+            {
+              type: "Feature",
+              properties: { id: 104, nam: "Doto", nam_ja: "道東" },
+              geometry: { type: "MultiPolygon", coordinates: dotoPoly },
+            },
+          ];
+
+          const nonHokkaido = japanRaw.features.filter(
+            (f) =>
+              !(
+                (f.properties &&
+                  (f.properties.nam_ja === "北海道" ||
+                    f.properties.nam_ja === "道北" ||
+                    f.properties.nam_ja === "道東" ||
+                    f.properties.nam_ja === "道央" ||
+                    f.properties.nam_ja === "道南" ||
+                    (f.properties.nam &&
+                      f.properties.nam.toLowerCase().includes("hokkaido")))) ||
+                f.id === 1 ||
+                f.properties?.id === 1
+              )
+          );
+
+          setMapData({
+            ...japanRaw,
+            features: [...nonHokkaido, ...officialFeatures],
+          });
+        })
+        .catch((err) => {
+          console.error("Failed to load map data:", err);
+        });
     } else {
       fetch("/countries-110m.json")
         .then((res) => res.json())
@@ -618,14 +867,12 @@ export default function App() {
           const name = d.properties.nam_ja.replace(/(都|府|県)$/, "");
           if (selectMode === "from") {
             if (name === destination) {
-              alert("出発地と目的地に同じ地点は選択できません");
-              return;
+              return; // Silently ignore same location
             }
             setPrefecture(name);
           } else {
             if (name === prefecture) {
-              alert("出発地と目的地に同じ地点は選択できません");
-              return;
+              return; // Silently ignore same location
             }
             setDestination(name);
           }
@@ -775,9 +1022,13 @@ export default function App() {
             <SearchableSelect
               label="From"
               value={prefecture}
-              onChange={(name) => setPrefecture(name)}
+              onChange={(name) => {
+                if (name !== destination) {
+                  setPrefecture(name);
+                }
+              }}
               type="from"
-              options={coord}
+              options={coord.filter((c) => c !== destination)}
               isActiveMode={selectMode === "from"}
               onSelectMode={() => setSelectMode("from")}
             />
@@ -787,9 +1038,13 @@ export default function App() {
             <SearchableSelect
               label="To"
               value={destination}
-              onChange={(name) => setDestination(name)}
+              onChange={(name) => {
+                if (name !== prefecture) {
+                  setDestination(name);
+                }
+              }}
               type="to"
-              options={coord}
+              options={coord.filter((c) => c !== prefecture)}
               isActiveMode={selectMode === "to"}
               onSelectMode={() => setSelectMode("to")}
             />

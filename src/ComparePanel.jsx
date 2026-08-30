@@ -46,18 +46,20 @@ export default function ComparePanel({
             <div className="compareNotice">比較対象の前年度はありません</div>
           ) : (
             <>
-              <div className="compareRow">
-                <span>前年度：</span>
-                <span className="compareValue">
-                  {(previousPeople ?? 0).toLocaleString()} 人
-                </span>
-              </div>
-
-              <div className="compareRow">
-                <span>今年度：</span>
-                <span className="compareValue">
-                  {(currentPeople ?? 0).toLocaleString()} 人
-                </span>
+              <div className="compareMainDisplay">
+                <div className="currentPeopleWrapper">
+                  <span className="currentPeopleLabel">今年度</span>
+                  <span className="currentPeopleNumber">
+                    {(currentPeople ?? 0).toLocaleString()}
+                  </span>
+                  <span className="currentPeopleUnit">人</span>
+                </div>
+                <div className="previousPeopleSub">
+                  <span className="prevLabel">前年:</span>
+                  <span className="prevNumber">
+                    {(previousPeople ?? 0).toLocaleString()} 人
+                  </span>
+                </div>
               </div>
 
               <div className="gaugeContainer">
@@ -136,18 +138,20 @@ export default function ComparePanel({
             <div className="compareNotice">ラベルを選択してください</div>
           ) : (
             <>
-              <div className="compareRow">
-                <span>前年度：</span>
-                <span className="compareValue">
-                  {(previousLabelPeople ?? 0).toLocaleString()} 人
-                </span>
-              </div>
-
-              <div className="compareRow">
-                <span>今年度：</span>
-                <span className="compareValue">
-                  {(currentLabelPeople ?? 0).toLocaleString()} 人
-                </span>
+              <div className="compareMainDisplay">
+                <div className="currentPeopleWrapper">
+                  <span className="currentPeopleLabel">今年度</span>
+                  <span className="currentPeopleNumber">
+                    {(currentLabelPeople ?? 0).toLocaleString()}
+                  </span>
+                  <span className="currentPeopleUnit">人</span>
+                </div>
+                <div className="previousPeopleSub">
+                  <span className="prevLabel">前年:</span>
+                  <span className="prevNumber">
+                    {(previousLabelPeople ?? 0).toLocaleString()} 人
+                  </span>
+                </div>
               </div>
 
               <div className="gaugeContainer">
