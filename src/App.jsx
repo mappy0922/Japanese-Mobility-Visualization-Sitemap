@@ -23,6 +23,7 @@ import { feature } from "topojson-client";
 
 import SvgMap from "./SvgMap";
 import SvgLabel from "./SvgLabel";
+import ComparePanel from "./ComparePanel";
 
 
 const MapName = [
@@ -2639,6 +2640,18 @@ scale(${k})
 
         </div>
 
+        <ComparePanel
+          year={year}
+          currentPeople={currentPeople}
+          previousPeople={previousPeople}
+          diff={diff}
+          rate={rate}
+          selectedLabel={selectedLabel}
+          currentLabelPeople={currentLabelPeople}
+          previousLabelPeople={previousLabelPeople}
+          labelDiff={labelDiff}
+          labelRate={labelRate}
+        />
 
         <div
           className={

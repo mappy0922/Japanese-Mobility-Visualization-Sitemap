@@ -304,3 +304,125 @@ button {
 .mapArea.shrink {
     width: calc(100% - 300px);
 }
+
+/* ============================================================
+   比較パネル (ComparePanel)
+   ============================================================ */
+
+.comparePanel {
+    position: absolute;
+    top: 85px;
+    left: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: auto;
+    width: 230px;
+}
+
+.compareCard {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.compareTitle {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    border-bottom: 2px solid #87cefa;
+    padding-bottom: 4px;
+}
+
+.compareBody {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.compareNotice {
+    font-size: 12px;
+    color: #777;
+    padding: 4px 0;
+}
+
+.selectedLabelBadge {
+    font-size: 12px;
+    font-weight: 600;
+    background: #e1f0fa;
+    color: #0288d1;
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin-bottom: 6px;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.compareRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+    color: #555;
+}
+
+.compareValue {
+    font-weight: 600;
+    color: #222;
+}
+
+.gaugeContainer {
+    position: relative;
+    width: 200px;
+    height: 14px;
+    background: #eee;
+    border-radius: 7px;
+    margin: 8px auto 4px auto;
+    overflow: hidden;
+}
+
+.gaugeCenterLine {
+    position: absolute;
+    left: 100px;
+    width: 2px;
+    height: 14px;
+    background: #333;
+    z-index: 2;
+}
+
+.gaugeBar {
+    position: absolute;
+    height: 14px;
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.gaugeBar.positive {
+    background: #ff5252;
+}
+
+.gaugeBar.negative {
+    background: #448aff;
+}
+
+.gaugeLabels {
+    display: flex;
+    justify-content: space-between;
+    width: 200px;
+    margin: 0 auto;
+    font-size: 10px;
+    color: #888;
+}
+
+.diffText {
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 6px;
+    text-align: right;
+}
