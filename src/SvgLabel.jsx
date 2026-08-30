@@ -39,10 +39,13 @@ export default function SvgLabel({
   travelData,
   transportationData,
   file,
+
+  // ★ Appから受け取る
+  tab,
+  setTab,
 }) {
 
   const [searchName, setSearchName] = useState("");
-  const [tab, setTab] = useState("basic");
 
   // 前年度データ
   const previousFileMap = {
@@ -75,25 +78,24 @@ export default function SvgLabel({
 
   const svgHeight = height;
 
-
   const searchDestination = () => {
 
     const target = coord.find(name =>
       name.includes(searchName)
     );
 
-
     if (target) {
 
       const element =
         document.getElementById(`destination-${target}`);
 
-
       if (element) {
+
         element.scrollIntoView({
           behavior: "smooth",
           block: "center"
         });
+
       }
 
     } else {
@@ -101,11 +103,10 @@ export default function SvgLabel({
       alert("該当する地点がありません");
 
     }
-
   };
 
   // ===== 前年度比ゲージ =====
-  const MAX_RATE = 100; // ±100%まで表示
+  const MAX_RATE = 100;
 
   const gaugeRate =
     rate === null
@@ -115,8 +116,12 @@ export default function SvgLabel({
         Math.min(MAX_RATE, Number(rate))
       );
 
-  const center = 110; // バーの中心(px)
-  const barWidth = Math.abs(gaugeRate) / MAX_RATE * center;
+  const center = 110;
+
+  const barWidth =
+    Math.abs(gaugeRate) /
+    MAX_RATE *
+    center;
 
   const labelGaugeRate =
     previousLabelPeople === 0
@@ -124,8 +129,10 @@ export default function SvgLabel({
       : Math.max(
         -100,
         Math.min(
-          ((currentLabelPeople - previousLabelPeople) /
-            previousLabelPeople) * 100,
+          (
+            (currentLabelPeople - previousLabelPeople) /
+            previousLabelPeople
+          ) * 100,
           100
         )
       );
@@ -133,8 +140,8 @@ export default function SvgLabel({
   const labelBarWidth =
     Math.abs(labelGaugeRate) * 1.1;
 
-
   return (
+
     <div
       style={{
         width: "300px",
@@ -143,6 +150,7 @@ export default function SvgLabel({
         overflowX: "hidden",
       }}
     >
+
       <svg
         width="300"
         height={svgHeight}
@@ -164,6 +172,7 @@ export default function SvgLabel({
           width="70"
           height="30"
         >
+
           <button
             onClick={() => setLegend_judge(true)}
             style={{
@@ -176,6 +185,7 @@ export default function SvgLabel({
           >
             ✕
           </button>
+
         </foreignObject>
 
         <foreignObject
@@ -184,6 +194,7 @@ export default function SvgLabel({
           width="290"
           height="35"
         >
+
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             style={{
@@ -196,7 +207,10 @@ export default function SvgLabel({
               onClick={() => setTab("basic")}
               style={{
                 flex: 1,
-                background: tab === "basic" ? "#87CEFA" : "white"
+                background:
+                  tab === "basic"
+                    ? "#87CEFA"
+                    : "white"
               }}
             >
               基本
@@ -206,7 +220,10 @@ export default function SvgLabel({
               onClick={() => setTab("compare")}
               style={{
                 flex: 1,
-                background: tab === "compare" ? "#87CEFA" : "white"
+                background:
+                  tab === "compare"
+                    ? "#87CEFA"
+                    : "white"
               }}
             >
               比較
@@ -216,7 +233,10 @@ export default function SvgLabel({
               onClick={() => setTab("graph")}
               style={{
                 flex: 1,
-                background: tab === "graph" ? "#87CEFA" : "white"
+                background:
+                  tab === "graph"
+                    ? "#87CEFA"
+                    : "white"
               }}
             >
               割合
@@ -226,20 +246,30 @@ export default function SvgLabel({
               onClick={() => setTab("rank")}
               style={{
                 flex: 1,
-                background: tab === "rank" ? "#87CEFA" : "white"
+                background:
+                  tab === "rank"
+                    ? "#87CEFA"
+                    : "white"
               }}
             >
               順位
             </button>
 
           </div>
+
         </foreignObject>
 
+        {/* ========================= */}
+        {/* 基本 */}
+        {/* ========================= */}
+
         {tab === "basic" && (
+
           <>
 
             {/* 対象地点変更 */}
             <g transform="translate(10,90)">
+
               <rect
                 width="280"
                 height="220"
@@ -264,6 +294,7 @@ export default function SvgLabel({
                 width="260"
                 height="170"
               >
+
                 <div
                   xmlns="http://www.w3.org/1999/xhtml"
                   style={{
@@ -271,14 +302,19 @@ export default function SvgLabel({
                     height: "100%",
                   }}
                 >
+
                   <input
                     value={searchName}
                     placeholder="目的地点を検索"
-                    onChange={(e) => setSearchName(e.target.value)}
+                    onChange={(e) =>
+                      setSearchName(e.target.value)
+                    }
                     onKeyDown={(e) => {
+
                       if (e.key === "Enter") {
                         searchDestination();
                       }
+
                     }}
                     style={{
                       width: "90%",
@@ -296,41 +332,69 @@ export default function SvgLabel({
                       border: "1px solid #bbb",
                     }}
                   >
+
                     {coord
-                      .filter((name) => name !== prefecture)
+                      .filter(
+                        (name) =>
+                          name !== prefecture
+                      )
                       .map((name) => (
+
                         <div
                           key={name}
                           id={`destination-${name}`}
-                          onClick={() => setDestination(name)}
+                          onClick={() =>
+                            setDestination(name)
+                          }
                           style={{
                             padding: "8px 12px",
                             cursor: "pointer",
-                            borderBottom: "1px solid #ddd",
+                            borderBottom:
+                              "1px solid #ddd",
                             background:
-                              destination === name ? "#87CEFA" : "white",
+                              destination === name
+                                ? "#87CEFA"
+                                : "white",
                           }}
+
                           onMouseEnter={(e) => {
-                            if (destination !== name) {
-                              e.currentTarget.style.background = "#eeeeee";
+
+                            if (
+                              destination !== name
+                            ) {
+                              e.currentTarget.style.background =
+                                "#eeeeee";
                             }
+
                           }}
+
                           onMouseLeave={(e) => {
-                            if (destination !== name) {
-                              e.currentTarget.style.background = "white";
+
+                            if (
+                              destination !== name
+                            ) {
+                              e.currentTarget.style.background =
+                                "white";
                             }
+
                           }}
                         >
                           {name}
                         </div>
+
                       ))}
+
                   </div>
+
                 </div>
+
               </foreignObject>
+
             </g>
 
             {/* ラベル変更 */}
             <g transform="translate(10,325)">
+
               <rect
                 width="280"
                 height="220"
@@ -355,6 +419,7 @@ export default function SvgLabel({
                 width="260"
                 height="170"
               >
+
                 <div
                   xmlns="http://www.w3.org/1999/xhtml"
                   style={{
@@ -366,42 +431,73 @@ export default function SvgLabel({
                     border: "1px solid #bbb",
                   }}
                 >
+
                   {label.map((name) => (
+
                     <div
                       key={name}
-                      onClick={() => setSelectedLabel(name)}
+                      onClick={() =>
+                        setSelectedLabel(name)
+                      }
                       style={{
                         padding: "8px 12px",
                         cursor: "pointer",
-                        borderBottom: "1px solid #ddd",
+                        borderBottom:
+                          "1px solid #ddd",
                         background:
-                          selectedLabel === name ? "#87CEFA" : "white",
+                          selectedLabel === name
+                            ? "#87CEFA"
+                            : "white",
                       }}
+
                       onMouseEnter={(e) => {
-                        if (selectedLabel !== name) {
-                          e.currentTarget.style.background = "#eeeeee";
+
+                        if (
+                          selectedLabel !== name
+                        ) {
+                          e.currentTarget.style.background =
+                            "#eeeeee";
                         }
+
                       }}
+
                       onMouseLeave={(e) => {
-                        if (selectedLabel !== name) {
-                          e.currentTarget.style.background = "white";
+
+                        if (
+                          selectedLabel !== name
+                        ) {
+                          e.currentTarget.style.background =
+                            "white";
                         }
+
                       }}
                     >
                       {name}
                     </div>
+
                   ))}
+
                 </div>
+
               </foreignObject>
+
             </g>
 
           </>
+
         )}
 
+        {/* ========================= */}
+        {/* 比較 */}
+        {/* ========================= */}
+
         {tab === "compare" && (
+
           <>
+
             {/* 前年度比較 */}
             <g transform="translate(10,90)">
+
               <rect
                 width="280"
                 height="190"
@@ -426,6 +522,7 @@ export default function SvgLabel({
                 width="260"
                 height="150"
               >
+
                 <div
                   xmlns="http://www.w3.org/1999/xhtml"
                   style={{
@@ -436,17 +533,24 @@ export default function SvgLabel({
 
                   {year === "1990年度" ? (
 
-                    <div>比較対象の前年度はありません</div>
+                    <div>
+                      比較対象の前年度はありません
+                    </div>
 
                   ) : (
 
                     <>
+
                       <div>
-                        前年度：{previousPeople.toLocaleString()} 人
+                        前年度：
+                        {previousPeople.toLocaleString()}
+                        人
                       </div>
 
                       <div>
-                        今年度：{currentPeople.toLocaleString()} 人
+                        今年度：
+                        {currentPeople.toLocaleString()}
+                        人
                       </div>
 
                       <div
@@ -460,6 +564,7 @@ export default function SvgLabel({
                           marginBottom: "10px"
                         }}
                       >
+
                         <div
                           style={{
                             position: "absolute",
@@ -471,6 +576,7 @@ export default function SvgLabel({
                         />
 
                         {gaugeRate > 0 && (
+
                           <div
                             style={{
                               position: "absolute",
@@ -480,25 +586,31 @@ export default function SvgLabel({
                               background: "#ff6666",
                             }}
                           />
+
                         )}
 
                         {gaugeRate < 0 && (
+
                           <div
                             style={{
                               position: "absolute",
-                              left: `${110 - barWidth}px`,
+                              left:
+                                `${110 - barWidth}px`,
                               width: `${barWidth}px`,
                               height: "18px",
                               background: "#6699ff",
                             }}
                           />
+
                         )}
+
                       </div>
 
                       <div
                         style={{
                           display: "flex",
-                          justifyContent: "space-between",
+                          justifyContent:
+                            "space-between",
                           width: "220px",
                           fontSize: "11px",
                           color: "#666",
@@ -506,9 +618,11 @@ export default function SvgLabel({
                           marginBottom: "8px"
                         }}
                       >
+
                         <span>-100%</span>
                         <span>0%</span>
                         <span>+100%</span>
+
                       </div>
 
                       <div
@@ -522,21 +636,34 @@ export default function SvgLabel({
                           fontWeight: "bold"
                         }}
                       >
-                        {diff > 0 ? "▲" : diff < 0 ? "▼" : "●"}
 
-                        {Math.abs(diff).toLocaleString()} 人
+                        {diff > 0
+                          ? "▲"
+                          : diff < 0
+                            ? "▼"
+                            : "●"}
+
+                        {Math.abs(diff).toLocaleString()}
+                        人
 
                         {rate !== null &&
                           ` (${diff >= 0 ? "+" : ""}${rate}%)`}
+
                       </div>
+
                     </>
+
                   )}
+
                 </div>
+
               </foreignObject>
+
             </g>
 
             {/* ラベル前年度比較 */}
             <g transform="translate(10,295)">
+
               <rect
                 width="280"
                 height="180"
@@ -561,6 +688,7 @@ export default function SvgLabel({
                 width="260"
                 height="150"
               >
+
                 <div
                   xmlns="http://www.w3.org/1999/xhtml"
                   style={{
@@ -571,21 +699,30 @@ export default function SvgLabel({
 
                   {year === "1990年度" ? (
 
-                    <div>比較対象の前年度はありません</div>
+                    <div>
+                      比較対象の前年度はありません
+                    </div>
 
                   ) : selectedLabel === "" ? (
 
-                    <div>ラベルを選択してください</div>
+                    <div>
+                      ラベルを選択してください
+                    </div>
 
                   ) : (
 
                     <>
+
                       <div>
-                        前年度：{previousLabelPeople.toLocaleString()}人
+                        前年度：
+                        {previousLabelPeople.toLocaleString()}
+                        人
                       </div>
 
                       <div>
-                        今年度：{currentLabelPeople.toLocaleString()}人
+                        今年度：
+                        {currentLabelPeople.toLocaleString()}
+                        人
                       </div>
 
                       <div
@@ -599,6 +736,7 @@ export default function SvgLabel({
                           marginBottom: "10px"
                         }}
                       >
+
                         <div
                           style={{
                             position: "absolute",
@@ -610,6 +748,7 @@ export default function SvgLabel({
                         />
 
                         {labelGaugeRate > 0 && (
+
                           <div
                             style={{
                               position: "absolute",
@@ -619,25 +758,31 @@ export default function SvgLabel({
                               background: "#ff6666",
                             }}
                           />
+
                         )}
 
                         {labelGaugeRate < 0 && (
+
                           <div
                             style={{
                               position: "absolute",
-                              left: `${110 - labelBarWidth}px`,
+                              left:
+                                `${110 - labelBarWidth}px`,
                               width: `${labelBarWidth}px`,
                               height: "18px",
                               background: "#6699ff",
                             }}
                           />
+
                         )}
+
                       </div>
 
                       <div
                         style={{
                           display: "flex",
-                          justifyContent: "space-between",
+                          justifyContent:
+                            "space-between",
                           width: "220px",
                           fontSize: "11px",
                           color: "#666",
@@ -645,9 +790,11 @@ export default function SvgLabel({
                           marginBottom: "8px"
                         }}
                       >
+
                         <span>-100%</span>
                         <span>0%</span>
                         <span>+100%</span>
+
                       </div>
 
                       <div
@@ -661,23 +808,44 @@ export default function SvgLabel({
                           fontWeight: "bold"
                         }}
                       >
-                        {labelDiff > 0 ? "▲" : labelDiff < 0 ? "▼" : "●"}
 
-                        {Math.abs(labelDiff).toLocaleString()}人
+                        {labelDiff > 0
+                          ? "▲"
+                          : labelDiff < 0
+                            ? "▼"
+                            : "●"}
+
+                        {Math.abs(
+                          labelDiff
+                        ).toLocaleString()}
+                        人
 
                         {labelRate === "新規"
                           ? " (新規)"
                           : ` (${labelDiff >= 0 ? "+" : ""}${labelRate}%)`}
+
                       </div>
+
                     </>
+
                   )}
+
                 </div>
+
               </foreignObject>
+
             </g>
+
           </>
+
         )}
 
+        {/* ========================= */}
+        {/* 割合 */}
+        {/* ========================= */}
+
         {tab === "graph" && (
+
           <g transform="translate(10, 90)">
 
             <rect
@@ -704,6 +872,7 @@ export default function SvgLabel({
               width="260"
               height="500"
             >
+
               <div
                 xmlns="http://www.w3.org/1999/xhtml"
                 style={{
@@ -713,7 +882,9 @@ export default function SvgLabel({
                 }}
               >
 
-                <h4>移動目的割合</h4>
+                <h4>
+                  移動目的割合
+                </h4>
 
                 {(() => {
 
@@ -725,78 +896,120 @@ export default function SvgLabel({
                     "代_全機関_不明",
                   ];
 
-                  const data = travelData.filter(
-                    item =>
-                      item.from === destination &&
-                      item.to === prefecture
-                  );
+                  const data =
+                    travelData.filter(
+                      item =>
+                        item.from === destination &&
+                        item.to === prefecture
+                    );
 
-                  const total = data.reduce(
-                    (sum, item) => sum + item.people,
-                    0
-                  );
+                  const total =
+                    data.reduce(
+                      (sum, item) =>
+                        sum + item.people,
+                      0
+                    );
 
-                  return purposes.map(purpose => {
+                  return purposes.map(
+                    purpose => {
 
-                    const people = data
-                      .filter(d => d.purpose === purpose)
-                      .reduce((sum, d) => sum + d.people, 0);
+                      const people =
+                        data
+                          .filter(
+                            d =>
+                              d.purpose ===
+                              purpose
+                          )
+                          .reduce(
+                            (sum, d) =>
+                              sum + d.people,
+                            0
+                          );
 
-                    const rate =
-                      total === 0
-                        ? 0
-                        : ((people / total) * 100).toFixed(1);
+                      const rate =
+                        total === 0
+                          ? 0
+                          : (
+                            people /
+                            total *
+                            100
+                          ).toFixed(1);
 
-                    return (
-                      <div
-                        key={purpose}
-                        style={{ marginBottom: "10px" }}
-                      >
+                      return (
 
                         <div
+                          key={purpose}
                           style={{
-                            display: "flex",
-                            justifyContent: "space-between"
+                            marginBottom:
+                              "10px"
                           }}
                         >
-                          <span>
-                            {purpose.replace("代_全機関_", "")}
-                          </span>
 
-                          <span>{rate}%</span>
-                        </div>
-
-                        <div
-                          style={{
-                            height: "12px",
-                            background: "#ddd",
-                            borderRadius: "6px",
-                          }}
-                        >
                           <div
                             style={{
-                              width: `${rate}%`,
+                              display:
+                                "flex",
+                              justifyContent:
+                                "space-between"
+                            }}
+                          >
+
+                            <span>
+                              {purpose.replace(
+                                "代_全機関_",
+                                ""
+                              )}
+                            </span>
+
+                            <span>
+                              {rate}%
+                            </span>
+
+                          </div>
+
+                          <div
+                            style={{
                               height: "12px",
-                              background: "#ff9966",
+                              background: "#ddd",
                               borderRadius: "6px",
                             }}
-                          />
+                          >
+
+                            <div
+                              style={{
+                                width:
+                                  `${rate}%`,
+                                height: "12px",
+                                background:
+                                  "#ff9966",
+                                borderRadius:
+                                  "6px",
+                              }}
+                            />
+
+                          </div>
+
                         </div>
 
-                      </div>
-                    );
-                  });
+                      );
+                    }
+                  );
 
                 })()}
 
-                <h4 style={{ marginTop: "20px" }}>
+                <h4
+                  style={{
+                    marginTop: "20px"
+                  }}
+                >
                   交通手段割合
                 </h4>
 
                 {(() => {
 
                   const methods =
-                    year === "2005年度" || year === "2010年度"
+                    year === "2005年度" ||
+                      year === "2010年度"
                       ? [
                         "航空",
                         "鉄道",
@@ -812,82 +1025,132 @@ export default function SvgLabel({
                         "乗用車等_全目的",
                       ];
 
-                  const data = transportationData.filter(
-                    item =>
-                      item.from === destination &&
-                      item.to === prefecture
-                  );
+                  const data =
+                    transportationData.filter(
+                      item =>
+                        item.from === destination &&
+                        item.to === prefecture
+                    );
 
-                  const totalItem = data.find(
-                    item =>
-                      item.purpose ===
-                      (year === "2005年度" || year === "2010年度"
-                        ? "全機関"
-                        : "全機関_全目的")
-                  );
+                  const totalItem =
+                    data.find(
+                      item =>
+                        item.purpose ===
+                        (
+                          year === "2005年度" ||
+                            year === "2010年度"
+                            ? "全機関"
+                            : "全機関_全目的"
+                        )
+                    );
 
-                  const total = totalItem ? totalItem.people : 0;
+                  const total =
+                    totalItem
+                      ? totalItem.people
+                      : 0;
 
-                  return methods.map(method => {
+                  return methods.map(
+                    method => {
 
-                    const people = data
-                      .filter(d => d.purpose === method)
-                      .reduce((sum, d) => sum + d.people, 0);
+                      const people =
+                        data
+                          .filter(
+                            d =>
+                              d.purpose ===
+                              method
+                          )
+                          .reduce(
+                            (sum, d) =>
+                              sum + d.people,
+                            0
+                          );
 
-                    const rate =
-                      total === 0
-                        ? 0
-                        : ((people / total) * 100).toFixed(1);
+                      const rate =
+                        total === 0
+                          ? 0
+                          : (
+                            people /
+                            total *
+                            100
+                          ).toFixed(1);
 
-                    return (
-                      <div
-                        key={method}
-                        style={{ marginBottom: "10px" }}
-                      >
+                      return (
 
                         <div
+                          key={method}
                           style={{
-                            display: "flex",
-                            justifyContent: "space-between"
+                            marginBottom:
+                              "10px"
                           }}
                         >
-                          <span>
-                            {method.replace("_全目的", "")}
-                          </span>
 
-                          <span>{rate}%</span>
-                        </div>
-
-                        <div
-                          style={{
-                            height: "12px",
-                            background: "#ddd",
-                            borderRadius: "6px",
-                          }}
-                        >
                           <div
                             style={{
-                              width: `${rate}%`,
+                              display:
+                                "flex",
+                              justifyContent:
+                                "space-between"
+                            }}
+                          >
+
+                            <span>
+                              {method.replace(
+                                "_全目的",
+                                ""
+                              )}
+                            </span>
+
+                            <span>
+                              {rate}%
+                            </span>
+
+                          </div>
+
+                          <div
+                            style={{
                               height: "12px",
-                              background: "#6699ff",
+                              background: "#ddd",
                               borderRadius: "6px",
                             }}
-                          />
+                          >
+
+                            <div
+                              style={{
+                                width:
+                                  `${rate}%`,
+                                height: "12px",
+                                background:
+                                  "#6699ff",
+                                borderRadius:
+                                  "6px",
+                              }}
+                            />
+
+                          </div>
+
                         </div>
 
-                      </div>
-                    );
-                  });
+                      );
+
+                    }
+                  );
 
                 })()}
 
               </div>
+
             </foreignObject>
 
           </g>
+
         )}
 
+        {/* ========================= */}
+        {/* 順位 */}
+        {/* ========================= */}
+
         {tab === "rank" && (
+
           <g transform="translate(10, 90)">
 
             <rect
@@ -922,6 +1185,7 @@ export default function SvgLabel({
               width="260"
               height="350"
             >
+
               <div
                 xmlns="http://www.w3.org/1999/xhtml"
                 style={{
@@ -930,20 +1194,31 @@ export default function SvgLabel({
                   fontSize: "13px",
                 }}
               >
+
                 {(() => {
 
                   const ranking = [];
 
                   coord.forEach(from => {
 
-                    if (from === prefecture) return;
+                    if (
+                      from === prefecture
+                    ) {
+                      return;
+                    }
 
-                    const people = file
-                      .filter(item =>
-                        item.from === from &&
-                        item.to === prefecture
-                      )
-                      .reduce((sum, item) => sum + item.people, 0);
+                    const people =
+                      file
+                        .filter(
+                          item =>
+                            item.from === from &&
+                            item.to === prefecture
+                        )
+                        .reduce(
+                          (sum, item) =>
+                            sum + item.people,
+                          0
+                        );
 
                     ranking.push({
                       from,
@@ -952,9 +1227,13 @@ export default function SvgLabel({
 
                   });
 
-                  ranking.sort((a, b) => b.people - a.people);
+                  ranking.sort(
+                    (a, b) =>
+                      b.people - a.people
+                  );
 
-                  const top10 = ranking.slice(0, 10);
+                  const top10 =
+                    ranking.slice(0, 10);
 
                   const maxPeople =
                     top10.length > 0
@@ -967,14 +1246,24 @@ export default function SvgLabel({
 
                     coord.forEach(from => {
 
-                      if (from === prefecture) return;
+                      if (
+                        from === prefecture
+                      ) {
+                        return;
+                      }
 
-                      const people = previousFile
-                        .filter(item =>
-                          item.from === from &&
-                          item.to === prefecture
-                        )
-                        .reduce((sum, item) => sum + item.people, 0);
+                      const people =
+                        previousFile
+                          .filter(
+                            item =>
+                              item.from === from &&
+                              item.to === prefecture
+                          )
+                          .reduce(
+                            (sum, item) =>
+                              sum + item.people,
+                            0
+                          );
 
                       previousRanking.push({
                         from,
@@ -983,133 +1272,181 @@ export default function SvgLabel({
 
                     });
 
-                    previousRanking.sort((a, b) => b.people - a.people);
+                    previousRanking.sort(
+                      (a, b) =>
+                        b.people -
+                        a.people
+                    );
 
                   }
 
-                  return top10.map((item, index) => {
+                  return top10.map(
+                    (item, index) => {
 
-                    const previousIndex =
-                      previousRanking.findIndex(
-                        p => p.from === item.from
-                      );
+                      const previousIndex =
+                        previousRanking.findIndex(
+                          p =>
+                            p.from ===
+                            item.from
+                        );
 
-                    let rankText = "";
+                      let rankText = "";
 
-                    if (!previousFile) {
+                      if (!previousFile) {
 
-                      rankText = "";
+                        rankText = "";
 
-                    } else if (previousIndex === -1) {
+                      } else if (
+                        previousIndex === -1
+                      ) {
 
-                      rankText = "NEW";
+                        rankText = "NEW";
 
-                    } else {
-
-                      const diff = previousIndex - index;
-
-                      if (diff > 0) {
-                        rankText = `↑${diff}`;
-                      } else if (diff < 0) {
-                        rankText = `↓${Math.abs(diff)}`;
                       } else {
-                        rankText = "→";
+
+                        const diff =
+                          previousIndex -
+                          index;
+
+                        if (diff > 0) {
+
+                          rankText =
+                            `↑${diff}`;
+
+                        } else if (
+                          diff < 0
+                        ) {
+
+                          rankText =
+                            `↓${Math.abs(diff)}`;
+
+                        } else {
+
+                          rankText = "→";
+
+                        }
                       }
 
-                    }
-
-                    return (
-
-                      <div
-                        key={item.from}
-                        style={{
-                          marginBottom: "12px",
-                        }}
-                      >
+                      return (
 
                         <div
+                          key={item.from}
                           style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            marginBottom: "3px",
-                            fontWeight: "bold",
+                            marginBottom:
+                              "12px",
                           }}
                         >
 
-                          <span>
-                            {index + 1}位　{item.from}
-                          </span>
-
-                          <span>
-                            {item.people.toLocaleString()}人
-                          </span>
-
-                        </div>
-
-                        {previousFile && (
-
                           <div
                             style={{
-                              fontSize: "12px",
-                              color:
-                                rankText.startsWith("↑")
-                                  ? "red"
-                                  : rankText.startsWith("↓")
-                                    ? "blue"
-                                    : rankText === "NEW"
-                                      ? "green"
-                                      : "#666",
-                              marginBottom: "3px",
+                              display:
+                                "flex",
+                              justifyContent:
+                                "space-between",
+                              marginBottom:
+                                "3px",
+                              fontWeight:
+                                "bold",
                             }}
                           >
-                            前回：
 
-                            {previousIndex === -1
-                              ? "圏外"
-                              : `${previousIndex + 1}位`}
+                            <span>
+                              {index + 1}位
+                              {item.from}
+                            </span>
 
-                            {" → "}
+                            <span>
+                              {item.people.toLocaleString()}
+                              人
+                            </span>
 
-                            {index + 1}位
-
-                            {"　"}
-
-                            {rankText}
                           </div>
 
-                        )}
+                          {previousFile && (
 
-                        <div
-                          style={{
-                            height: "12px",
-                            background: "#dddddd",
-                            borderRadius: "6px",
-                          }}
-                        >
+                            <div
+                              style={{
+                                fontSize:
+                                  "12px",
+                                color:
+                                  rankText.startsWith(
+                                    "↑"
+                                  )
+                                    ? "red"
+                                    : rankText.startsWith(
+                                      "↓"
+                                    )
+                                      ? "blue"
+                                      : rankText ===
+                                        "NEW"
+                                        ? "green"
+                                        : "#666",
+                                marginBottom:
+                                  "3px",
+                              }}
+                            >
+
+                              前回：
+
+                              {previousIndex ===
+                                -1
+                                ? "圏外"
+                                : `${previousIndex + 1}位`}
+
+                              {" → "}
+
+                              {index + 1}位
+
+                              {"　"}
+
+                              {rankText}
+
+                            </div>
+
+                          )}
 
                           <div
                             style={{
-                              width: `${item.people / maxPeople * 100}%`,
                               height: "12px",
-                              background: "#009688",
-                              borderRadius: "6px",
-                              transition: "0.4s",
+                              background:
+                                "#dddddd",
+                              borderRadius:
+                                "6px",
                             }}
-                          />
+                          >
+
+                            <div
+                              style={{
+                                width:
+                                  `${item.people / maxPeople * 100}%`,
+                                height:
+                                  "12px",
+                                background:
+                                  "#009688",
+                                borderRadius:
+                                  "6px",
+                                transition:
+                                  "0.4s",
+                              }}
+                            />
+
+                          </div>
 
                         </div>
 
-                      </div>
+                      );
 
-                    );
-
-                  });
+                    }
+                  );
 
                 })()}
+
               </div>
+
             </foreignObject>
 
           </g>
+
         )}
 
         {/* 出発地点・目的地点表示 */}
@@ -1124,13 +1461,14 @@ export default function SvgLabel({
             ? prefecture
             : prefecture.includes("東京")
               ? `${prefecture}都`
-              : prefecture.includes("大阪") || prefecture.includes("京都")
+              : prefecture.includes("大阪") ||
+                prefecture.includes("京都")
                 ? `${prefecture}府`
                 : `${prefecture}県`}
         </text>
 
-
       </svg>
+
     </div>
   );
 }
