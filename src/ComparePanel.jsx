@@ -11,14 +11,13 @@ export default function ComparePanel({
   labelRate,
 }) {
   const MAX_RATE = 100;
-  const center = 100; // ゲージ全体の横幅200pxの中央 (100px)
 
   const gaugeRate =
     rate === null
       ? 0
       : Math.max(-MAX_RATE, Math.min(MAX_RATE, Number(rate)));
 
-  const barWidth = (Math.abs(gaugeRate) / MAX_RATE) * center;
+  const barPercent = (Math.abs(gaugeRate) / MAX_RATE) * 50;
 
   const labelGaugeRate =
     previousLabelPeople === 0
@@ -33,11 +32,11 @@ export default function ComparePanel({
           )
         );
 
-  const labelBarWidth = (Math.abs(labelGaugeRate) / MAX_RATE) * center;
+  const labelBarPercent = (Math.abs(labelGaugeRate) / MAX_RATE) * 50;
 
   return (
     <div className="comparePanel">
-      {/* 前年度比較 カード */}
+      {/* 1. 前年度比較 カード */}
       <div className="compareCard">
         <div className="compareTitle">前年度比較</div>
         <div className="compareBody">
@@ -65,8 +64,8 @@ export default function ComparePanel({
                   <div
                     className="gaugeBar positive"
                     style={{
-                      left: `${center}px`,
-                      width: `${barWidth}px`,
+                      left: "50%",
+                      width: `${barPercent}%`,
                     }}
                   />
                 )}
@@ -74,8 +73,8 @@ export default function ComparePanel({
                   <div
                     className="gaugeBar negative"
                     style={{
-                      left: `${center - barWidth}px`,
-                      width: `${barWidth}px`,
+                      left: `${50 - barPercent}%`,
+                      width: `${barPercent}%`,
                     }}
                   />
                 )}
@@ -92,9 +91,9 @@ export default function ComparePanel({
                 style={{
                   color:
                     diff > 0
-                      ? "#e53935"
+                      ? "#d9534f"
                       : diff < 0
-                        ? "#1e88e5"
+                        ? "#0288d1"
                         : "#333",
                 }}
               >
@@ -107,7 +106,7 @@ export default function ComparePanel({
         </div>
       </div>
 
-      {/* ラベル比較 カード */}
+      {/* 2. ラベル比較 カード */}
       <div className="compareCard">
         <div className="compareTitle">ラベル比較</div>
         <div className="compareBody">
@@ -118,7 +117,7 @@ export default function ComparePanel({
           ) : (
             <>
               <div className="selectedLabelBadge" title={selectedLabel}>
-                {selectedLabel}
+                {selectedLabel.replace("代_全機関_", "").replace("_全目的", "")}
               </div>
 
               <div className="compareRow">
@@ -141,8 +140,8 @@ export default function ComparePanel({
                   <div
                     className="gaugeBar positive"
                     style={{
-                      left: `${center}px`,
-                      width: `${labelBarWidth}px`,
+                      left: "50%",
+                      width: `${labelBarPercent}%`,
                     }}
                   />
                 )}
@@ -150,8 +149,8 @@ export default function ComparePanel({
                   <div
                     className="gaugeBar negative"
                     style={{
-                      left: `${center - labelBarWidth}px`,
-                      width: `${labelBarWidth}px`,
+                      left: `${50 - labelBarPercent}%`,
+                      width: `${labelBarPercent}%`,
                     }}
                   />
                 )}
@@ -168,9 +167,9 @@ export default function ComparePanel({
                 style={{
                   color:
                     labelDiff > 0
-                      ? "#e53935"
+                      ? "#d9534f"
                       : labelDiff < 0
-                        ? "#1e88e5"
+                        ? "#0288d1"
                         : "#333",
                 }}
               >

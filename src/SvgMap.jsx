@@ -38,22 +38,26 @@ export default function SvgMap({
 }) {
     /*
      * ============================================================
-     * 凡例のレイアウト
+     * 凡例のレイアウト (右側に配置)
      * ============================================================
      */
 
-    const columns = mapWidth > 900 ? 6 : 2;
+    const columns = mapWidth > 750 ? 4 : 2;
 
-    const gap = 20;
+    const gap = 10;
 
-    const cardWidth = 120;
+    const cardWidth = 115;
 
     const rows = Math.ceil(
         circleSize.length / columns
     );
 
     const legendHeight =
-        rows * 50 + 20;
+        rows * 44 + 10;
+
+    const numCols = Math.min(circleSize.length, columns);
+    const totalLegendWidth = numCols * cardWidth + (numCols - 1) * gap;
+    const startX = Math.max(20, mapWidth - totalLegendWidth - 20);
 
 
     /*
@@ -275,7 +279,7 @@ export default function SvgMap({
                                                         begin={`${delay}s`}
                                                         repeatCount="indefinite"
                                                         rotate="auto"
-                                                        keyPoints="1;0"
+                                                        keyPoints="0;1"
                                                         keyTimes="0;1"
                                                     >
 
@@ -353,36 +357,12 @@ export default function SvgMap({
                                         key={i}
                                     >
 
-                                        <circle
-                                            className="Number-of-people-moving-circle"
-                                            pointerEvents="none"
-                                            cx={
-                                                positionCircle[0]
-                                            }
-                                            cy={
-                                                positionCircle[1]
-                                            }
-                                            r={
-                                                5 / Scale
-                                            }
-                                            fill="black"
-                                        />
-
 
                                         {Scale >= 2 && (
-
                                             <text
                                                 className="prefecture"
-                                                x={
-                                                    prefecture.includes("道")
-                                                        ? positionCircle[0]
-                                                        : positionText[0]
-                                                }
-                                                y={
-                                                    prefecture.includes("道")
-                                                        ? positionCircle[1] - 5
-                                                        : positionText[1]
-                                                }
+                                                x={positionCircle ? positionCircle[0] : positionText[0]}
+                                                y={positionCircle ? positionCircle[1] - 5 : positionText[1]}
                                                 textAnchor="middle"
                                                 dominantBaseline="middle"
                                                 fontSize={
@@ -393,7 +373,6 @@ export default function SvgMap({
                                             >
                                                 {item}
                                             </text>
-
                                         )}
 
                                     </g>
@@ -423,7 +402,7 @@ export default function SvgMap({
 
 
                 const x =
-                    gap +
+                    startX +
                     col *
                     (cardWidth + gap);
 
@@ -432,7 +411,7 @@ export default function SvgMap({
                     height -
                     legendHeight -
                     40 +
-                    row * 50;
+                    row * 44;
 
 
                 const selected =
@@ -487,11 +466,7 @@ export default function SvgMap({
                             fill="white"
                             stroke={
                                 selected
-                                    ? (
-                                        i === 5
-                                            ? "black"
-                                            : circleColor(name)
-                                    )
+                                    ? circleColor(name)
                                     : "#999"
                             }
                             strokeWidth={

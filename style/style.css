@@ -4,19 +4,26 @@ body {
     padding: 0px;
     cursor: auto;
     overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 h1 {
-    background: lightblue;
+    background: #5b9bd5;
     font-size: 20px;
     color: white;
-    padding: 10px 0px 5px 50px;
+    padding: 10px 0px 5px 30px;
     margin: 0px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .image {
     cursor: grabbing;
     position: relative;
+    width: 100vw;
+    height: calc(100vh - 45px);
+    overflow: hidden;
 }
 
 .Scale-Button {
@@ -68,241 +75,225 @@ h1 {
     font-size: 10px;
 }
 
-.control {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 10;
-    display: flex;
-    gap: 50px;
-}
+/* ============================================================
+   左側統合コントロールパネル (自然な縦並び・スクロール対応)
+   ============================================================ */
 
-.item {
+.leftPanel {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    z-index: 20;
     display: flex;
     flex-direction: column;
+    gap: 10px;
+    width: 270px;
+    max-height: calc(100vh - 75px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+    pointer-events: auto;
 }
 
-.Select {
-    padding: 5px;
+.leftPanel::-webkit-scrollbar {
+    width: 5px;
 }
 
-.fade {
-    opacity: 0.5;
-    transition: all 0.7s;
+.leftPanel::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-.legend {
-    font-size: 12px;
-    cursor: pointer;
+.leftPanel::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
 }
 
-.Number-of-people-moving-line,
-.prefecture {
-    transition: all 0.7s;
+.leftPanel::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
 }
 
-.Number-of-people-moving-circle {
-    cursor: pointer;
-}
+/* ============================================================
+   出発地・目的地セレクター (From ➔ To)
+   ============================================================ */
 
-.Number-of-people-moving-circle:active {
-    transform-box: fill-box;
-    transform-origin: center;
-    transform: scale(2);
-}
-
-.Legend_all {
-    transition: transform 0.5s ease;
-}
-
-.Legend_all.hide {
-    transform: translateX(300px);
-}
-
-button {
-    cursor: pointer;
-    border-radius: 10px;
-}
-
-.account {
-    position: fixed;
-    top: 3px;
-    right: 20px;
-    z-index: 100;
-}
-
-.Legend {
-    position: fixed;
-    top: 5px;
-    right: 10px;
-    z-index: 100;
-}
-
-.accountButton,
-.legendButton {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    background: none;
-    border: none;
-    opacity: 0.6;
-}
-
-.accountMenu,
-.legendMenu {
-    position: absolute;
-    top: 45px;
-    right: 0;
-    width: 130px;
-    background: white;
-    border: 1px solid gray;
-    border-radius: 10px;
-    padding: 5px;
-}
-
-.accountMenu button,
-.legendMenu button {
-    width: 100%;
-    height: 30px;
-    font-size: 13px;
-    background: none;
-    border: none;
-}
-
-.informationBox,
-.informationBox2 {
-    position: fixed;
-    width: 160px;
-    height: 70px;
-    background: white;
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 8px;
-    z-index: 1000;
-    font-size: 14px;
-}
-
-.informationBox {
-    height: 70px;
-}
-
-.informationBox2 {
-    height: 90px;
-}
-
-.informationBox button,
-.informationBox2 button {
-    margin-top: 7px;
-    color: white;
-    background: black;
-}
-
-.guideOverlay {
-    position: fixed;
-    inset: 0;
-
-    background: rgba(0, 0, 0, .55);
-
+.routeSelector {
     display: flex;
-    justify-content: center;
     align-items: center;
-
-    z-index: 9999;
-}
-
-.guideModal {
-    position: relative;
-    width: 700px;
-    max-width: 90%;
-
-    background: white;
-
-    border-radius: 16px;
-
-    padding: 35px;
-
-    box-shadow: 0 15px 40px rgba(0, 0, 0, .3);
-
-    animation: popup .25s;
-}
-
-@keyframes popup {
-    from {
-        transform: scale(.9);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.guideModal h2 {
-    margin-top: 0;
-    text-align: center;
-}
-
-.guideModal p,
-.guideModal li {
-    font-size: 18px;
-    line-height: 1.8;
-}
-
-.guideImage {
-    width: 100%;
-    margin: 20px 0;
-    border-radius: 10px;
-}
-
-.guideButtons {
-    display: flex;
     justify-content: space-between;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 6px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.routeBadge {
+    display: flex;
     align-items: center;
-    margin-top: 20px;
-}
-
-.guideButtons button {
-    padding: 10px 25px;
-    font-size: 16px;
+    gap: 6px;
+    padding: 5px 8px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: #f4f6f8;
+    font-size: 13px;
     cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    justify-content: center;
 }
 
-.legendPanel {
-    position: absolute;
-    top: 0;
-    right: 0;
-
-    overflow: hidden;
-
-    transition:
-        width 0.5s ease,
-        opacity 0.5s ease;
-
-    opacity: 1;
+.routeBadge.fromBadge {
+    color: #c62828;
 }
 
-.legendPanel.open {
-    width: 300px;
-    opacity: 1;
+.routeBadge.fromBadge.activeMode {
+    border-color: #e53935;
+    background: #ffebee;
+    box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.25);
+    font-weight: bold;
 }
 
-.legendPanel.close {
-    width: 0;
-    opacity: 0;
+.routeBadge.toBadge {
+    color: #1565c0;
 }
 
-.mapArea {
-    transition: width .35s ease;
-    overflow: hidden;
+.routeBadge.toBadge.activeMode {
+    border-color: #1e88e5;
+    background: #e3f2fd;
+    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.25);
+    font-weight: bold;
 }
 
-.mapArea.full {
+.routeDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.fromDot {
+    background: #e53935;
+}
+
+.toDot {
+    background: #1e88e5;
+}
+
+.routeLabel {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+.routeName {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.routeArrow {
+    color: #888;
+    font-size: 14px;
+    margin: 0 4px;
+}
+
+/* ============================================================
+   年度選択・交通行動選択 カード
+   ============================================================ */
+
+.controlCard {
+    display: flex;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
     width: 100%;
 }
 
-.mapArea.shrink {
-    width: calc(100% - 300px);
+.controlItem {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 4px;
+}
+
+.controlLabel {
+    font-size: 11px;
+    font-weight: bold;
+    color: #555;
+}
+
+.controlSelect {
+    padding: 5px 6px;
+    font-size: 12px;
+    border-radius: 8px;
+    border: 1.5px solid #d0d7de;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.controlSelect:focus {
+    border-color: #1e88e5;
+    box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.2);
+}
+
+/* ============================================================
+   ラベル選択 (3x2 グリッド)
+   ============================================================ */
+
+.labelSelector {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 8px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.labelGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    width: 100%;
+}
+
+.labelButton {
+    padding: 6px 4px;
+    font-size: 12px;
+    border-radius: 8px;
+    border: 1.5px solid #d0d7de;
+    background: #f8f9fa;
+    color: #333;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.labelButton:hover {
+    background: #eef2f6;
+    border-color: #90caf9;
+}
+
+.labelButton.active {
+    background: #1e88e5;
+    color: white;
+    border-color: #1565c0;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(30, 136, 229, 0.35);
 }
 
 /* ============================================================
@@ -310,24 +301,21 @@ button {
    ============================================================ */
 
 .comparePanel {
-    position: absolute;
-    top: 85px;
-    left: 20px;
-    z-index: 10;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    pointer-events: auto;
-    width: 230px;
+    width: 100%;
 }
 
 .compareCard {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 12px;
     padding: 12px 14px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .compareTitle {
@@ -380,9 +368,9 @@ button {
 
 .gaugeContainer {
     position: relative;
-    width: 200px;
+    width: 100%;
     height: 14px;
-    background: #eee;
+    background: #e8e0c8;
     border-radius: 7px;
     margin: 8px auto 4px auto;
     overflow: hidden;
@@ -390,11 +378,12 @@ button {
 
 .gaugeCenterLine {
     position: absolute;
-    left: 100px;
+    left: 50%;
     width: 2px;
     height: 14px;
-    background: #333;
+    background: #8d7f68;
     z-index: 2;
+    transform: translateX(-50%);
 }
 
 .gaugeBar {
@@ -404,17 +393,19 @@ button {
 }
 
 .gaugeBar.positive {
-    background: #ff5252;
+    background: linear-gradient(90deg, #ff9966, #ff5e62);
+    border-radius: 0 5px 5px 0;
 }
 
 .gaugeBar.negative {
-    background: #448aff;
+    background: linear-gradient(90deg, #00f2fe, #4facfe);
+    border-radius: 5px 0 0 5px;
 }
 
 .gaugeLabels {
     display: flex;
     justify-content: space-between;
-    width: 200px;
+    width: 100%;
     margin: 0 auto;
     font-size: 10px;
     color: #888;
@@ -425,4 +416,176 @@ button {
     font-weight: bold;
     margin-top: 6px;
     text-align: right;
-}
+}
+
+/* ============================================================
+   地図エリア
+   ============================================================ */
+
+.mapArea {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.mapArea.full {
+    width: 100%;
+}
+
+.mapArea.shrink {
+    width: calc(100% - 300px);
+}
+
+.legendPanel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    overflow: hidden;
+    transition:
+        width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.4s ease;
+    z-index: 50;
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
+}
+
+.legendPanel.open {
+    width: 300px;
+    opacity: 1;
+}
+
+.legendPanel.close {
+    width: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ============================================================
+   汎用ボタン & ヘッダーメニュー
+   ============================================================ */
+
+button {
+    cursor: pointer;
+    border-radius: 8px;
+    font-family: inherit;
+}
+
+.Legend {
+    position: fixed;
+    top: 5px;
+    right: 15px;
+    z-index: 100;
+}
+
+.legendButton {
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.legendButton:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.legendMenu {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    width: 130px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.legendMenu button {
+    width: 100%;
+    height: 32px;
+    font-size: 13px;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 0 8px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+.legendMenu button:hover {
+    background: #f0f4f8;
+}
+
+/* ============================================================
+   チュートリアル
+   ============================================================ */
+
+.guideOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.guideModal {
+    position: relative;
+    width: 700px;
+    max-width: 90%;
+    background: white;
+    border-radius: 16px;
+    padding: 35px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, .3);
+    animation: popup .25s;
+}
+
+@keyframes popup {
+    from {
+        transform: scale(.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.guideModal h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.guideModal p,
+.guideModal li {
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.guideImage {
+    width: 100%;
+    margin: 15px 0;
+    border-radius: 10px;
+}
+
+.guideButtons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.guideButtons button {
+    padding: 10px 25px;
+    font-size: 15px;
+    cursor: pointer;
+    background: #1e88e5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+}

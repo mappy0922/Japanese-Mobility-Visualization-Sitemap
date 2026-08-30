@@ -1,495 +1,161 @@
-import { useState } from "react";
-import { travelData1990 } from "./PurposeTravel1990";
-import { transportationData1990 } from "./TransportationTravel1990";
-import { travelData1995 } from "./PurposeTravel1995";
-import { transportationData1995 } from "./TransportationTravel1995";
-import { travelData2000 } from "./PurposeTravel2000";
-import { trasnportationData2000 } from "./TransportationTravel2000";
-import { travelData2005 } from "./PurposeTravel2005";
-import { transportationData2005 } from "./TransportationTravel2005";
-import { travelData2010 } from "./PurposeTravel2010";
-import { transportationData2010 } from "./TransportationTravel2010";
-
 export default function SvgLabel({
   height,
   legend_judge,
   setLegend_judge,
   traffic,
-  label,
-  active,
-  setActive,
-  dataColor,
-  circleSize,
-  circleColor,
   prefecture,
   destination,
-  setDestination,
   coord,
-  selectedLabel,
-  setSelectedLabel,
   year,
-  currentPeople,
-  previousPeople,
-  diff,
-  rate,
-  currentLabelPeople,
-  previousLabelPeople,
-  labelDiff,
-  labelRate,
-  travelData,
-  transportationData,
-  file,
-
-  // ★ Appから受け取る
-  tab,
+  travelData = [],
+  transportationData = [],
+  file = [],
+  previousFile = null,
+  tab = "graph",
   setTab,
 }) {
-
-  const [searchName, setSearchName] = useState("");
-
-  // 前年度データ
-  const previousFileMap = {
-    "1990年度": null,
-
-    "1995年度":
-      traffic === "移動目的"
-        ? travelData1990
-        : transportationData1990,
-
-    "2000年度":
-      traffic === "移動目的"
-        ? travelData1995
-        : transportationData1995,
-
-    "2005年度":
-      traffic === "移動目的"
-        ? travelData2000
-        : trasnportationData2000,
-
-    "2010年度":
-      traffic === "移動目的"
-        ? travelData2005
-        : transportationData2005,
-  };
-
-  const previousFile = previousFileMap[year];
-
-  const margin = 15;
-
   const svgHeight = height;
 
-  const searchDestination = () => {
-
-    const target = coord.find(name =>
-      name.includes(searchName)
-    );
-
-    if (target) {
-
-      const element =
-        document.getElementById(`destination-${target}`);
-
-      if (element) {
-
-        element.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-
-      }
-
-    } else {
-
-      alert("該当する地点がありません");
-
-    }
-  };
-
-
   return (
-
     <div
       style={{
         width: "300px",
         height: `${height}px`,
-        overflowY: "auto",
-        overflowX: "hidden",
+        overflow: "hidden",
+        boxSizing: "border-box",
       }}
     >
-
-      <svg
-        width="300"
-        height={svgHeight}
-      >
-
+      <svg width="300" height={svgHeight}>
         {/* 背景 */}
         <rect
           x="0"
           y="0"
           width="300"
           height={svgHeight}
-          fill="#fff2ae"
-          stroke="black"
+          fill="white"
+          stroke="#dcdcdc"
         />
 
-        <foreignObject
-          x="250"
-          y="8"
-          width="70"
-          height="30"
-        >
-
-          <button
-            onClick={() => setLegend_judge(true)}
-            style={{
-              border: "none",
-              background: "none",
-              cursor: "pointer",
-              fontSize: "12px",
-              fontWeight: "bold",
-            }}
-          >
-            ✕
-          </button>
-
-        </foreignObject>
-
-        <foreignObject
-          x="5"
-          y="40"
-          width="290"
-          height="35"
-        >
-
+        {/* 1. 上部タブ切り替えボタン */}
+        <foreignObject x="10" y="8" width="240" height="34">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             style={{
               display: "flex",
-              gap: "4px"
+              gap: "5px",
+              height: "100%",
             }}
           >
-
-            <button
-              onClick={() => setTab("basic")}
-              style={{
-                flex: 1,
-                background:
-                  tab === "basic"
-                    ? "#87CEFA"
-                    : "white"
-              }}
-            >
-              基本
-            </button>
-
-
             <button
               onClick={() => setTab("graph")}
               style={{
                 flex: 1,
-                background:
+                padding: "4px 0",
+                fontSize: "13px",
+                fontWeight: "bold",
+                borderRadius: "6px",
+                border: "1.5px solid #d0d7de",
+                background: tab === "graph" ? "#1e88e5" : "white",
+                color: tab === "graph" ? "white" : "#333",
+                cursor: "pointer",
+                boxShadow:
                   tab === "graph"
-                    ? "#87CEFA"
-                    : "white"
+                    ? "0 2px 5px rgba(30, 136, 229, 0.25)"
+                    : "none",
+                transition: "all 0.15s ease",
               }}
             >
-              割合
+              📊 割合
             </button>
-
             <button
               onClick={() => setTab("rank")}
               style={{
                 flex: 1,
-                background:
+                padding: "4px 0",
+                fontSize: "13px",
+                fontWeight: "bold",
+                borderRadius: "6px",
+                border: "1.5px solid #d0d7de",
+                background: tab === "rank" ? "#1e88e5" : "white",
+                color: tab === "rank" ? "white" : "#333",
+                cursor: "pointer",
+                boxShadow:
                   tab === "rank"
-                    ? "#87CEFA"
-                    : "white"
+                    ? "0 2px 5px rgba(30, 136, 229, 0.25)"
+                    : "none",
+                transition: "all 0.15s ease",
               }}
             >
-              順位
+              🏆 順位
             </button>
-
           </div>
-
         </foreignObject>
 
-        {/* ========================= */}
-        {/* 基本 */}
-        {/* ========================= */}
+        {/* 2. 閉じるボタン */}
+        <foreignObject x="256" y="8" width="34" height="34">
+          <button
+            onClick={() => setLegend_judge(true)}
+            style={{
+              width: "100%",
+              height: "100%",
+              border: "1px solid #dcdcdc",
+              borderRadius: "6px",
+              background: "rgba(255, 255, 255, 0.9)",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
+              color: "#555",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 0,
+            }}
+            title="閉じる"
+          >
+            ✕
+          </button>
+        </foreignObject>
 
-        {tab === "basic" && (
-
-          <>
-
-            {/* 対象地点変更 */}
-            <g transform="translate(10,90)">
-
-              <rect
-                width="280"
-                height="220"
-                fill="#f1e2cc"
-                stroke="black"
-                strokeWidth="0.5"
-                rx="15"
-              />
-
-              <text
-                x="15"
-                y="25"
-                fontSize="16"
-                fontWeight="bold"
-              >
-                対象地点変更
-              </text>
-
-              <foreignObject
-                x="10"
-                y="35"
-                width="260"
-                height="170"
-              >
-
+        {/* ============================================================
+            割合表示 (tab === "graph") - 拡大＆存在感のあるゲージ
+           ============================================================ */}
+        {tab === "graph" && (
+          <foreignObject x="10" y="46" width="280" height={svgHeight - 50}>
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style={{
+                height: "100%",
+                overflow: "hidden",
+                boxSizing: "border-box",
+              }}
+            >
+              {/* 移動目的割合セクション */}
+              <div style={{ marginBottom: "10px" }}>
                 <div
-                  xmlns="http://www.w3.org/1999/xhtml"
                   style={{
-                    width: "100%",
-                    height: "100%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "baseline",
+                    marginBottom: "4px",
+                    borderBottom: "1.5px solid #e0d8b0",
+                    paddingBottom: "3px",
                   }}
                 >
-
-                  <input
-                    value={searchName}
-                    placeholder="目的地点を検索"
-                    onChange={(e) =>
-                      setSearchName(e.target.value)
-                    }
-                    onKeyDown={(e) => {
-
-                      if (e.key === "Enter") {
-                        searchDestination();
-                      }
-
-                    }}
+                  <span
                     style={{
-                      width: "90%",
-                      padding: "5px",
-                      marginBottom: "5px",
-                    }}
-                  />
-
-                  <div
-                    style={{
-                      height: "125px",
-                      overflowY: "auto",
-                      background: "white",
-                      borderRadius: "8px",
-                      border: "1px solid #bbb",
+                      fontSize: "13.5px",
+                      fontWeight: "bold",
+                      color: "#222",
                     }}
                   >
-
-                    {coord
-                      .filter(
-                        (name) =>
-                          name !== prefecture
-                      )
-                      .map((name) => (
-
-                        <div
-                          key={name}
-                          id={`destination-${name}`}
-                          onClick={() =>
-                            setDestination(name)
-                          }
-                          style={{
-                            padding: "8px 12px",
-                            cursor: "pointer",
-                            borderBottom:
-                              "1px solid #ddd",
-                            background:
-                              destination === name
-                                ? "#87CEFA"
-                                : "white",
-                          }}
-
-                          onMouseEnter={(e) => {
-
-                            if (
-                              destination !== name
-                            ) {
-                              e.currentTarget.style.background =
-                                "#eeeeee";
-                            }
-
-                          }}
-
-                          onMouseLeave={(e) => {
-
-                            if (
-                              destination !== name
-                            ) {
-                              e.currentTarget.style.background =
-                                "white";
-                            }
-
-                          }}
-                        >
-                          {name}
-                        </div>
-
-                      ))}
-
-                  </div>
-
+                    移動目的割合
+                  </span>
+                  <span style={{ fontSize: "11px", color: "#666" }}>
+                    {prefecture} ➔ {destination}
+                  </span>
                 </div>
-
-              </foreignObject>
-
-            </g>
-
-            {/* ラベル変更 */}
-            <g transform="translate(10,325)">
-
-              <rect
-                width="280"
-                height="220"
-                fill="#f1e2cc"
-                stroke="black"
-                strokeWidth="0.5"
-                rx="15"
-              />
-
-              <text
-                x="15"
-                y="25"
-                fontSize="16"
-                fontWeight="bold"
-              >
-                ラベル変更
-              </text>
-
-              <foreignObject
-                x="10"
-                y="35"
-                width="260"
-                height="170"
-              >
-
-                <div
-                  xmlns="http://www.w3.org/1999/xhtml"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    overflowY: "auto",
-                    background: "white",
-                    borderRadius: "8px",
-                    border: "1px solid #bbb",
-                  }}
-                >
-
-                  {label.map((name) => (
-
-                    <div
-                      key={name}
-                      onClick={() =>
-                        setSelectedLabel(name)
-                      }
-                      style={{
-                        padding: "8px 12px",
-                        cursor: "pointer",
-                        borderBottom:
-                          "1px solid #ddd",
-                        background:
-                          selectedLabel === name
-                            ? "#87CEFA"
-                            : "white",
-                      }}
-
-                      onMouseEnter={(e) => {
-
-                        if (
-                          selectedLabel !== name
-                        ) {
-                          e.currentTarget.style.background =
-                            "#eeeeee";
-                        }
-
-                      }}
-
-                      onMouseLeave={(e) => {
-
-                        if (
-                          selectedLabel !== name
-                        ) {
-                          e.currentTarget.style.background =
-                            "white";
-                        }
-
-                      }}
-                    >
-                      {name}
-                    </div>
-
-                  ))}
-
-                </div>
-
-              </foreignObject>
-
-            </g>
-
-          </>
-
-        )}
-
-
-        {/* ========================= */}
-        {/* 割合 */}
-        {/* ========================= */}
-
-        {tab === "graph" && (
-
-          <g transform="translate(10, 90)">
-
-            <rect
-              width="280"
-              height="550"
-              fill="#f1e2cc"
-              stroke="black"
-              strokeWidth="0.5"
-              rx="15"
-            />
-
-            <text
-              x="15"
-              y="25"
-              fontSize="16"
-              fontWeight="bold"
-            >
-              移動目的・交通手段割合
-            </text>
-
-            <foreignObject
-              x="10"
-              y="35"
-              width="260"
-              height="500"
-            >
-
-              <div
-                xmlns="http://www.w3.org/1999/xhtml"
-                style={{
-                  fontSize: "13px",
-                  overflowY: "auto",
-                  height: "500px",
-                }}
-              >
-
-                <h4>
-                  移動目的割合
-                </h4>
 
                 {(() => {
-
                   const purposes = [
                     "代_全機関_仕事",
                     "代_全機関_観光",
@@ -498,127 +164,125 @@ export default function SvgLabel({
                     "代_全機関_不明",
                   ];
 
-                  const data =
-                    travelData.filter(
-                      item =>
-                        item.from === destination &&
-                        item.to === prefecture
-                    );
-
-                  const total =
-                    data.reduce(
-                      (sum, item) =>
-                        sum + item.people,
-                      0
-                    );
-
-                  return purposes.map(
-                    purpose => {
-
-                      const people =
-                        data
-                          .filter(
-                            d =>
-                              d.purpose ===
-                              purpose
-                          )
-                          .reduce(
-                            (sum, d) =>
-                              sum + d.people,
-                            0
-                          );
-
-                      const rate =
-                        total === 0
-                          ? 0
-                          : (
-                            people /
-                            total *
-                            100
-                          ).toFixed(1);
-
-                      return (
-
-                        <div
-                          key={purpose}
-                          style={{
-                            marginBottom:
-                              "10px"
-                          }}
-                        >
-
-                          <div
-                            style={{
-                              display:
-                                "flex",
-                              justifyContent:
-                                "space-between"
-                            }}
-                          >
-
-                            <span>
-                              {purpose.replace(
-                                "代_全機関_",
-                                ""
-                              )}
-                            </span>
-
-                            <span>
-                              {rate}%
-                            </span>
-
-                          </div>
-
-                          <div
-                            style={{
-                              height: "12px",
-                              background: "#ddd",
-                              borderRadius: "6px",
-                            }}
-                          >
-
-                            <div
-                              style={{
-                                width:
-                                  `${rate}%`,
-                                height: "12px",
-                                background:
-                                  "#ff9966",
-                                borderRadius:
-                                  "6px",
-                              }}
-                            />
-
-                          </div>
-
-                        </div>
-
-                      );
-                    }
+                  const data = travelData.filter(
+                    (item) =>
+                      item.from === prefecture && item.to === destination
                   );
 
-                })()}
+                  const total = data.reduce(
+                    (sum, item) => sum + item.people,
+                    0
+                  );
 
-                <h4
+                  if (total === 0) {
+                    return (
+                      <div
+                        style={{
+                          color: "#888",
+                          fontSize: "12px",
+                          padding: "8px 0",
+                          textAlign: "center",
+                        }}
+                      >
+                        該当データはありません
+                      </div>
+                    );
+                  }
+
+                  return purposes.map((purpose) => {
+                    const people = data
+                      .filter((d) => d.purpose === purpose)
+                      .reduce((sum, d) => sum + d.people, 0);
+
+                    const percentage =
+                      total === 0
+                        ? "0.0"
+                        : ((people / total) * 100).toFixed(1);
+
+                    return (
+                      <div
+                        key={purpose}
+                        style={{
+                          marginBottom: "6px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            fontSize: "12.5px",
+                            marginBottom: "2px",
+                          }}
+                        >
+                          <span style={{ fontWeight: "600", color: "#333" }}>
+                            {purpose.replace("代_全機関_", "")}
+                          </span>
+                          <span
+                            style={{
+                              fontWeight: "bold",
+                              color: "#d9534f",
+                              fontSize: "12px",
+                            }}
+                          >
+                            {percentage}% ({people.toLocaleString()}人)
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            height: "13px",
+                            background: "#e8e0c8",
+                            borderRadius: "6.5px",
+                            overflow: "hidden",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: `${percentage}%`,
+                              height: "13px",
+                              background:
+                                "linear-gradient(90deg, #ff9966, #ff5e62)",
+                              borderRadius: "6.5px",
+                              transition: "width 0.3s ease",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+
+              {/* 交通手段割合セクション */}
+              <div>
+                <div
                   style={{
-                    marginTop: "20px"
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "baseline",
+                    marginTop: "10px",
+                    marginBottom: "4px",
+                    borderBottom: "1.5px solid #e0d8b0",
+                    paddingBottom: "3px",
                   }}
                 >
-                  交通手段割合
-                </h4>
+                  <span
+                    style={{
+                      fontSize: "13.5px",
+                      fontWeight: "bold",
+                      color: "#222",
+                    }}
+                  >
+                    交通手段割合
+                  </span>
+                  <span style={{ fontSize: "11px", color: "#666" }}>
+                    {prefecture} ➔ {destination}
+                  </span>
+                </div>
 
                 {(() => {
-
                   const methods =
-                    year === "2005年度" ||
-                      year === "2010年度"
-                      ? [
-                        "航空",
-                        "鉄道",
-                        "船",
-                        "バス",
-                        "乗用車等",
-                      ]
+                    year === "2005年度" || year === "2010年度"
+                      ? ["航空", "鉄道", "船", "バス", "乗用車等"]
                       : [
                         "航空_全目的",
                         "鉄道_全目的",
@@ -627,450 +291,340 @@ export default function SvgLabel({
                         "乗用車等_全目的",
                       ];
 
-                  const data =
-                    transportationData.filter(
-                      item =>
-                        item.from === destination &&
-                        item.to === prefecture
-                    );
-
-                  const totalItem =
-                    data.find(
-                      item =>
-                        item.purpose ===
-                        (
-                          year === "2005年度" ||
-                            year === "2010年度"
-                            ? "全機関"
-                            : "全機関_全目的"
-                        )
-                    );
-
-                  const total =
-                    totalItem
-                      ? totalItem.people
-                      : 0;
-
-                  return methods.map(
-                    method => {
-
-                      const people =
-                        data
-                          .filter(
-                            d =>
-                              d.purpose ===
-                              method
-                          )
-                          .reduce(
-                            (sum, d) =>
-                              sum + d.people,
-                            0
-                          );
-
-                      const rate =
-                        total === 0
-                          ? 0
-                          : (
-                            people /
-                            total *
-                            100
-                          ).toFixed(1);
-
-                      return (
-
-                        <div
-                          key={method}
-                          style={{
-                            marginBottom:
-                              "10px"
-                          }}
-                        >
-
-                          <div
-                            style={{
-                              display:
-                                "flex",
-                              justifyContent:
-                                "space-between"
-                            }}
-                          >
-
-                            <span>
-                              {method.replace(
-                                "_全目的",
-                                ""
-                              )}
-                            </span>
-
-                            <span>
-                              {rate}%
-                            </span>
-
-                          </div>
-
-                          <div
-                            style={{
-                              height: "12px",
-                              background: "#ddd",
-                              borderRadius: "6px",
-                            }}
-                          >
-
-                            <div
-                              style={{
-                                width:
-                                  `${rate}%`,
-                                height: "12px",
-                                background:
-                                  "#6699ff",
-                                borderRadius:
-                                  "6px",
-                              }}
-                            />
-
-                          </div>
-
-                        </div>
-
-                      );
-
-                    }
+                  const data = transportationData.filter(
+                    (item) =>
+                      item.from === prefecture && item.to === destination
                   );
 
+                  const totalItem = data.find(
+                    (item) =>
+                      item.purpose ===
+                      (year === "2005年度" || year === "2010年度"
+                        ? "全機関"
+                        : "全機関_全目的")
+                  );
+
+                  const total = totalItem ? totalItem.people : 0;
+
+                  if (total === 0) {
+                    return (
+                      <div
+                        style={{
+                          color: "#888",
+                          fontSize: "12px",
+                          padding: "8px 0",
+                          textAlign: "center",
+                        }}
+                      >
+                        該当データはありません
+                      </div>
+                    );
+                  }
+
+                  return methods.map((method) => {
+                    const people = data
+                      .filter((d) => d.purpose === method)
+                      .reduce((sum, d) => sum + d.people, 0);
+
+                    const percentage =
+                      total === 0
+                        ? "0.0"
+                        : ((people / total) * 100).toFixed(1);
+
+                    return (
+                      <div
+                        key={method}
+                        style={{
+                          marginBottom: "6px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            fontSize: "12.5px",
+                            marginBottom: "2px",
+                          }}
+                        >
+                          <span style={{ fontWeight: "600", color: "#333" }}>
+                            {method.replace("_全目的", "")}
+                          </span>
+                          <span
+                            style={{
+                              fontWeight: "bold",
+                              color: "#0288d1",
+                              fontSize: "12px",
+                            }}
+                          >
+                            {percentage}% ({people.toLocaleString()}人)
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            height: "13px",
+                            background: "#e8e0c8",
+                            borderRadius: "6.5px",
+                            overflow: "hidden",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: `${percentage}%`,
+                              height: "13px",
+                              background:
+                                "linear-gradient(90deg, #4facfe, #00f2fe)",
+                              borderRadius: "6.5px",
+                              transition: "width 0.3s ease",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  });
                 })()}
-
               </div>
-
-            </foreignObject>
-
-          </g>
-
+            </div>
+          </foreignObject>
         )}
 
-        {/* ========================= */}
-        {/* 順位 */}
-        {/* ========================= */}
-
+        {/* ============================================================
+            順位表示 (tab === "rank") - 拡大＆存在感のあるゲージ
+           ============================================================ */}
         {tab === "rank" && (
-
-          <g transform="translate(10, 90)">
-
-            <rect
-              width="280"
-              height="420"
-              fill="#f1e2cc"
-              stroke="black"
-              strokeWidth="0.5"
-              rx="15"
-            />
-
-            <text
-              x="15"
-              y="25"
-              fontSize="16"
-              fontWeight="bold"
+          <foreignObject x="10" y="46" width="280" height={svgHeight - 50}>
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style={{
+                height: "100%",
+                overflow: "hidden",
+                boxSizing: "border-box",
+              }}
             >
-              来訪者ランキング TOP10
-            </text>
-
-            <text
-              x="15"
-              y="45"
-              fontSize="13"
-            >
-              {prefecture}へ来る人数
-            </text>
-
-            <foreignObject
-              x="10"
-              y="55"
-              width="260"
-              height="350"
-            >
-
               <div
-                xmlns="http://www.w3.org/1999/xhtml"
                 style={{
-                  height: "340px",
-                  overflowY: "auto",
-                  fontSize: "13px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "baseline",
+                  marginBottom: "4px",
+                  paddingBottom: "3px",
+                  borderBottom: "1.5px solid #e0d8b0",
                 }}
               >
+                <span
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    color: "#222",
+                  }}
+                >
+                  来訪者ランキング TOP10
+                </span>
+                <span style={{ fontSize: "11.5px", color: "#666" }}>
+                  {destination}へ来る人数
+                </span>
+              </div>
 
-                {(() => {
+              {(() => {
+                const ranking = [];
 
-                  const ranking = [];
+                coord.forEach((from) => {
+                  if (from === destination) {
+                    return;
+                  }
 
-                  coord.forEach(from => {
+                  const people = file
+                    .filter(
+                      (item) =>
+                        item.from === from && item.to === destination
+                    )
+                    .reduce((sum, item) => sum + item.people, 0);
 
-                    if (
-                      from === prefecture
-                    ) {
+                  ranking.push({
+                    from,
+                    people,
+                  });
+                });
+
+                ranking.sort((a, b) => b.people - a.people);
+                const top10 = ranking.slice(0, 10);
+                const maxPeople =
+                  top10.length > 0 && top10[0].people > 0
+                    ? top10[0].people
+                    : 1;
+
+                let previousRanking = [];
+                if (previousFile && previousFile.length > 0) {
+                  coord.forEach((from) => {
+                    if (from === destination) {
                       return;
                     }
 
-                    const people =
-                      file
-                        .filter(
-                          item =>
-                            item.from === from &&
-                            item.to === prefecture
-                        )
-                        .reduce(
-                          (sum, item) =>
-                            sum + item.people,
-                          0
-                        );
+                    const people = previousFile
+                      .filter(
+                        (item) =>
+                          item.from === from && item.to === destination
+                      )
+                      .reduce((sum, item) => sum + item.people, 0);
 
-                    ranking.push({
+                    previousRanking.push({
                       from,
                       people,
                     });
-
                   });
 
-                  ranking.sort(
-                    (a, b) =>
-                      b.people - a.people
+                  previousRanking.sort((a, b) => b.people - a.people);
+                }
+
+                if (top10.length === 0) {
+                  return (
+                    <div
+                      style={{
+                        color: "#888",
+                        textAlign: "center",
+                        padding: "20px 0",
+                        fontSize: "12px",
+                      }}
+                    >
+                      来訪者データがありません
+                    </div>
                   );
+                }
 
-                  const top10 =
-                    ranking.slice(0, 10);
-
-                  const maxPeople =
-                    top10.length > 0
-                      ? top10[0].people
-                      : 1;
-
-                  let previousRanking = [];
-
-                  if (previousFile) {
-
-                    coord.forEach(from => {
-
-                      if (
-                        from === prefecture
-                      ) {
-                        return;
-                      }
-
-                      const people =
-                        previousFile
-                          .filter(
-                            item =>
-                              item.from === from &&
-                              item.to === prefecture
-                          )
-                          .reduce(
-                            (sum, item) =>
-                              sum + item.people,
-                            0
-                          );
-
-                      previousRanking.push({
-                        from,
-                        people,
-                      });
-
-                    });
-
-                    previousRanking.sort(
-                      (a, b) =>
-                        b.people -
-                        a.people
-                    );
-
-                  }
-
-                  return top10.map(
-                    (item, index) => {
-
-                      const previousIndex =
-                        previousRanking.findIndex(
-                          p =>
-                            p.from ===
-                            item.from
-                        );
+                return (
+                  <div>
+                    {top10.map((item, index) => {
+                      const previousIndex = previousRanking.findIndex(
+                        (p) => p.from === item.from
+                      );
 
                       let rankText = "";
+                      let rankColor = "#777";
 
-                      if (!previousFile) {
-
+                      if (!previousFile || previousFile.length === 0) {
                         rankText = "";
-
-                      } else if (
-                        previousIndex === -1
-                      ) {
-
+                      } else if (previousIndex === -1) {
                         rankText = "NEW";
-
+                        rankColor = "#2e7d32";
                       } else {
-
-                        const diff =
-                          previousIndex -
-                          index;
-
-                        if (diff > 0) {
-
-                          rankText =
-                            `↑${diff}`;
-
-                        } else if (
-                          diff < 0
-                        ) {
-
-                          rankText =
-                            `↓${Math.abs(diff)}`;
-
+                        const rankDiff = previousIndex - index;
+                        if (rankDiff > 0) {
+                          rankText = `↑${rankDiff}`;
+                          rankColor = "#e53935";
+                        } else if (rankDiff < 0) {
+                          rankText = `↓${Math.abs(rankDiff)}`;
+                          rankColor = "#1e88e5";
                         } else {
-
                           rankText = "→";
-
+                          rankColor = "#777";
                         }
                       }
 
                       return (
-
                         <div
                           key={item.from}
                           style={{
-                            marginBottom:
-                              "12px",
+                            marginBottom: "4px",
+                            background: "rgba(255, 255, 255, 0.8)",
+                            padding: "4px 8px",
+                            borderRadius: "7px",
+                            border: "1px solid #ede4bc",
                           }}
                         >
-
                           <div
                             style={{
-                              display:
-                                "flex",
-                              justifyContent:
-                                "space-between",
-                              marginBottom:
-                                "3px",
-                              fontWeight:
-                                "bold",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              fontSize: "12.5px",
+                              fontWeight: "bold",
+                              marginBottom: "2px",
                             }}
                           >
-
-                            <span>
-                              {index + 1}位
-                              {item.from}
-                            </span>
-
-                            <span>
-                              {item.people.toLocaleString()}
-                              人
-                            </span>
-
-                          </div>
-
-                          {previousFile && (
-
-                            <div
+                            <span
                               style={{
-                                fontSize:
-                                  "12px",
-                                color:
-                                  rankText.startsWith(
-                                    "↑"
-                                  )
-                                    ? "red"
-                                    : rankText.startsWith(
-                                      "↓"
-                                    )
-                                      ? "blue"
-                                      : rankText ===
-                                        "NEW"
-                                        ? "green"
-                                        : "#666",
-                                marginBottom:
-                                  "3px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "6px",
                               }}
                             >
+                              <span
+                                style={{
+                                  display: "inline-block",
+                                  width: "20px",
+                                  height: "20px",
+                                  lineHeight: "20px",
+                                  textAlign: "center",
+                                  borderRadius: "50%",
+                                  background:
+                                    index === 0
+                                      ? "#ffd700"
+                                      : index === 1
+                                        ? "#c0c0c0"
+                                        : index === 2
+                                          ? "#cd7f32"
+                                          : "#e0e0e0",
+                                  color: index === 2 ? "white" : "#333",
+                                  fontSize: "11px",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {index + 1}
+                              </span>
+                              <span>{item.from}</span>
+                              {previousFile &&
+                                previousFile.length > 0 &&
+                                rankText && (
+                                  <span
+                                    style={{
+                                      fontSize: "10.5px",
+                                      fontWeight: "bold",
+                                      color: rankColor,
+                                      marginLeft: "2px",
+                                    }}
+                                  >
+                                    ({rankText})
+                                  </span>
+                                )}
+                            </span>
 
-                              前回：
-
-                              {previousIndex ===
-                                -1
-                                ? "圏外"
-                                : `${previousIndex + 1}位`}
-
-                              {" → "}
-
-                              {index + 1}位
-
-                              {"　"}
-
-                              {rankText}
-
-                            </div>
-
-                          )}
+                            <span
+                              style={{
+                                color: "#00796b",
+                                fontSize: "12.5px",
+                              }}
+                            >
+                              {item.people.toLocaleString()} 人
+                            </span>
+                          </div>
 
                           <div
                             style={{
-                              height: "12px",
-                              background:
-                                "#dddddd",
-                              borderRadius:
-                                "6px",
+                              height: "9px",
+                              background: "#e8e0c8",
+                              borderRadius: "4.5px",
+                              overflow: "hidden",
                             }}
                           >
-
                             <div
                               style={{
-                                width:
-                                  `${item.people / maxPeople * 100}%`,
-                                height:
-                                  "12px",
+                                width: `${(item.people / maxPeople) * 100}%`,
+                                height: "9px",
                                 background:
-                                  "#009688",
-                                borderRadius:
-                                  "6px",
-                                transition:
-                                  "0.4s",
+                                  "linear-gradient(90deg, #009688, #4db6ac)",
+                                borderRadius: "4.5px",
                               }}
                             />
-
                           </div>
-
                         </div>
-
                       );
-
-                    }
-                  );
-
-                })()}
-
-              </div>
-
-            </foreignObject>
-
-          </g>
-
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+          </foreignObject>
         )}
-
-        {/* 出発地点・目的地点表示 */}
-        <text
-          x="150"
-          y="28"
-          fontSize="22"
-          fontWeight="bold"
-          textAnchor="middle"
-        >
-          {prefecture.includes("道")
-            ? prefecture
-            : prefecture.includes("東京")
-              ? `${prefecture}都`
-              : prefecture.includes("大阪") ||
-                prefecture.includes("京都")
-                ? `${prefecture}府`
-                : `${prefecture}県`}
-        </text>
-
       </svg>
-
     </div>
   );
 }
