@@ -149,7 +149,7 @@ export default function SvgMap({
 
 
                 {/* ====================================================
-                    移動経路
+                    移動経路 (人数に応じた線の太さの変更処理)
                    ==================================================== */}
 
                 <g id="lineLayer">
@@ -237,6 +237,12 @@ export default function SvgMap({
                                       ${to[0]} ${to[1]}
                                 `;
 
+                                // 人数（移動量）に応じた連続的かつ明確な線の太さの計算 (2.0px 〜 34.0px)
+                                const people = Math.max(0, item.people || 0);
+                                const normalized = Math.min(1.0, people / 200000);
+                                const baseWidth = 2.0 + Math.pow(normalized, 0.52) * 32.0;
+                                const strokeWidth = baseWidth / Scale;
+
 
                                 return (
                                     <g
@@ -255,7 +261,7 @@ export default function SvgMap({
                                                 ]
                                             }
                                             strokeWidth={
-                                                3 / Scale
+                                                strokeWidth
                                             }
                                             strokeLinecap="round"
                                         />

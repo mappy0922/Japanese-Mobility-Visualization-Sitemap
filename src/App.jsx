@@ -22,6 +22,7 @@ import { feature } from "topojson-client";
 import SvgMap from "./SvgMap";
 import SvgLabel from "./SvgLabel";
 import ComparePanel from "./ComparePanel";
+import SearchableSelect from "./SearchableSelect";
 
 const MapName = ["日本地図", "世界地図"];
 
@@ -769,31 +770,29 @@ export default function App() {
             左側統合コントロールパネル (自然な縦並び・スクロール対応)
            ============================================================ */}
         <div className="leftPanel">
-          {/* ① From -> To 地点選択バー */}
+          {/* ① From -> To 地点選択バー (検索機能付きプルダウン) */}
           <div className="routeSelector">
-            <button
-              type="button"
-              className={`routeBadge fromBadge ${selectMode === "from" ? "activeMode" : ""}`}
-              onClick={() => setSelectMode("from")}
-              title="クリックして出発地(From)選択モードに切り替え"
-            >
-              <span className="routeDot fromDot" />
-              <span className="routeLabel">From:</span>
-              <span className="routeName">{prefecture}</span>
-            </button>
+            <SearchableSelect
+              label="From"
+              value={prefecture}
+              onChange={(name) => setPrefecture(name)}
+              type="from"
+              options={coord}
+              isActiveMode={selectMode === "from"}
+              onSelectMode={() => setSelectMode("from")}
+            />
 
             <span className="routeArrow">➔</span>
 
-            <button
-              type="button"
-              className={`routeBadge toBadge ${selectMode === "to" ? "activeMode" : ""}`}
-              onClick={() => setSelectMode("to")}
-              title="クリックして目的地(To)選択モードに切り替え"
-            >
-              <span className="routeDot toDot" />
-              <span className="routeLabel">To:</span>
-              <span className="routeName">{destination}</span>
-            </button>
+            <SearchableSelect
+              label="To"
+              value={destination}
+              onChange={(name) => setDestination(name)}
+              type="to"
+              options={coord}
+              isActiveMode={selectMode === "to"}
+              onSelectMode={() => setSelectMode("to")}
+            />
           </div>
 
           {/* ② 年度選択・交通行動選択 (独立カード) */}
@@ -851,31 +850,16 @@ export default function App() {
             </div>
           </div>
 
-          {/* ③ ラベル選択グリッド */}
-          <div className="labelSelector">
-            <div className="labelGrid">
-              {label.map((name) => (
-                <button
-                  key={name}
-                  type="button"
-                  className={`labelButton ${selectedLabel === name ? "active" : ""}`}
-                  onClick={() => setSelectedLabel(name)}
-                  title={name}
-                >
-                  {name.replace("代_全機関_", "").replace("_全目的", "")}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* ④ 比較・分析パネル（前年度比較 ➔ ラベル比較） */}
+          {/* ③ 比較・分析パネル（前年度比較 ➔ ラベル比較＆2x3ラベルボタン） */}
           <ComparePanel
             year={year}
             currentPeople={currentPeople}
             previousPeople={previousPeople}
             diff={diff}
             rate={rate}
+            label={label}
             selectedLabel={selectedLabel}
+            setSelectedLabel={setSelectedLabel}
             currentLabelPeople={currentLabelPeople}
             previousLabelPeople={previousLabelPeople}
             labelDiff={labelDiff}

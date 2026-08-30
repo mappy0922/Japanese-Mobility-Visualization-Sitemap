@@ -4,7 +4,9 @@ export default function ComparePanel({
   previousPeople,
   diff,
   rate,
+  label = [],
   selectedLabel,
+  setSelectedLabel,
   currentLabelPeople,
   previousLabelPeople,
   labelDiff,
@@ -106,9 +108,27 @@ export default function ComparePanel({
         </div>
       </div>
 
-      {/* 2. ラベル比較 カード */}
+      {/* 2. ラベル比較 カード (タイトル横に2x3ラベル選択ボタンを配置) */}
       <div className="compareCard">
-        <div className="compareTitle">ラベル比較</div>
+        <div className="labelCompareHeader">
+          <div className="compareTitle inlineTitle">ラベル比較</div>
+          {label && label.length > 0 && (
+            <div className="labelGridInCard">
+              {label.map((name) => (
+                <button
+                  key={name}
+                  type="button"
+                  className={`labelButtonInCard ${selectedLabel === name ? "active" : ""}`}
+                  onClick={() => setSelectedLabel && setSelectedLabel(name)}
+                  title={name}
+                >
+                  {name.replace("代_全機関_", "").replace("_全目的", "")}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className="compareBody">
           {year === "1990年度" ? (
             <div className="compareNotice">比較対象の前年度はありません</div>
@@ -116,10 +136,6 @@ export default function ComparePanel({
             <div className="compareNotice">ラベルを選択してください</div>
           ) : (
             <>
-              <div className="selectedLabelBadge" title={selectedLabel}>
-                {selectedLabel.replace("代_全機関_", "").replace("_全目的", "")}
-              </div>
-
               <div className="compareRow">
                 <span>前年度：</span>
                 <span className="compareValue">
