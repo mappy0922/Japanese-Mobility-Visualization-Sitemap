@@ -138,6 +138,9 @@ export default function App() {
   const [isLogin, setIsLogin] =
     useState(false);
 
+  const [tab, setTab] =
+    useState("basic");
+
 
   /*
    * ============================================================
@@ -2919,6 +2922,13 @@ scale(${k})
 
             file={
               file
+            }
+
+            tab={
+              tab}
+
+            setTab={
+              setTab
             }
 
           />
