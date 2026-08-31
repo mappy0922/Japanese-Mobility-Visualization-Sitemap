@@ -65,7 +65,7 @@ export default function SvgLabel({
                 transition: "all 0.15s ease",
               }}
             >
-              📊 割合
+              割合
             </button>
             <button
               onClick={() => setTab("rank")}
@@ -86,7 +86,7 @@ export default function SvgLabel({
                 transition: "all 0.15s ease",
               }}
             >
-              🏆 順位
+              順位
             </button>
           </div>
         </foreignObject>
@@ -230,7 +230,7 @@ export default function SvgLabel({
                         <div
                           style={{
                             height: "13px",
-                            background: "#e8e0c8",
+                            background: "#f1f5f9",
                             borderRadius: "6.5px",
                             overflow: "hidden",
                           }}
@@ -239,8 +239,7 @@ export default function SvgLabel({
                             style={{
                               width: `${percentage}%`,
                               height: "13px",
-                              background:
-                                "linear-gradient(90deg, #ff9966, #ff5e62)",
+                              background: "#ef4444",
                               borderRadius: "6.5px",
                               transition: "width 0.3s ease",
                             }}
@@ -362,7 +361,7 @@ export default function SvgLabel({
                         <div
                           style={{
                             height: "13px",
-                            background: "#e8e0c8",
+                            background: "#f1f5f9",
                             borderRadius: "6.5px",
                             overflow: "hidden",
                           }}
@@ -371,8 +370,7 @@ export default function SvgLabel({
                             style={{
                               width: `${percentage}%`,
                               height: "13px",
-                              background:
-                                "linear-gradient(90deg, #4facfe, #00f2fe)",
+                              background: "#1e88e5",
                               borderRadius: "6.5px",
                               transition: "width 0.3s ease",
                             }}
@@ -410,18 +408,20 @@ export default function SvgLabel({
                   borderBottom: "1.5px solid #e0d8b0",
                 }}
               >
-                <span
-                  style={{
-                    fontSize: "14px",
-                    fontWeight: "bold",
-                    color: "#222",
-                  }}
-                >
-                  来訪者ランキング TOP10
-                </span>
-                <span style={{ fontSize: "11.5px", color: "#666" }}>
-                  {destination}へ来る人数
-                </span>
+                <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "bold",
+                      color: "#1e293b",
+                    }}
+                  >
+                    {destination}へ来る人数ランキング TOP10
+                  </span>
+                  <span style={{ fontSize: "10.5px", color: "#64748b" }}>
+                    各都道府県からの年間来訪者数
+                  </span>
+                </div>
               </div>
 
               {(() => {
@@ -600,7 +600,7 @@ export default function SvgLabel({
                           <div
                             style={{
                               height: "9px",
-                              background: "#e8e0c8",
+                              background: "#f1f5f9",
                               borderRadius: "4.5px",
                               overflow: "hidden",
                             }}
@@ -609,8 +609,7 @@ export default function SvgLabel({
                               style={{
                                 width: `${(item.people / maxPeople) * 100}%`,
                                 height: "9px",
-                                background:
-                                  "linear-gradient(90deg, #009688, #4db6ac)",
+                                background: "#0d9488",
                                 borderRadius: "4.5px",
                               }}
                             />

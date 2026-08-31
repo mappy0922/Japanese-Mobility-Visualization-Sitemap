@@ -160,19 +160,22 @@ export default function SvgMap({
                             .filter(item =>
                                 item.from === prefecture &&
                                 item.to === destination &&
-                                item.purpose === selectedLabel
+                                (!selectedLabel || item.purpose === selectedLabel)
                             )
                             .map((item, i) => {
 
+                                const fromCoord = coords[item.from];
+                                const toCoord = coords[item.to];
+
+                                if (!fromCoord || !toCoord) {
+                                    return null;
+                                }
+
                                 const from =
-                                    projectionRef.current(
-                                        item.fromCoord
-                                    );
+                                    projectionRef.current(fromCoord);
 
                                 const to =
-                                    projectionRef.current(
-                                        item.toCoord
-                                    );
+                                    projectionRef.current(toCoord);
 
                                 if (!from || !to) {
                                     return null;
@@ -217,7 +220,7 @@ export default function SvgMap({
 
 
                                 const curveHeight =
-                                    dist * 2;
+                                    dist * 0.22;
 
 
                                 const cx =
@@ -258,7 +261,7 @@ export default function SvgMap({
                                             stroke={
                                                 dataColor[
                                                 item.purpose
-                                                ]
+                                                ] || "#3b82f6"
                                             }
                                             strokeWidth={
                                                 strokeWidth
@@ -281,26 +284,18 @@ export default function SvgMap({
                                                 >
 
                                                     <animateMotion
-                                                        dur="2s"
-                                                        begin={`${delay}s`}
+                                                        dur="2.5s"
                                                         repeatCount="indefinite"
-                                                        rotate="auto"
-                                                        keyPoints="0;1"
-                                                        keyTimes="0;1"
-                                                    >
-
-                                                        <mpath
-                                                            href={`#flow-path-${i}`}
-                                                        />
-
-                                                    </animateMotion>
+                                                        begin={`${delay * 2.5}s`}
+                                                        path={d}
+                                                    />
 
 
                                                     <animate
                                                         attributeName="opacity"
-                                                        values="0;1;0"
-                                                        dur="2s"
-                                                        begin={`${delay}s`}
+                                                        values="0.3;1;0.3"
+                                                        dur="2.5s"
+                                                        begin={`${delay * 2.5}s`}
                                                         repeatCount="indefinite"
                                                     />
 
@@ -309,11 +304,11 @@ export default function SvgMap({
                                                         attributeName="r"
                                                         values={`
                                                             ${3 / Scale};
-                                                            ${8 / Scale};
+                                                            ${7 / Scale};
                                                             ${3 / Scale}
                                                         `}
-                                                        dur="2s"
-                                                        begin={`${delay}s`}
+                                                        dur="2.5s"
+                                                        begin={`${delay * 2.5}s`}
                                                         repeatCount="indefinite"
                                                     />
 
@@ -391,6 +386,27 @@ export default function SvgMap({
 
             </g>
 
+
+            {/* ============================================================
+                凡例ヘッダー・説明文
+               ============================================================ */}
+            <g transform={`translate(${startX}, ${height - legendHeight - 80})`}>
+                <rect
+                    x="-6"
+                    y="-4"
+                    width={totalLegendWidth + 12}
+                    height={36}
+                    rx="8"
+                    fill="rgba(255, 255, 255, 0.95)"
+                    stroke="none"
+                />
+                <text x="4" y="12" fontSize="11.5" fontWeight="bold" fill="#1e293b">
+                    都道府県の色分け（来訪者数別）
+                </text>
+                <text x="4" y="25" fontSize="9.5" fill="#64748b">
+                    ※クリックで指定した人数範囲の都道府県をハイライト
+                </text>
+            </g>
 
             {/* ============================================================
                 凡例
@@ -473,12 +489,12 @@ export default function SvgMap({
                             stroke={
                                 selected
                                     ? circleColor(name)
-                                    : "#999"
+                                    : "transparent"
                             }
                             strokeWidth={
                                 selected
-                                    ? 3
-                                    : 1.5
+                                    ? 2.5
+                                    : 0
                             }
                         />
 

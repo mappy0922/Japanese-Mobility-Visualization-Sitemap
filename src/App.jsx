@@ -987,17 +987,6 @@ export default function App() {
                 使い方
               </button>
               <button
-                onClick={() => {
-                  localStorage.setItem(
-                    "favoriteArr",
-                    JSON.stringify(favoriteArr)
-                  );
-                  window.location.href = "./index3.html";
-                }}
-              >
-                お気に入り一覧
-              </button>
-              <button
                 onClick={() =>
                   window.open(
                     "https://forms.gle/kSxSu3UmnEzXxabs8",
@@ -1033,7 +1022,20 @@ export default function App() {
               onSelectMode={() => setSelectMode("from")}
             />
 
-            <span className="routeArrow">➔</span>
+            <button
+              type="button"
+              className="routeSwapBtn"
+              onClick={() => {
+                const prevPref = prefecture;
+                const prevDest = destination;
+                setPrefecture(prevDest);
+                setDestination(prevPref);
+              }}
+              title="出発地と目的地を入れ替える"
+              aria-label="出発地と目的地を入れ替える"
+            >
+              ⇄
+            </button>
 
             <SearchableSelect
               label="To"
@@ -1050,10 +1052,13 @@ export default function App() {
             />
           </div>
 
-          {/* ② 年度選択・交通行動選択 (独立カード) */}
+          {/* ② 年度選択 (スマートカード) */}
           <div className="controlCard">
             <div className="controlItem">
-              <label className="controlLabel">年度選択</label>
+              <div className="controlLabelWrapper">
+                <label className="controlLabel">分析年度</label>
+                <span className="controlLabelHint">調査年を選択</span>
+              </div>
               <select
                 className="controlSelect"
                 value={year}
@@ -1076,37 +1081,12 @@ export default function App() {
                 ))}
               </select>
             </div>
-
-            <div className="controlItem">
-              <label className="controlLabel">交通行動選択</label>
-              <select
-                className="controlSelect"
-                value={traffic}
-                onChange={(e) => {
-                  const nextTraffic = e.target.value;
-                  setTraffic(nextTraffic);
-                  if (nextTraffic === "移動目的") {
-                    setSelectedLabel("代_全機関_観光");
-                  } else {
-                    setSelectedLabel(
-                      year === "2005年度" || year === "2010年度"
-                        ? "鉄道"
-                        : "鉄道_全目的"
-                    );
-                  }
-                }}
-              >
-                {transportation.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
 
-          {/* ③ 比較・分析パネル（前年度比較 ➔ ラベル比較＆2x3ラベルボタン） */}
+          {/* ③ 比較・分析パネル（全体前年度比較 ➔ 目的別/手段別詳細比較） */}
           <ComparePanel
+            traffic={traffic}
+            setTraffic={setTraffic}
             year={year}
             currentPeople={currentPeople}
             previousPeople={previousPeople}

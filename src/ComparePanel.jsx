@@ -1,4 +1,65 @@
+function TextOnlyComparison({ current, previous, diff, rate }) {
+  const curVal = current ?? 0;
+  const prevVal = previous ?? 0;
+
+  // 倍率・増減情報の生成
+  let diffBadgeText = "";
+  let diffBadgeColor = "#475569";
+
+  if (prevVal === 0) {
+    if (curVal === 0) {
+      diffBadgeText = "0人 (変動なし)";
+      diffBadgeColor = "#64748b";
+    } else {
+      diffBadgeText = `▲ +${curVal.toLocaleString()}人 (前年なし/新規)`;
+      diffBadgeColor = "#e53935";
+    }
+  } else {
+    const multiplier = (curVal / prevVal).toFixed(1);
+    const diffNum = curVal - prevVal;
+    if (diffNum > 0) {
+      const pct = rate ?? ((diffNum / prevVal) * 100).toFixed(1);
+      diffBadgeText = `▲ +${diffNum.toLocaleString()}人 (+${pct}% / ${multiplier}倍)`;
+      diffBadgeColor = "#e53935";
+    } else if (diffNum < 0) {
+      const pct = rate ?? ((diffNum / prevVal) * 100).toFixed(1);
+      diffBadgeText = `▼ ${diffNum.toLocaleString()}人 (${pct}% / ${multiplier}倍)`;
+      diffBadgeColor = "#1e88e5";
+    } else {
+      diffBadgeText = "● ±0人 (前年同水準)";
+      diffBadgeColor = "#64748b";
+    }
+  }
+
+  return (
+    <div className="textCompareContainer">
+      <div className="textCompareRow">
+        <div className="textCompareItem">
+          <span className="textCompareLabel">今年度</span>
+          <span className="textCompareValue current">
+            {curVal.toLocaleString()} <span className="textCompareUnit">人</span>
+          </span>
+        </div>
+        <div className="textCompareDivider" />
+        <div className="textCompareItem">
+          <span className="textCompareLabel">前年度</span>
+          <span className="textCompareValue previous">
+            {prevVal.toLocaleString()} <span className="textCompareUnit">人</span>
+          </span>
+        </div>
+      </div>
+
+      <div className="textDiffBadge" style={{ color: diffBadgeColor }}>
+        <span className="textDiffLabel">前年比:</span>
+        <span className="textDiffValue">{diffBadgeText}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function ComparePanel({
+  traffic,
+  setTraffic,
   year,
   currentPeople,
   previousPeople,
@@ -12,30 +73,6 @@ export default function ComparePanel({
   labelDiff,
   labelRate,
 }) {
-  const MAX_RATE = 100;
-
-  const gaugeRate =
-    rate === null
-      ? 0
-      : Math.max(-MAX_RATE, Math.min(MAX_RATE, Number(rate)));
-
-  const barPercent = (Math.abs(gaugeRate) / MAX_RATE) * 50;
-
-  const labelGaugeRate =
-    previousLabelPeople === 0
-      ? 0
-      : Math.max(
-          -100,
-          Math.min(
-            ((currentLabelPeople - previousLabelPeople) /
-              previousLabelPeople) *
-              100,
-            100
-          )
-        );
-
-  const labelBarPercent = (Math.abs(labelGaugeRate) / MAX_RATE) * 50;
-
   return (
     <div className="comparePanel">
       {/* 1. 前年度比較 カード */}
@@ -45,88 +82,80 @@ export default function ComparePanel({
           {year === "1990年度" ? (
             <div className="compareNotice">比較対象の前年度はありません</div>
           ) : (
-            <>
-              <div className="compareMainDisplay">
-                <div className="currentPeopleWrapper">
-                  <span className="currentPeopleLabel">今年度</span>
-                  <span className="currentPeopleNumber">
-                    {(currentPeople ?? 0).toLocaleString()}
-                  </span>
-                  <span className="currentPeopleUnit">人</span>
-                </div>
-                <div className="previousPeopleSub">
-                  <span className="prevLabel">前年:</span>
-                  <span className="prevNumber">
-                    {(previousPeople ?? 0).toLocaleString()} 人
-                  </span>
-                </div>
-              </div>
-
-              <div className="gaugeContainer">
-                <div className="gaugeCenterLine" />
-                {gaugeRate > 0 && (
-                  <div
-                    className="gaugeBar positive"
-                    style={{
-                      left: "50%",
-                      width: `${barPercent}%`,
-                    }}
-                  />
-                )}
-                {gaugeRate < 0 && (
-                  <div
-                    className="gaugeBar negative"
-                    style={{
-                      left: `${50 - barPercent}%`,
-                      width: `${barPercent}%`,
-                    }}
-                  />
-                )}
-              </div>
-
-              <div className="gaugeLabels">
-                <span>-100%</span>
-                <span>0%</span>
-                <span>+100%</span>
-              </div>
-
-              <div
-                className="diffText"
-                style={{
-                  color:
-                    diff > 0
-                      ? "#d9534f"
-                      : diff < 0
-                        ? "#0288d1"
-                        : "#333",
-                }}
-              >
-                {diff > 0 ? "▲ " : diff < 0 ? "▼ " : "● "}
-                {Math.abs(diff ?? 0).toLocaleString()} 人
-                {rate !== null && ` (${diff >= 0 ? "+" : ""}${rate}%)`}
-              </div>
-            </>
+            <TextOnlyComparison
+              current={currentPeople}
+              previous={previousPeople}
+              diff={diff}
+              rate={rate}
+            />
           )}
         </div>
       </div>
 
-      {/* 2. ラベル比較 カード (タイトル横に2x3ラベル選択ボタンを配置) */}
+      {/* 2. ラベル比較 カード */}
       <div className="compareCard">
         <div className="labelCompareHeader">
-          <div className="compareTitle inlineTitle">ラベル比較</div>
+          <div className="compareHeaderTopRow">
+            <span className="compareTitle">ラベル比較</span>
+          </div>
+
+          {/* 交通目的別 / 交通手段別 切り替えボタングループ */}
+          <div className="trafficModeSwitch">
+            <button
+              type="button"
+              className={`trafficModeBtn ${traffic === "移動目的" ? "active" : ""}`}
+              onClick={() => {
+                if (setTraffic) {
+                  setTraffic("移動目的");
+                  setSelectedLabel && setSelectedLabel("代_全機関_観光");
+                }
+              }}
+            >
+              <span>交通目的別で見る</span>
+            </button>
+            <button
+              type="button"
+              className={`trafficModeBtn ${traffic === "移動手段" ? "active" : ""}`}
+              onClick={() => {
+                if (setTraffic) {
+                  setTraffic("移動手段");
+                  setSelectedLabel &&
+                    setSelectedLabel(
+                      year === "2005年度" || year === "2010年度"
+                        ? "鉄道"
+                        : "鉄道_全目的"
+                    );
+                }
+              }}
+            >
+              <span>交通手段別で見る</span>
+            </button>
+          </div>
+
+          {/* ラベル項目ボタングリッド */}
           {label && label.length > 0 && (
-            <div className="labelGridInCard">
-              {label.map((name) => (
-                <button
-                  key={name}
-                  type="button"
-                  className={`labelButtonInCard ${selectedLabel === name ? "active" : ""}`}
-                  onClick={() => setSelectedLabel && setSelectedLabel(name)}
-                  title={name}
-                >
-                  {name.replace("代_全機関_", "").replace("_全目的", "")}
-                </button>
-              ))}
+            <div
+              className={`labelGridInCard ${
+                traffic === "移動目的" ? "purposeGrid" : "transportGrid"
+              }`}
+            >
+              {label.map((name) => {
+                const displayName = name
+                  .replace("代_全機関_", "")
+                  .replace("_全目的", "");
+
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    className={`labelButtonInCard ${selectedLabel === name ? "active" : ""}`}
+                    onClick={() => setSelectedLabel && setSelectedLabel(name)}
+                    title={displayName}
+                  >
+                    <span className="labelBtnText">{displayName}</span>
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -137,69 +166,12 @@ export default function ComparePanel({
           ) : !selectedLabel ? (
             <div className="compareNotice">ラベルを選択してください</div>
           ) : (
-            <>
-              <div className="compareMainDisplay">
-                <div className="currentPeopleWrapper">
-                  <span className="currentPeopleLabel">今年度</span>
-                  <span className="currentPeopleNumber">
-                    {(currentLabelPeople ?? 0).toLocaleString()}
-                  </span>
-                  <span className="currentPeopleUnit">人</span>
-                </div>
-                <div className="previousPeopleSub">
-                  <span className="prevLabel">前年:</span>
-                  <span className="prevNumber">
-                    {(previousLabelPeople ?? 0).toLocaleString()} 人
-                  </span>
-                </div>
-              </div>
-
-              <div className="gaugeContainer">
-                <div className="gaugeCenterLine" />
-                {labelGaugeRate > 0 && (
-                  <div
-                    className="gaugeBar positive"
-                    style={{
-                      left: "50%",
-                      width: `${labelBarPercent}%`,
-                    }}
-                  />
-                )}
-                {labelGaugeRate < 0 && (
-                  <div
-                    className="gaugeBar negative"
-                    style={{
-                      left: `${50 - labelBarPercent}%`,
-                      width: `${labelBarPercent}%`,
-                    }}
-                  />
-                )}
-              </div>
-
-              <div className="gaugeLabels">
-                <span>-100%</span>
-                <span>0%</span>
-                <span>+100%</span>
-              </div>
-
-              <div
-                className="diffText"
-                style={{
-                  color:
-                    labelDiff > 0
-                      ? "#d9534f"
-                      : labelDiff < 0
-                        ? "#0288d1"
-                        : "#333",
-                }}
-              >
-                {labelDiff > 0 ? "▲ " : labelDiff < 0 ? "▼ " : "● "}
-                {Math.abs(labelDiff ?? 0).toLocaleString()} 人
-                {labelRate === "新規"
-                  ? " (新規)"
-                  : ` (${labelDiff >= 0 ? "+" : ""}${labelRate}%)`}
-              </div>
-            </>
+            <TextOnlyComparison
+              current={currentLabelPeople}
+              previous={previousLabelPeople}
+              diff={labelDiff}
+              rate={labelRate === "新規" ? null : labelRate}
+            />
           )}
         </div>
       </div>

@@ -122,6 +122,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 4px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     padding: 6px 10px;
@@ -130,6 +131,34 @@ h1 {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
     width: 100%;
     box-sizing: border-box;
+}
+
+.routeSwapBtn {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    margin: 0 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: bold;
+    color: #475569;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.routeSwapBtn:hover {
+    background: #1e88e5;
+    color: #ffffff;
+    transform: rotate(180deg);
+}
+
+.routeSwapBtn:active {
+    transform: rotate(180deg) scale(0.92);
 }
 
 /* ============================================================
@@ -454,65 +483,117 @@ h1 {
 }
 
 .compareTitle {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 8px;
-    border-bottom: 2px solid #87cefa;
-    padding-bottom: 4px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.compareHeaderTopRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2px;
 }
 
 .labelCompareHeader {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
     margin-bottom: 8px;
-    border-bottom: 2px solid #87cefa;
-    padding-bottom: 4px;
 }
 
-.compareTitle.inlineTitle {
-    margin-bottom: 0;
-    border-bottom: none;
-    padding-bottom: 0;
+.trafficModeSwitch {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.trafficModeBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
     white-space: nowrap;
-    flex-shrink: 0;
+}
+
+.trafficModeBtn:hover {
+    color: #1e293b;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.trafficModeBtn.active {
+    background: #ffffff;
+    color: #1e88e5;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.trafficModeIcon {
+    font-size: 12px;
 }
 
 .labelGridInCard {
     display: grid;
+    gap: 4px;
+    width: 100%;
+    margin-top: 2px;
+}
+
+.labelGridInCard.purposeGrid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 3px;
-    flex: 1;
+}
+
+.labelGridInCard.transportGrid {
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .labelButtonInCard {
-    padding: 3px 2px;
-    font-size: 10px;
-    font-weight: 600;
-    border-radius: 5px;
-    border: 1px solid #d0d7de;
-    background: #f8f9fa;
-    color: #444;
+    padding: 6px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 8px;
+    border: none;
+    background: #f8fafc;
+    color: #334155;
     cursor: pointer;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     transition: all 0.15s ease;
 }
 
 .labelButtonInCard:hover {
-    background: #eef2f6;
-    border-color: #90caf9;
+    background: #f1f5f9;
+    color: #1e88e5;
 }
 
 .labelButtonInCard.active {
     background: #1e88e5;
-    color: white;
-    border-color: #1565c0;
-    box-shadow: 0 1px 4px rgba(30, 136, 229, 0.35);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(30, 136, 229, 0.35);
+}
+
+.labelBtnIcon {
+    font-size: 11.5px;
+}
+
+.labelBtnText {
+    font-size: 11px;
 }
 
 .compareBody {
@@ -541,120 +622,99 @@ h1 {
     white-space: nowrap;
 }
 
-.compareMainDisplay {
+/* ============================================================
+   今年度 vs 前年度 テキスト比較 (TextOnlyComparison)
+   ============================================================ */
+
+.textCompareContainer {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin: 4px 0 6px 0;
-    padding: 0 2px;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+    width: 100%;
 }
 
-.currentPeopleWrapper {
+.textCompareRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+.textCompareItem {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.textCompareLabel {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.textCompareValue {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.textCompareValue.current {
+    color: #111827;
+}
+
+.textCompareValue.current .textCompareUnit {
+    color: #374151;
+}
+
+.textCompareValue.previous {
+    color: #475569;
+}
+
+.textCompareUnit {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    margin-left: 2px;
+}
+
+.textCompareDivider {
+    width: 1px;
+    height: 28px;
+    background: #e2e8f0;
+    margin: 0 10px;
+}
+
+.textDiffBadge {
     display: flex;
     align-items: baseline;
-    gap: 4px;
-}
-
-.currentPeopleLabel {
-    font-size: 11px;
-    color: #64748b;
-    font-weight: 600;
-}
-
-.currentPeopleNumber {
-    font-size: 21px;
-    font-weight: 800;
-    color: #1e293b;
-    letter-spacing: -0.5px;
-    line-height: 1;
-}
-
-.currentPeopleUnit {
-    font-size: 12px;
-    color: #475569;
-    font-weight: 600;
-}
-
-.previousPeopleSub {
-    font-size: 11.5px;
-    color: #64748b;
-    font-weight: 500;
-    margin-bottom: 2px;
-}
-
-.previousPeopleSub .prevLabel {
-    color: #94a3b8;
-    margin-right: 2px;
-}
-
-.previousPeopleSub .prevNumber {
-    font-weight: 600;
-    color: #475569;
-}
-
-.compareRow {
-    display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3px;
-    color: #555;
-}
-
-.compareValue {
-    font-weight: 600;
-    color: #222;
-}
-
-.gaugeContainer {
-    position: relative;
-    width: 100%;
-    height: 14px;
-    background: #e8e0c8;
-    border-radius: 7px;
-    margin: 8px auto 4px auto;
+    padding: 5px 8px;
+    background: #f8fafc;
+    border-radius: 6px;
+    white-space: nowrap;
     overflow: hidden;
 }
 
-.gaugeCenterLine {
-    position: absolute;
-    left: 50%;
-    width: 2px;
-    height: 14px;
-    background: #8d7f68;
-    z-index: 2;
-    transform: translateX(-50%);
+.textDiffLabel {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    white-space: nowrap;
+    margin-right: 4px;
+    flex-shrink: 0;
 }
 
-.gaugeBar {
-    position: absolute;
-    height: 14px;
-    transition: width 0.3s ease, left 0.3s ease;
-}
-
-.gaugeBar.positive {
-    background: linear-gradient(90deg, #ff9966, #ff5e62);
-    border-radius: 0 5px 5px 0;
-}
-
-.gaugeBar.negative {
-    background: linear-gradient(90deg, #00f2fe, #4facfe);
-    border-radius: 5px 0 0 5px;
-}
-
-.gaugeLabels {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin: 0 auto;
-    font-size: 10px;
-    color: #888;
-}
-
-.diffText {
-    font-size: 13px;
-    font-weight: bold;
-    margin-top: 6px;
-    text-align: right;
+.textDiffValue {
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* ============================================================
