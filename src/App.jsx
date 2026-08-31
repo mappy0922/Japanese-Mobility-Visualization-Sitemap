@@ -1187,84 +1187,104 @@ export default function App() {
               ×
             </button>
 
+            {/* 上部プログレスゲージ */}
+            <div className="guideGaugeTrack">
+              <div
+                className="guideGaugeFill"
+                style={{ width: `${((guideStep + 1) / 4) * 100}%` }}
+              />
+            </div>
+
             {guideStep === 0 && (
-              <>
-                <h2>🚄 日本人の移動可視化サイトへようこそ！</h2>
-                <p>
-                  このサイトでは、日本国内の人の移動データを地図上で可視化しています。
+              <div className="guideStepContent">
+                <h2>日本人の移動可視化サイトへようこそ！</h2>
+                <p className="guideIntro">
+                  このサイトでは、日本国内の都道府県間における人流データを地図やグラフ上で視覚的に分析できます。
                 </p>
-                <img
-                  src="/guide2.png"
-                  alt="説明画像"
-                  className="guideImage"
-                />
-              </>
+                <div className="guideFeatureList">
+                  <div className="guideFeatureItem">
+                    <strong>1. 出発地（From）と目的地（To）の選択</strong>
+                    <p>左上の検索付きプルダウンから、分析したい出発地と目的地を選択できます。</p>
+                  </div>
+                  <div className="guideFeatureItem">
+                    <strong>2. 「⇄」入れ替えボタン</strong>
+                    <p>中央の入れ替えボタンを押すと、ワンクリックで出発地と目的地が入れ替わります。</p>
+                  </div>
+                  <div className="guideFeatureItem">
+                    <strong>3. 分析年度の切り替え</strong>
+                    <p>年度選択カードから調査年（1990年度〜2021年度）を切り替えて過去データと比較できます。</p>
+                  </div>
+                </div>
+              </div>
             )}
 
             {guideStep === 1 && (
-              <>
-                <h2>🗺 地図の操作方法</h2>
-                <ul>
-                  <li>県をクリックすると選択地点を変更できます。</li>
-                  <li>
-                    下のボタンで条件を満たす来客者数ごとの絞り込みが出来ます
-                  </li>
-                  <li>
-                    それぞれの都道府県をタップすることで、その詳細を見ることが出来ます
-                  </li>
-                </ul>
-                <img
-                  src="/guide1.png"
-                  alt="操作方法"
-                  className="guideImage"
-                />
-              </>
+              <div className="guideStepContent">
+                <h2>地図の操作と人流・ハイライトの見方</h2>
+                <p className="guideIntro">
+                  地図上では、視覚的なアニメーションや色分けにより全国の人流を把握できます。
+                </p>
+                <div className="guideFeatureList">
+                  <div className="guideFeatureItem">
+                    <strong>1. 人流光線アニメーション</strong>
+                    <p>出発地から目的地へ向かって流れる光の線で、人の移動の向きと繋がりを直感的に表示します。</p>
+                  </div>
+                  <div className="guideFeatureItem">
+                    <strong>2. 都道府県のクリック選択</strong>
+                    <p>地図上の都道府県を直接クリックすることで、選択地点（出発地／目的地）を素早く切り替えられます。</p>
+                  </div>
+                  <div className="guideFeatureItem">
+                    <strong>3. 都道府県の色分け（凡例ハイライト）</strong>
+                    <p>画面右下の凡例ボタンをクリックすると、指定した来訪者数範囲の都道府県のみをハイライトして絞り込めます。</p>
+                  </div>
+                </div>
+              </div>
             )}
 
             {guideStep === 2 && (
-              <>
-                <h2>📊 データの見方</h2>
-                <div
-                  style={{
-                    width: "100%",
-                    maxWidth: "100%",
-                    overflowX: "hidden",
-                  }}
-                >
-                  <ul
-                    style={{
-                      paddingLeft: "20px",
-                      lineHeight: "1.8",
-                      wordBreak: "break-word",
-                      overflowWrap: "break-word",
-                    }}
-                  >
-                    <li>
-                      選択地点への来訪人数を前年度と比較できます。
-                    </li>
-                    <li>
-                      移動目的・交通手段ごとの来訪人数を前年度と比較できます。
-                    </li>
-                    <li>
-                      対象地点から選択地点への移動目的・交通手段の割合を確認できます。
-                    </li>
-                    <li>選択地点へ来る人数ランキングを確認できます。</li>
-                  </ul>
-                  <img
-                    src="/guide3.png"
-                    alt="データの見方"
-                    className="guideImage"
-                    style={{
-                      width: "100%",
-                      maxWidth: "100%",
-                      height: "auto",
-                      display: "block",
-                      marginTop: "10px",
-                      borderRadius: "8px",
-                    }}
-                  />
+              <div className="guideStepContent">
+                <h2>前年度比較と目的・手段別の詳細分析</h2>
+                <p className="guideIntro">
+                  左側の比較パネルでは、来訪人数の増減や交通行動ごとの詳細な内訳を調査できます。
+                </p>
+                <div className="guideFeatureList">
+                  <div className="guideFeatureItem">
+                    <strong>1. 前年度比較</strong>
+                    <p>今年度と前年度の人数、および前年比（増減数・増減率・前年比倍率）をテキストで即座に確認できます。</p>
+                  </div>
+                  <div className="guideFeatureItem">
+                    <strong>2. 交通目的別で見る</strong>
+                    <p>「観光」「仕事」「私用」などの目的ボタンを押すと、目的別の来訪人数と前年比に切り替わります。</p>
+                  </div>
+                  <div className="guideFeatureItem">
+                    <strong>3. 交通手段別で見る</strong>
+                    <p>「鉄道」「自動車」「航空」「船舶」などの手段ボタンを押すと、利用手段ごとの来訪人数と前年比に切り替わります。</p>
+                  </div>
                 </div>
-              </>
+              </div>
+            )}
+
+            {guideStep === 3 && (
+              <div className="guideStepContent">
+                <h2>割合グラフと来訪者ランキングTOP10</h2>
+                <p className="guideIntro">
+                  右側の情報パネルでは、詳細な構成比率や来訪者の多い都道府県ランキングを確認できます。
+                </p>
+                <div className="guideFeatureList">
+                  <div className="guideFeatureItem">
+                    <strong>1. 割合タブ</strong>
+                    <p>出発地から目的地への「移動目的割合」や「交通手段割合」をバーグラフとパーセントで確認できます。</p>
+                  </div>
+                  <div className="guideFeatureItem">
+                    <strong>2. 順位タブ（来訪者ランキング TOP10）</strong>
+                    <p>選択した目的地へ来る人数の多い上位10都道府県のランキングと、前年からの順位変動を確認できます。</p>
+                  </div>
+                  <div className="guideFeatureItem">
+                    <strong>3. メニュー（≡）</strong>
+                    <p>右上のメニューから、いつでもこのチュートリアルや詳しい使い方ページを開くことができます。</p>
+                  </div>
+                </div>
+              </div>
             )}
 
             <div className="guideButtons">
@@ -1274,7 +1294,7 @@ export default function App() {
                 </button>
               )}
 
-              {guideStep < 2 ? (
+              {guideStep < 3 ? (
                 <button
                   onClick={() => setGuideStep(guideStep + 1)}
                   style={{ marginLeft: "auto" }}
@@ -1282,7 +1302,9 @@ export default function App() {
                   次へ →
                 </button>
               ) : (
-                <button onClick={closeGuide}>はじめる</button>
+                <button onClick={closeGuide} style={{ marginLeft: "auto" }}>
+                  はじめる
+                </button>
               )}
             </div>
           </div>

@@ -835,13 +835,18 @@ button {
 
 .guideModal {
     position: relative;
-    width: 700px;
-    max-width: 90%;
+    width: 620px;
+    max-width: 92%;
+    max-height: 90vh;
+    overflow: hidden;
     background: white;
     border-radius: 16px;
-    padding: 35px;
+    padding: 28px 32px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, .3);
     animation: popup .25s;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes popup {
@@ -855,36 +860,93 @@ button {
     }
 }
 
-.guideModal h2 {
-    margin-top: 0;
-    text-align: center;
+.guideGaugeTrack {
+    width: calc(100% - 40px);
+    height: 4px;
+    background: #f1f5f9;
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0 0 16px 0;
 }
 
-.guideModal p,
-.guideModal li {
-    font-size: 16px;
-    line-height: 1.8;
+.guideGaugeFill {
+    height: 100%;
+    background: #1e88e5;
+    border-radius: 2px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.guideImage {
-    width: 100%;
-    margin: 15px 0;
-    border-radius: 10px;
+.guideStepContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.guideStepContent h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    text-align: left;
+}
+
+.guideIntro {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #475569;
+    margin-bottom: 12px;
+}
+
+.guideFeatureList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.guideFeatureItem {
+    background: #f8fafc;
+    border-left: 4px solid #1e88e5;
+    border-radius: 0 8px 8px 0;
+    padding: 8px 12px;
+}
+
+.guideFeatureItem strong {
+    font-size: 13px;
+    color: #0f172a;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.guideFeatureItem p {
+    font-size: 12px;
+    color: #475569;
+    line-height: 1.5;
+    margin: 0;
 }
 
 .guideButtons {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
 }
 
 .guideButtons button {
-    padding: 10px 25px;
-    font-size: 15px;
+    padding: 8px 24px;
+    font-size: 14px;
+    font-weight: 700;
     cursor: pointer;
     background: #1e88e5;
     color: white;
     border: none;
     border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.guideButtons button:hover {
+    background: #1565c0;
 }
