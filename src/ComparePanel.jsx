@@ -33,19 +33,18 @@ function TextOnlyComparison({ current, previous, diff, rate }) {
 
   return (
     <div className="textCompareContainer">
-      <div className="textCompareRow">
-        <div className="textCompareItem">
-          <span className="textCompareLabel">今年度</span>
-          <span className="textCompareValue current">
-            {curVal.toLocaleString()} <span className="textCompareUnit">人</span>
-          </span>
+      <div className="textCompareHeroRow">
+        <div className="currentPeopleHero">
+          <span className="currentHeroLabel">今年度</span>
+          <div className="currentHeroNumberWrapper">
+            <span className="currentHeroNumber">{curVal.toLocaleString()}</span>
+            <span className="currentHeroUnit">人</span>
+          </div>
         </div>
-        <div className="textCompareDivider" />
-        <div className="textCompareItem">
-          <span className="textCompareLabel">前年度</span>
-          <span className="textCompareValue previous">
-            {prevVal.toLocaleString()} <span className="textCompareUnit">人</span>
-          </span>
+
+        <div className="previousPeopleSubRight">
+          <span className="prevSubLabel">前年:</span>
+          <span className="prevSubNumber">{prevVal.toLocaleString()} 人</span>
         </div>
       </div>
 

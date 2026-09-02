@@ -1055,10 +1055,7 @@ export default function App() {
           {/* ② 年度選択 (スマートカード) */}
           <div className="controlCard">
             <div className="controlItem">
-              <div className="controlLabelWrapper">
-                <label className="controlLabel">分析年度</label>
-                <span className="controlLabelHint">調査年を選択</span>
-              </div>
+              <label className="controlLabel">年度選択</label>
               <select
                 className="controlSelect"
                 value={year}
@@ -1211,8 +1208,8 @@ export default function App() {
                     <p>中央の入れ替えボタンを押すと、ワンクリックで出発地と目的地が入れ替わります。</p>
                   </div>
                   <div className="guideFeatureItem">
-                    <strong>3. 分析年度の切り替え</strong>
-                    <p>年度選択カードから調査年（1990年度〜2021年度）を切り替えて過去データと比較できます。</p>
+                    <strong>3. 年度選択</strong>
+                    <p>年度選択カードから対象年度（1990年度〜2021年度）を切り替えて過去データと比較できます。</p>
                   </div>
                 </div>
               </div>

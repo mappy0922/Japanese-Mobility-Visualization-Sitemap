@@ -634,58 +634,67 @@ h1 {
     width: 100%;
 }
 
-.textCompareRow {
+.textCompareHeroRow {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: flex-end;
     background: #f8fafc;
     border-radius: 8px;
     padding: 8px 12px;
 }
 
-.textCompareItem {
+.currentPeopleHero {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    flex: 1;
 }
 
-.textCompareLabel {
+.currentHeroLabel {
     font-size: 11px;
     font-weight: 700;
     color: #64748b;
 }
 
-.textCompareValue {
-    font-size: 16px;
+.currentHeroNumberWrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+}
+
+.currentHeroNumber {
+    font-size: 21px;
     font-weight: 800;
-    line-height: 1.2;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    line-height: 1;
 }
 
-.textCompareValue.current {
-    color: #111827;
-}
-
-.textCompareValue.current .textCompareUnit {
-    color: #374151;
-}
-
-.textCompareValue.previous {
+.currentHeroUnit {
+    font-size: 12px;
+    font-weight: 700;
     color: #475569;
 }
 
-.textCompareUnit {
-    font-size: 11px;
-    font-weight: 600;
+.previousPeopleSubRight {
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    font-size: 11.5px;
     color: #64748b;
-    margin-left: 2px;
+    font-weight: 500;
+    padding-bottom: 2px;
+    white-space: nowrap;
 }
 
-.textCompareDivider {
-    width: 1px;
-    height: 28px;
-    background: #e2e8f0;
-    margin: 0 10px;
+.prevSubLabel {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.prevSubNumber {
+    font-weight: 700;
+    color: #475569;
+    font-size: 12px;
 }
 
 .textDiffBadge {
