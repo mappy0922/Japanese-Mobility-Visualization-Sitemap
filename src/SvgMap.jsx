@@ -246,6 +246,22 @@ export default function SvgMap({
                                 const baseWidth = 2.0 + Math.pow(normalized, 0.52) * 32.0;
                                 const strokeWidth = baseWidth / Scale;
 
+                                // 距離（dist）に応じた円の個数の制御（近距離での密集・過度な発光を防止しつつ各距離帯で+2個）
+                                let particleCount = 3;
+                                if (dist >= 320) {
+                                    particleCount = 6;
+                                } else if (dist >= 180) {
+                                    particleCount = 5;
+                                } else if (dist >= 80) {
+                                    particleCount = 4;
+                                } else {
+                                    particleCount = 3;
+                                }
+
+                                const delays = Array.from(
+                                    { length: particleCount },
+                                    (_, idx) => idx / particleCount
+                                );
 
                                 return (
                                     <g
@@ -270,51 +286,50 @@ export default function SvgMap({
                                         />
 
 
-                                        {[0, 0.2, 0.4, 0.6, 0.8]
-                                            .map(delay => (
+                                        {delays.map(delay => (
 
-                                                <circle
-                                                    key={`flow-${i}-${delay}`}
-                                                    r={
-                                                        6 / Scale
-                                                    }
-                                                    fill="white"
-                                                    opacity="0.9"
-                                                    filter="url(#flowGlow)"
-                                                >
+                                            <circle
+                                                key={`flow-${i}-${delay}`}
+                                                r={
+                                                    5 / Scale
+                                                }
+                                                fill="white"
+                                                opacity="0.9"
+                                                filter="url(#flowGlow)"
+                                            >
 
-                                                    <animateMotion
-                                                        dur="2.5s"
-                                                        repeatCount="indefinite"
-                                                        begin={`${delay * 2.5}s`}
-                                                        path={d}
-                                                    />
-
-
-                                                    <animate
-                                                        attributeName="opacity"
-                                                        values="0.3;1;0.3"
-                                                        dur="2.5s"
-                                                        begin={`${delay * 2.5}s`}
-                                                        repeatCount="indefinite"
-                                                    />
+                                                <animateMotion
+                                                    dur="2.5s"
+                                                    repeatCount="indefinite"
+                                                    begin={`${delay * 2.5}s`}
+                                                    path={d}
+                                                />
 
 
-                                                    <animate
-                                                        attributeName="r"
-                                                        values={`
-                                                            ${3 / Scale};
-                                                            ${7 / Scale};
-                                                            ${3 / Scale}
-                                                        `}
-                                                        dur="2.5s"
-                                                        begin={`${delay * 2.5}s`}
-                                                        repeatCount="indefinite"
-                                                    />
+                                                <animate
+                                                    attributeName="opacity"
+                                                    values="0.3;1;0.3"
+                                                    dur="2.5s"
+                                                    begin={`${delay * 2.5}s`}
+                                                    repeatCount="indefinite"
+                                                />
 
-                                                </circle>
 
-                                            ))}
+                                                <animate
+                                                    attributeName="r"
+                                                    values={`
+                                                        ${2.5 / Scale};
+                                                        ${5.5 / Scale};
+                                                        ${2.5 / Scale}
+                                                    `}
+                                                    dur="2.5s"
+                                                    begin={`${delay * 2.5}s`}
+                                                    repeatCount="indefinite"
+                                                />
+
+                                            </circle>
+
+                                        ))}
 
                                     </g>
                                 );

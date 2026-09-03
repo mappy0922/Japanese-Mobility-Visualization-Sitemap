@@ -168,7 +168,7 @@ export default function App() {
    */
   const [Map, setMap] = useState(MapName[0]);
   const [traffic, setTraffic] = useState(transportation[0]);
-  const [year, setYear] = useState(yearSelection[0]);
+  const [year, setYear] = useState("2010年度");
   const [prefecture, setPrefecture] = useState("東京");
   const [destination, setDestination] = useState("大阪");
 
@@ -841,7 +841,7 @@ export default function App() {
         })
         .attr("stroke-width", (d) => {
           const name = d.properties.nam_ja.replace(/(都|府|県)$/, "");
-          if (name === prefecture || name === destination) return 3.5;
+          if (name === prefecture || name === destination) return 2.1;
           return 0;
         });
 
@@ -1270,7 +1270,7 @@ export default function App() {
                 <div className="guideFeatureList">
                   <div className="guideFeatureItem">
                     <strong>1. 割合タブ</strong>
-                    <p>出発地から目的地への「移動目的割合」や「交通手段割合」をバーグラフとパーセントで確認できます。</p>
+                    <p>他都道府県から目的地へ来る「移動目的割合」や「交通手段割合」をバーグラフとパーセントで確認できます。</p>
                   </div>
                   <div className="guideFeatureItem">
                     <strong>2. 順位タブ（来訪者ランキング TOP10）</strong>

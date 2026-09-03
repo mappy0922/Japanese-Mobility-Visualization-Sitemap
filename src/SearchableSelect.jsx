@@ -16,9 +16,11 @@ export default function SearchableSelect({
 
   const isFrom = type === "from";
 
-  // 外部クリックおよびEscapeキーでプルダウンを閉じる
+  // 外部クリック/タップおよびEscapeキーでプルダウンを閉じる
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    if (!isOpen) return;
+
+    const handleOutsideInteraction = (event) => {
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target)
@@ -35,13 +37,19 @@ export default function SearchableSelect({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    // キャプチャフェーズで登録することで、地図等の子要素で伝播停止されても確実に検知
+    document.addEventListener("pointerdown", handleOutsideInteraction, true);
+    document.addEventListener("touchstart", handleOutsideInteraction, true);
+    document.addEventListener("mousedown", handleOutsideInteraction, true);
     document.addEventListener("keydown", handleKeyDown);
+
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("pointerdown", handleOutsideInteraction, true);
+      document.removeEventListener("touchstart", handleOutsideInteraction, true);
+      document.removeEventListener("mousedown", handleOutsideInteraction, true);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [isOpen]);
 
   // 開いた時に入力欄へフォーカス
   useEffect(() => {

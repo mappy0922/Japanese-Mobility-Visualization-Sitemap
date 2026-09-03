@@ -143,15 +143,15 @@ export default function SvgLabel({
                 >
                   <span
                     style={{
-                      fontSize: "13.5px",
+                      fontSize: "13px",
                       fontWeight: "bold",
                       color: "#222",
                     }}
                   >
                     移動目的割合
                   </span>
-                  <span style={{ fontSize: "11px", color: "#666" }}>
-                    {prefecture} ➔ {destination}
+                  <span style={{ fontSize: "11px", color: "#666", fontWeight: "500" }}>
+                    他都道府県 ➔ {destination}
                   </span>
                 </div>
 
@@ -166,7 +166,7 @@ export default function SvgLabel({
 
                   const data = travelData.filter(
                     (item) =>
-                      item.from === prefecture && item.to === destination
+                      item.to === destination && item.from !== destination
                   );
 
                   const total = data.reduce(
@@ -266,15 +266,15 @@ export default function SvgLabel({
                 >
                   <span
                     style={{
-                      fontSize: "13.5px",
+                      fontSize: "13px",
                       fontWeight: "bold",
                       color: "#222",
                     }}
                   >
                     交通手段割合
                   </span>
-                  <span style={{ fontSize: "11px", color: "#666" }}>
-                    {prefecture} ➔ {destination}
+                  <span style={{ fontSize: "11px", color: "#666", fontWeight: "500" }}>
+                    他都道府県 ➔ {destination}
                   </span>
                 </div>
 
@@ -292,18 +292,28 @@ export default function SvgLabel({
 
                   const data = transportationData.filter(
                     (item) =>
-                      item.from === prefecture && item.to === destination
+                      item.to === destination && item.from !== destination
                   );
 
-                  const totalItem = data.find(
-                    (item) =>
-                      item.purpose ===
-                      (year === "2005年度" || year === "2010年度"
-                        ? "全機関"
-                        : "全機関_全目的")
-                  );
+                  const totalPurpose =
+                    year === "2005年度" || year === "2010年度"
+                      ? "全機関"
+                      : "全機関_全目的";
 
-                  const total = totalItem ? totalItem.people : 0;
+                  const totalFromData = data
+                    .filter((item) => item.purpose === totalPurpose)
+                    .reduce((sum, item) => sum + item.people, 0);
+
+                  const methodSum = methods.reduce((acc, m) => {
+                    return (
+                      acc +
+                      data
+                        .filter((d) => d.purpose === m)
+                        .reduce((sum, d) => sum + d.people, 0)
+                    );
+                  }, 0);
+
+                  const total = totalFromData > 0 ? totalFromData : methodSum;
 
                   if (total === 0) {
                     return (
