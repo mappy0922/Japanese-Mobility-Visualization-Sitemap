@@ -60,6 +60,8 @@ export default function ComparePanel({
   traffic,
   setTraffic,
   year,
+  prefecture = "東京",
+  destination = "大阪",
   currentPeople,
   previousPeople,
   diff,
@@ -72,11 +74,18 @@ export default function ComparePanel({
   labelDiff,
   labelRate,
 }) {
+  const selectedLabelDisplayName = selectedLabel
+    ? selectedLabel.replace("代_全機関_", "").replace("_全目的", "")
+    : "";
+
   return (
     <div className="comparePanel">
       {/* 1. 5年間隔比較 カード */}
       <div className="compareCard">
-        <div className="compareTitle">5年間隔比較</div>
+        <div className="compareHeaderTopRow">
+          <span className="compareTitle">5年間隔比較</span>
+          <span className="compareFlowBadge">他都道府県→{destination}</span>
+        </div>
         <div className="compareBody">
           {year === "1990年度" ? (
             <div className="compareNotice">比較対象の5年前データはありません</div>
@@ -96,6 +105,9 @@ export default function ComparePanel({
         <div className="labelCompareHeader">
           <div className="compareHeaderTopRow">
             <span className="compareTitle">ラベル比較</span>
+            <span className="compareFlowBadge">
+              {prefecture}({selectedLabelDisplayName || "選択中"})→{destination}
+            </span>
           </div>
 
           {/* 交通目的別 / 交通手段別 切り替えボタングループ */}

@@ -488,6 +488,17 @@ h1 {
     color: #1e293b;
 }
 
+.compareFlowBadge {
+    font-size: 10px;
+    font-weight: 500;
+    color: #64748b;
+    background: transparent;
+    padding: 0;
+    border: none;
+    letter-spacing: 0.1px;
+    white-space: nowrap;
+}
+
 .compareHeaderTopRow {
     display: flex;
     align-items: center;

@@ -1099,6 +1099,8 @@ export default function App() {
             traffic={traffic}
             setTraffic={setTraffic}
             year={year}
+            prefecture={prefecture}
+            destination={destination}
             currentPeople={currentPeople}
             previousPeople={previousPeople}
             diff={diff}
