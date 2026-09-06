@@ -152,7 +152,7 @@ h1 {
 }
 
 .routeSwapBtn:hover {
-    background: #1e88e5;
+    background: #1e3a8a;
     color: #ffffff;
     transform: rotate(180deg);
 }
@@ -196,23 +196,23 @@ h1 {
 }
 
 .searchableSelectTrigger.fromTrigger {
-    color: #c62828;
+    color: #d97706;
 }
 
 .searchableSelectTrigger.fromTrigger.activeTrigger {
-    border-color: #e53935;
-    background: #ffebee;
-    box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2);
+    border-color: #f59e0b;
+    background: #fffbeb;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 
 .searchableSelectTrigger.toTrigger {
-    color: #1565c0;
+    color: #6d28d9;
 }
 
 .searchableSelectTrigger.toTrigger.activeTrigger {
-    border-color: #1e88e5;
-    background: #e3f2fd;
-    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.2);
+    border-color: #7c3aed;
+    background: #f5f3ff;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
 }
 
 .searchableDot {
@@ -223,11 +223,11 @@ h1 {
 }
 
 .searchableDot.fromDot {
-    background: #e53935;
+    background: #f59e0b;
 }
 
 .searchableDot.toDot {
-    background: #1e88e5;
+    background: #7c3aed;
 }
 
 .searchableLabel {
@@ -292,9 +292,9 @@ h1 {
 }
 
 .searchableInput:focus {
-    border-color: #1e88e5;
+    border-color: #1e3a8a;
     background: #fff;
-    box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.15);
+    box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.15);
 }
 
 .searchableClearBtn {
@@ -453,11 +453,11 @@ h1 {
 }
 
 .labelButton.active {
-    background: #1e88e5;
+    background: #1e3a8a;
     color: white;
-    border-color: #1565c0;
+    border-color: #172554;
     font-weight: bold;
-    box-shadow: 0 2px 6px rgba(30, 136, 229, 0.35);
+    box-shadow: 0 2px 6px rgba(30, 58, 138, 0.35);
 }
 
 /* ============================================================
@@ -537,7 +537,8 @@ h1 {
 
 .trafficModeBtn.active {
     background: #ffffff;
-    color: #1e88e5;
+    color: #1e3a8a;
+    font-weight: 800;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
@@ -579,13 +580,13 @@ h1 {
 
 .labelButtonInCard:hover {
     background: #f1f5f9;
-    color: #1e88e5;
+    color: #1e3a8a;
 }
 
 .labelButtonInCard.active {
-    background: #1e88e5;
+    background: #1e3a8a;
     color: #ffffff;
-    box-shadow: 0 2px 6px rgba(30, 136, 229, 0.35);
+    box-shadow: 0 2px 6px rgba(30, 58, 138, 0.35);
 }
 
 .labelBtnIcon {
@@ -880,7 +881,7 @@ button {
 
 .guideGaugeFill {
     height: 100%;
-    background: #1e88e5;
+    background: #1e3a8a;
     border-radius: 2px;
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -916,7 +917,7 @@ button {
 
 .guideFeatureItem {
     background: #f8fafc;
-    border-left: 4px solid #1e88e5;
+    border-left: 4px solid #1e3a8a;
     border-radius: 0 8px 8px 0;
     padding: 8px 12px;
 }
@@ -949,7 +950,7 @@ button {
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    background: #1e88e5;
+    background: #1e3a8a;
     color: white;
     border: none;
     border-radius: 8px;
@@ -957,5 +958,5 @@ button {
 }
 
 .guideButtons button:hover {
-    background: #1565c0;
+    background: #172554;
 }

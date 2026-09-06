@@ -11,7 +11,7 @@ function TextOnlyComparison({ current, previous, diff, rate }) {
       diffBadgeText = "0人 (変動なし)";
       diffBadgeColor = "#64748b";
     } else {
-      diffBadgeText = `▲ +${curVal.toLocaleString()}人 (前年なし/新規)`;
+      diffBadgeText = `▲ +${curVal.toLocaleString()}人 (5年前なし/新規)`;
       diffBadgeColor = "#e53935";
     }
   } else {
@@ -26,7 +26,7 @@ function TextOnlyComparison({ current, previous, diff, rate }) {
       diffBadgeText = `▼ ${diffNum.toLocaleString()}人 (${pct}% / ${multiplier}倍)`;
       diffBadgeColor = "#1e88e5";
     } else {
-      diffBadgeText = "● ±0人 (前年同水準)";
+      diffBadgeText = "● ±0人 (5年前同水準)";
       diffBadgeColor = "#64748b";
     }
   }
@@ -43,13 +43,13 @@ function TextOnlyComparison({ current, previous, diff, rate }) {
         </div>
 
         <div className="previousPeopleSubRight">
-          <span className="prevSubLabel">前年:</span>
+          <span className="prevSubLabel">5年前:</span>
           <span className="prevSubNumber">{prevVal.toLocaleString()} 人</span>
         </div>
       </div>
 
       <div className="textDiffBadge" style={{ color: diffBadgeColor }}>
-        <span className="textDiffLabel">前年比:</span>
+        <span className="textDiffLabel">5年前比:</span>
         <span className="textDiffValue">{diffBadgeText}</span>
       </div>
     </div>
@@ -74,12 +74,12 @@ export default function ComparePanel({
 }) {
   return (
     <div className="comparePanel">
-      {/* 1. 前年度比較 カード */}
+      {/* 1. 5年間隔比較 カード */}
       <div className="compareCard">
-        <div className="compareTitle">前年度比較</div>
+        <div className="compareTitle">5年間隔比較</div>
         <div className="compareBody">
           {year === "1990年度" ? (
-            <div className="compareNotice">比較対象の前年度はありません</div>
+            <div className="compareNotice">比較対象の5年前データはありません</div>
           ) : (
             <TextOnlyComparison
               current={currentPeople}
@@ -161,7 +161,7 @@ export default function ComparePanel({
 
         <div className="compareBody">
           {year === "1990年度" ? (
-            <div className="compareNotice">比較対象の前年度はありません</div>
+            <div className="compareNotice">比較対象の5年前データはありません</div>
           ) : !selectedLabel ? (
             <div className="compareNotice">ラベルを選択してください</div>
           ) : (

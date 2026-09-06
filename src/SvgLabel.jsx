@@ -55,12 +55,12 @@ export default function SvgLabel({
                 fontWeight: "bold",
                 borderRadius: "6px",
                 border: "1.5px solid #d0d7de",
-                background: tab === "graph" ? "#1e88e5" : "white",
+                background: tab === "graph" ? "#1e3a8a" : "white",
                 color: tab === "graph" ? "white" : "#333",
                 cursor: "pointer",
                 boxShadow:
                   tab === "graph"
-                    ? "0 2px 5px rgba(30, 136, 229, 0.25)"
+                    ? "0 2px 5px rgba(30, 58, 138, 0.25)"
                     : "none",
                 transition: "all 0.15s ease",
               }}
@@ -76,12 +76,12 @@ export default function SvgLabel({
                 fontWeight: "bold",
                 borderRadius: "6px",
                 border: "1.5px solid #d0d7de",
-                background: tab === "rank" ? "#1e88e5" : "white",
+                background: tab === "rank" ? "#1e3a8a" : "white",
                 color: tab === "rank" ? "white" : "#333",
                 cursor: "pointer",
                 boxShadow:
                   tab === "rank"
-                    ? "0 2px 5px rgba(30, 136, 229, 0.25)"
+                    ? "0 2px 5px rgba(30, 58, 138, 0.25)"
                     : "none",
                 transition: "all 0.15s ease",
               }}
@@ -214,13 +214,13 @@ export default function SvgLabel({
                             marginBottom: "2px",
                           }}
                         >
-                          <span style={{ fontWeight: "600", color: "#333" }}>
+                          <span style={{ fontWeight: "600", color: "#111827" }}>
                             {purpose.replace("代_全機関_", "")}
                           </span>
                           <span
                             style={{
                               fontWeight: "bold",
-                              color: "#d9534f",
+                              color: "#111827",
                               fontSize: "12px",
                             }}
                           >
@@ -239,7 +239,7 @@ export default function SvgLabel({
                             style={{
                               width: `${percentage}%`,
                               height: "13px",
-                              background: "#ef4444",
+                              background: "#1e293b",
                               borderRadius: "6.5px",
                               transition: "width 0.3s ease",
                             }}
@@ -355,13 +355,13 @@ export default function SvgLabel({
                             marginBottom: "2px",
                           }}
                         >
-                          <span style={{ fontWeight: "600", color: "#333" }}>
+                          <span style={{ fontWeight: "600", color: "#111827" }}>
                             {method.replace("_全目的", "")}
                           </span>
                           <span
                             style={{
                               fontWeight: "bold",
-                              color: "#0288d1",
+                              color: "#111827",
                               fontSize: "12px",
                             }}
                           >
@@ -380,7 +380,7 @@ export default function SvgLabel({
                             style={{
                               width: `${percentage}%`,
                               height: "13px",
-                              background: "#1e88e5",
+                              background: "#1e293b",
                               borderRadius: "6.5px",
                               transition: "width 0.3s ease",
                             }}

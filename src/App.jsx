@@ -258,31 +258,31 @@ export default function App() {
   let dataColor = {};
   if (traffic === "移動目的") {
     dataColor = {
-      代_全機関_仕事: "#4E79A7",
-      代_全機関_観光: "#F28E2B",
-      代_全機関_私用: "#E15759",
-      代_全機関_その他: "#76B7B2",
-      代_全機関_不明: "#59A14F",
-      代_全機関_全目的: "#BAB0AC",
+      代_全機関_仕事: "#2563eb",
+      代_全機関_観光: "#ea580c",
+      代_全機関_私用: "#db2777",
+      代_全機関_その他: "#06b6d4",
+      代_全機関_不明: "#64748b",
+      代_全機関_全目的: "#94a3b8",
     };
   } else {
     if (year === "1990年度" || year === "1995年度" || year === "2000年度") {
       dataColor = {
-        航空_全目的: "#4E79A7",
-        鉄道_全目的: "#F28E2B",
-        船_全目的: "#76B7B2",
-        バス_全目的: "#E15759",
-        自動車_全目的: "#59A14F",
-        全機関_全目的: "#BAB0AC",
+        航空_全目的: "#0891b2",
+        鉄道_全目的: "#eab308",
+        船_全目的: "#4f46e5",
+        バス_全目的: "#f43f5e",
+        自動車_全目的: "#92400e",
+        全機関_全目的: "#475569",
       };
     } else {
       dataColor = {
-        航空: "#4E79A7",
-        鉄道: "#F28E2B",
-        船: "#76B7B2",
-        バス: "#E15759",
-        乗用車等: "#59A14F",
-        全機関: "#BAB0AC",
+        航空: "#0891b2",
+        鉄道: "#eab308",
+        船: "#4f46e5",
+        バス: "#f43f5e",
+        乗用車等: "#92400e",
+        全機関: "#475569",
       };
     }
   }
@@ -835,8 +835,8 @@ export default function App() {
         })
         .attr("stroke", (d) => {
           const name = d.properties.nam_ja.replace(/(都|府|県)$/, "");
-          if (name === prefecture) return "#e53935";
-          if (name === destination) return "#1e88e5";
+          if (name === prefecture) return "#f59e0b";
+          if (name === destination) return "#7c3aed";
           return "none";
         })
         .attr("stroke-width", (d) => {
@@ -1080,7 +1080,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* ③ 比較・分析パネル（全体前年度比較 ➔ 目的別/手段別詳細比較） */}
+          {/* ③ 比較・分析パネル（全体5年間隔比較 ➔ 目的別/手段別詳細比較） */}
           <ComparePanel
             traffic={traffic}
             setTraffic={setTraffic}
@@ -1240,14 +1240,14 @@ export default function App() {
 
             {guideStep === 2 && (
               <div className="guideStepContent">
-                <h2>前年度比較と目的・手段別の詳細分析</h2>
+                <h2>5年間隔比較と目的・手段別の詳細分析</h2>
                 <p className="guideIntro">
                   左側の比較パネルでは、来訪人数の増減や交通行動ごとの詳細な内訳を調査できます。
                 </p>
                 <div className="guideFeatureList">
                   <div className="guideFeatureItem">
-                    <strong>1. 前年度比較</strong>
-                    <p>今年度と前年度の人数、および前年比（増減数・増減率・前年比倍率）をテキストで即座に確認できます。</p>
+                    <strong>1. 5年間隔比較</strong>
+                    <p>今年度と5年前の人数、および5年前比（増減数・増減率・倍率）をテキストで即座に確認できます。</p>
                   </div>
                   <div className="guideFeatureItem">
                     <strong>2. 交通目的別で見る</strong>
