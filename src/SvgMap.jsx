@@ -42,7 +42,7 @@ export default function SvgMap({
      * ============================================================
      */
 
-    const columns = mapWidth > 750 ? 4 : 2;
+    const columns = mapWidth > 800 ? 3 : 2;
 
     const gap = 10;
 
@@ -240,10 +240,9 @@ export default function SvgMap({
                                       ${to[0]} ${to[1]}
                                 `;
 
-                                // 人数（移動量）に応じた連続的かつ明確な線の太さの計算 (2.0px 〜 34.0px)
+                                // 人数が増えれば増えるほど連続的かつ明確に線が太くなる計算 (0.8px 〜 23.0px)
                                 const people = Math.max(0, item.people || 0);
-                                const normalized = Math.min(1.0, people / 200000);
-                                const baseWidth = 2.0 + Math.pow(normalized, 0.52) * 32.0;
+                                const baseWidth = Math.max(0.8, 0.6 + Math.pow(people, 0.37) * 0.032);
                                 const strokeWidth = baseWidth / Scale;
 
                                 // 距離（dist）に応じた円の個数の制御（近距離での密集・過度な発光を防止しつつ各距離帯で+2個）
@@ -559,10 +558,15 @@ export default function SvgMap({
                         <text
                             x="35"
                             y="25"
-                            fontSize="12"
+                            fontSize="11.5"
+                            fontWeight="500"
                         >
-                            {i < 5
-                                ? `${name}人以上`
+                            {typeof name === "number"
+                                ? name >= 100000000
+                                    ? `${(name / 100000000).toLocaleString()}億人以上`
+                                    : name >= 10000
+                                        ? `${(name / 10000).toLocaleString()}万人以上`
+                                        : `${name.toLocaleString()}人以上`
                                 : `${name}`
                             }
                         </text>

@@ -35,7 +35,14 @@ const yearSelection = [
   "2010年度",
 ];
 
-const circleSize = [200000, 100000, 50000, 10000];
+const circleSize = [
+  200000000,
+  100000000,
+  50000000,
+  20000000,
+  10000000,
+  5000000,
+];
 
 const coord = Object.keys(coords);
 
@@ -293,43 +300,50 @@ export default function App() {
    * ============================================================
    */
   const judge = (people, judgeLimits) => {
+    const limits = judgeLimits && judgeLimits.length >= 4 ? judgeLimits : circleSize;
     const size = Math.log10(people + 1);
-    if (people >= judgeLimits[0]) return size * 1.8;
-    if (people >= judgeLimits[1]) return size * 1.5;
-    if (people >= judgeLimits[2]) return size * 1.2;
-    if (people >= judgeLimits[3]) return size * 0.8;
+    if (people >= limits[0]) return size * 1.8;
+    if (people >= limits[1]) return size * 1.5;
+    if (people >= limits[2]) return size * 1.2;
+    if (people >= limits[3]) return size * 0.8;
     return size * 0.5;
   };
 
   const RANGE_COLORS = {
-    200000: "#1b5e20", // ディープフォレスト (20万人以上 - 濃い緑)
-    100000: "#2e7d32", // エメラルドグリーン (10万人〜20万人 - 中濃緑)
-    50000: "#4caf50",  // リーフグリーン (5万人〜10万人 - 明るい緑)
-    10000: "#81c784",  // ペールミント (1万人〜5万人 - 薄い緑)
+    200000000: "#052e16", // ディープフォレスト (2億人以上 - 最深緑)
+    100000000: "#14532d", // エメラルドグリーン (1億人〜2億人 - 濃緑)
+    50000000:  "#166534", // リーフグリーン (5000万人〜1億人 - 深緑)
+    20000000:  "#15803d", // フォレストグリーン (2000万人〜5000万人 - 中濃緑)
+    10000000:  "#22c55e", // スプリンググリーン (1000万人〜2000万人 - 明るい緑)
+    5000000:   "#86efac", // ペールミント (500万人〜1000万人 - 薄い緑)
   };
 
   const circleColor = (val) => {
-    if (val >= 200000) return RANGE_COLORS[200000];
-    if (val >= 100000) return RANGE_COLORS[100000];
-    if (val >= 50000) return RANGE_COLORS[50000];
-    if (val >= 10000) return RANGE_COLORS[10000];
+    if (val >= 200000000) return RANGE_COLORS[200000000];
+    if (val >= 100000000) return RANGE_COLORS[100000000];
+    if (val >= 50000000) return RANGE_COLORS[50000000];
+    if (val >= 20000000) return RANGE_COLORS[20000000];
+    if (val >= 10000000) return RANGE_COLORS[10000000];
+    if (val >= 5000000) return RANGE_COLORS[5000000];
     return "#e2e8f0";
   };
 
   const isInRange = (people, level) => {
     switch (level) {
-      case 200000:
-        return people >= 200000;
-      case 100000:
-        return people >= 100000 && people < 200000;
-      case 50000:
-        return people >= 50000 && people < 100000;
-      case 10000:
-        return people >= 10000 && people < 50000;
-      case 1000:
-        return people >= 1000 && people < 10000;
+      case 200000000:
+        return people >= 200000000;
+      case 100000000:
+        return people >= 100000000 && people < 200000000;
+      case 50000000:
+        return people >= 50000000 && people < 100000000;
+      case 20000000:
+        return people >= 20000000 && people < 50000000;
+      case 10000000:
+        return people >= 10000000 && people < 20000000;
+      case 5000000:
+        return people >= 5000000 && people < 10000000;
       default:
-        return people < 1000;
+        return people < 5000000;
     }
   };
 
@@ -1135,6 +1149,30 @@ export default function App() {
             selectedLabel={selectedLabel}
           />
         </div>
+
+        {/* ============================================================
+            凡例を開くボタン (画面右端に半分隠れる左矢印タブボタン)
+           ============================================================ */}
+        {legend_judge && (
+          <button
+            type="button"
+            className="openLegendBtn"
+            onClick={() => setLegend_judge(false)}
+            title="割合・順位パネルを開く"
+            aria-label="割合・順位パネルを開く"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+        )}
 
         {/* ============================================================
             右側情報パネル (SvgLabel)
