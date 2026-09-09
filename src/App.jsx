@@ -106,6 +106,25 @@ export default function App() {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [showLandscapeNotice, setShowLandscapeNotice] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+    };
+  }, []);
+
+  const isPortraitMobile =
+    windowSize.width < 768 && windowSize.height > windowSize.width;
 
   const height = windowSize.height - 45;
 
@@ -1066,6 +1085,26 @@ export default function App() {
           )}
         </div>
       </div>
+
+      {/* ============================================================
+          スマホ縦画面時の横画面推奨通知バナー (アイコンなし)
+         ============================================================ */}
+      {isPortraitMobile && showLandscapeNotice && (
+        <div className="orientationNoticeBanner">
+          <span className="orientationNoticeText">
+            スマホ版では横画面を推奨します。
+          </span>
+          <button
+            type="button"
+            className="orientationNoticeClose"
+            onClick={() => setShowLandscapeNotice(false)}
+            aria-label="閉じる"
+            title="閉じる"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       <div className="image">
         {/* ============================================================
