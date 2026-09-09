@@ -117,6 +117,27 @@ export default function SvgMap({
         });
     };
 
+    /*
+     * ============================================================
+     * 全選択 / 全解除
+     * ============================================================
+     */
+    const handleSelectAll = () => {
+        if (clusterViewMode) {
+            setSelectedClusters(clusterList.map((c) => c.id));
+        } else {
+            setSelectedRange([...circleSize]);
+        }
+    };
+
+    const handleDeselectAll = () => {
+        if (clusterViewMode) {
+            setSelectedClusters([]);
+        } else {
+            setSelectedRange([]);
+        }
+    };
+
 
     /*
      * ============================================================
@@ -358,7 +379,7 @@ export default function SvgMap({
                ============================================================ */}
             <g transform={`translate(${startX}, ${height - legendHeight - 96})`}>
                 {/* モード切り替えタブ */}
-                <foreignObject x="-4" y="0" width={Math.max(totalLegendWidth + 8, 250)} height="32">
+                <foreignObject x="-4" y="-6" width={Math.max(totalLegendWidth + 8, 250)} height="32">
                     <div
                         xmlns="http://www.w3.org/1999/xhtml"
                         style={{
@@ -410,24 +431,96 @@ export default function SvgMap({
                     </div>
                 </foreignObject>
 
-                {/* 説明テキスト */}
-                <rect
+                {/* 説明テキスト & 全選択・全解除ボタン */}
+                <foreignObject
                     x="-4"
                     y="36"
                     width={Math.max(totalLegendWidth + 8, 250)}
-                    height="32"
-                    rx="6"
-                    fill="rgba(255, 255, 255, 0.95)"
-                    stroke="none"
-                />
-                <text x="4" y="49" fontSize="11" fontWeight="bold" fill="#1e293b">
-                    {clusterViewMode ? "都道府県の地域特性クラスタ分類" : "都道府県の色分け（来訪者数別）"}
-                </text>
-                <text x="4" y="61" fontSize="9" fill="#64748b">
-                    {clusterViewMode
-                        ? "※クリックで指定したクラスタの都道府県をハイライト"
-                        : "※クリックで指定した人数範囲の都道府県をハイライト"}
-                </text>
+                    height="36"
+                >
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: "6px",
+                            background: "rgba(255, 255, 255, 0.95)",
+                            padding: "4px 8px",
+                            borderRadius: "6px",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                            boxSizing: "border-box",
+                            height: "100%",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column", minWidth: 0, flex: 1 }}>
+                            <span
+                                style={{
+                                    fontSize: "11px",
+                                    fontWeight: "bold",
+                                    color: "#1e293b",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                }}
+                            >
+                                {clusterViewMode
+                                    ? "地域特性クラスタ分類"
+                                    : "都道府県の色分け（規模別）"}
+                            </span>
+                            <span
+                                style={{
+                                    fontSize: "9px",
+                                    color: "#64748b",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                }}
+                            >
+                                ※クリックで表示切替
+                            </span>
+                        </div>
+
+                        <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
+                            <button
+                                type="button"
+                                onClick={handleSelectAll}
+                                style={{
+                                    padding: "2px 6px",
+                                    fontSize: "10px",
+                                    fontWeight: "bold",
+                                    borderRadius: "4px",
+                                    border: "1px solid #cbd5e1",
+                                    background: "#f8fafc",
+                                    color: "#64748b",
+                                    cursor: "pointer",
+                                    transition: "all 0.15s ease",
+                                }}
+                                title="すべて選択"
+                            >
+                                全選択
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleDeselectAll}
+                                style={{
+                                    padding: "2px 6px",
+                                    fontSize: "10px",
+                                    fontWeight: "bold",
+                                    borderRadius: "4px",
+                                    border: "1px solid #cbd5e1",
+                                    background: "#f8fafc",
+                                    color: "#64748b",
+                                    cursor: "pointer",
+                                    transition: "all 0.15s ease",
+                                }}
+                                title="すべて解除"
+                            >
+                                全解除
+                            </button>
+                        </div>
+                    </div>
+                </foreignObject>
             </g>
 
             {/* ============================================================
