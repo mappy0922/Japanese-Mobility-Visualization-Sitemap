@@ -161,7 +161,6 @@ export default function ComparePanel({
                     type="button"
                     className={`labelButtonInCard ${selectedLabel === name ? "active" : ""}`}
                     onClick={() => setSelectedLabel && setSelectedLabel(name)}
-                    title={displayName}
                   >
                     <span className="labelBtnText">{displayName}</span>
                   </button>

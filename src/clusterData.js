@@ -9,9 +9,9 @@ export const CLUSTERS = {
     name: "大都市圏・通勤交流型",
     shortName: "大都市圏・通勤型",
     enName: "Metropolitan Commuter Hub",
-    color: "#8b5cf6", // パープル
-    bgColor: "rgba(139, 92, 246, 0.12)",
-    borderColor: "#c4b5fd",
+    color: "#e11d48", // クリムゾンレッド (Toのパープルとの重複回避)
+    bgColor: "rgba(225, 29, 72, 0.12)",
+    borderColor: "#fda4af",
     icon: "🏙️",
     summary: "近隣都県からの通勤・通学および生活移動が膨大で、鉄道分担率が極めて高い大都市圏の中枢・通勤圏。",
   },

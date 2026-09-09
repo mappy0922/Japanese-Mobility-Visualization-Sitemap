@@ -1121,32 +1121,37 @@ export default function App() {
             </div>
           </div>
 
-          {/* ③ 比較・分析パネル（全体5年間隔比較 ➔ 目的別/手段別詳細比較） */}
-          <ComparePanel
-            traffic={traffic}
-            setTraffic={setTraffic}
-            year={year}
-            prefecture={prefecture}
-            destination={destination}
-            currentPeople={currentPeople}
-            previousPeople={previousPeople}
-            diff={diff}
-            rate={rate}
-            label={label}
-            selectedLabel={selectedLabel}
-            setSelectedLabel={setSelectedLabel}
-            currentLabelPeople={currentLabelPeople}
-            previousLabelPeople={previousLabelPeople}
-            labelDiff={labelDiff}
-            labelRate={labelRate}
-          />
 
-          {/* ④ 地域特性・クラスタ分析パネル（出発地×目的×交通手段の総合分析） */}
-          <ClusterPanel
-            destination={destination}
-            setDestination={setDestination}
-            prefecture={prefecture}
-          />
+
+          {/* ③ 分析パネル（モードに応じて排他表示） */}
+          {!clusterViewMode ? (
+            /* 👥 人流規模別: 5年間隔比較 & ラベル詳細比較 */
+            <ComparePanel
+              traffic={traffic}
+              setTraffic={setTraffic}
+              year={year}
+              prefecture={prefecture}
+              destination={destination}
+              currentPeople={currentPeople}
+              previousPeople={previousPeople}
+              diff={diff}
+              rate={rate}
+              label={label}
+              selectedLabel={selectedLabel}
+              setSelectedLabel={setSelectedLabel}
+              currentLabelPeople={currentLabelPeople}
+              previousLabelPeople={previousLabelPeople}
+              labelDiff={labelDiff}
+              labelRate={labelRate}
+            />
+          ) : (
+            /* 🏷️ 地域特性クラスタ: 出発地×目的×交通手段の総合分析 */
+            <ClusterPanel
+              destination={destination}
+              setDestination={setDestination}
+              prefecture={prefecture}
+            />
+          )}
         </div>
 
         {/* ============================================================

@@ -48,7 +48,7 @@ export default function SvgMap({
      */
 
     const clusterList = [
-        { id: "metropolitan", name: "大都市圏・通勤型", color: "#8b5cf6", icon: "🏙️" },
+        { id: "metropolitan", name: "大都市圏・通勤型", color: "#e11d48", icon: "🏙️" },
         { id: "tourism", name: "観光・広域型", color: "#0284c7", icon: "✈️" },
         { id: "industrial", name: "産業・中枢型", color: "#ea580c", icon: "🏭" },
         { id: "resort", name: "歴史・リゾート型", color: "#059669", icon: "🏯" },
@@ -447,7 +447,7 @@ export default function SvgMap({
                                 transition: "all 0.15s ease",
                             }}
                         >
-                            👥 人流規模別
+                            人流規模別
                         </button>
                         <button
                             type="button"
@@ -459,13 +459,13 @@ export default function SvgMap({
                                 fontWeight: "bold",
                                 border: "none",
                                 borderRadius: "6px",
-                                background: clusterViewMode ? "#8b5cf6" : "transparent",
+                                background: clusterViewMode ? "#1e3a8a" : "transparent",
                                 color: clusterViewMode ? "#fff" : "#64748b",
                                 cursor: "pointer",
                                 transition: "all 0.15s ease",
                             }}
                         >
-                            🏷️ 地域特性クラスタ
+                            地域特性クラスタ
                         </button>
                     </div>
                 </foreignObject>

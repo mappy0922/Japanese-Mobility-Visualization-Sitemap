@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  getPrefectureCluster,
-  getPrefecturesInCluster,
-} from "./clusterData";
+import { getPrefectureCluster } from "./clusterData";
 
 export default function ClusterPanel({
   destination = "大阪",
@@ -11,7 +8,6 @@ export default function ClusterPanel({
 }) {
   const profile = getPrefectureCluster(destination);
   const cluster = profile.cluster;
-  const sameClusterPrefs = getPrefecturesInCluster(cluster.id);
 
   return (
     <div className="compareCard clusterPanelCard">
@@ -71,7 +67,7 @@ export default function ClusterPanel({
                 className="metricFill"
                 style={{
                   width: `${profile.scores.tourism}%`,
-                  background: "#0284c7",
+                  background: "#1e293b",
                 }}
               />
             </div>
@@ -87,7 +83,7 @@ export default function ClusterPanel({
                 className="metricFill"
                 style={{
                   width: `${profile.scores.business}%`,
-                  background: "#ea580c",
+                  background: "#1e293b",
                 }}
               />
             </div>
@@ -103,7 +99,7 @@ export default function ClusterPanel({
                 className="metricFill"
                 style={{
                   width: `${profile.scores.rail}%`,
-                  background: "#8b5cf6",
+                  background: "#1e293b",
                 }}
               />
             </div>
@@ -119,48 +115,11 @@ export default function ClusterPanel({
                 className="metricFill"
                 style={{
                   width: `${profile.scores.longDist}%`,
-                  background: "#059669",
+                  background: "#1e293b",
                 }}
               />
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* 同じクラスタに属する地域タグ */}
-      <div className="sameClusterSection">
-        <div className="clusterSectionTitle">
-          <span>同じ「{cluster.shortName}」の地域</span>
-          <span className="sameClusterCount">({sameClusterPrefs.length}地点)</span>
-        </div>
-        <div className="sameClusterTagList">
-          {sameClusterPrefs.map((pref) => {
-            const isSelected = pref === destination;
-            return (
-              <button
-                key={pref}
-                type="button"
-                className={`sameClusterTag ${isSelected ? "active" : ""}`}
-                style={
-                  isSelected
-                    ? {
-                        background: cluster.color,
-                        borderColor: cluster.color,
-                        color: "#fff",
-                      }
-                    : {}
-                }
-                onClick={() => {
-                  if (setDestination) {
-                    setDestination(pref);
-                  }
-                }}
-                title={`${pref}のデータを見る`}
-              >
-                {pref}
-              </button>
-            );
-          })}
         </div>
       </div>
     </div>
