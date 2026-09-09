@@ -22,7 +22,9 @@ import { feature } from "topojson-client";
 import SvgMap from "./SvgMap";
 import SvgLabel from "./SvgLabel";
 import ComparePanel from "./ComparePanel";
+import ClusterPanel from "./ClusterPanel";
 import SearchableSelect from "./SearchableSelect";
+import { getPrefectureCluster } from "./clusterData";
 
 const MapName = ["日本地図", "世界地図"];
 
@@ -159,6 +161,14 @@ export default function App() {
   const [selectedRange, setSelectedRange] = useState([...circleSize]);
   const [hoverRange, setHoverRange] = useState(null);
   const [legend_judge, setLegend_judge] = useState(false);
+  const [clusterViewMode, setClusterViewMode] = useState(false);
+  const [selectedClusters, setSelectedClusters] = useState([
+    "metropolitan",
+    "tourism",
+    "industrial",
+    "resort",
+    "local",
+  ]);
 
   /*
    * ============================================================
@@ -832,7 +842,16 @@ export default function App() {
         .attr("class", "overlay")
         .attr("d", path)
         .attr("fill", (d) => {
-          const people = getPeople(d.properties.nam_ja);
+          const rawName = d.properties.nam_ja;
+          const name = rawName.replace(/(都|府|県)$/, "");
+          if (clusterViewMode) {
+            const p = getPrefectureCluster(name);
+            if (selectedClusters.includes(p.cluster.id)) {
+              return p.cluster.color;
+            }
+            return "#e2e8f0";
+          }
+          const people = getPeople(rawName);
           if (selectedRange.length === 0) return "transparent";
           const matched = selectedRange.some((range) =>
             isInRange(people, range)
@@ -840,7 +859,13 @@ export default function App() {
           return matched ? circleColor(people) : "#eeeeee";
         })
         .attr("fill-opacity", (d) => {
-          const people = getPeople(d.properties.nam_ja);
+          const rawName = d.properties.nam_ja;
+          const name = rawName.replace(/(都|府|県)$/, "");
+          if (clusterViewMode) {
+            const p = getPrefectureCluster(name);
+            return selectedClusters.includes(p.cluster.id) ? 0.82 : 0.15;
+          }
+          const people = getPeople(rawName);
           if (selectedRange.length === 0) return 0;
           const matched = selectedRange.some((range) =>
             isInRange(people, range)
@@ -902,6 +927,8 @@ export default function App() {
     destination,
     selectMode,
     legend_judge,
+    clusterViewMode,
+    selectedClusters,
   ]);
 
   /*
@@ -1113,6 +1140,13 @@ export default function App() {
             labelDiff={labelDiff}
             labelRate={labelRate}
           />
+
+          {/* ④ 地域特性・クラスタ分析パネル（出発地×目的×交通手段の総合分析） */}
+          <ClusterPanel
+            destination={destination}
+            setDestination={setDestination}
+            prefecture={prefecture}
+          />
         </div>
 
         {/* ============================================================
@@ -1149,6 +1183,10 @@ export default function App() {
             prefectureCenter={prefectureCenter}
             destination={destination}
             selectedLabel={selectedLabel}
+            clusterViewMode={clusterViewMode}
+            setClusterViewMode={setClusterViewMode}
+            selectedClusters={selectedClusters}
+            setSelectedClusters={setSelectedClusters}
           />
         </div>
 

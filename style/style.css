@@ -1013,3 +1013,205 @@ button {
 .guideButtons button:hover {
     background: #172554;
 }
+
+/* ============================================================
+   地域特性・クラスタ分析パネル (ClusterPanel)
+   ============================================================ */
+
+.clusterPanelCard {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 3px solid #8b5cf6;
+}
+
+.clusterHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.clusterTargetName {
+    font-size: 11px;
+    font-weight: 700;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 2px 7px;
+    border-radius: 4px;
+}
+
+.clusterHeroBadge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid;
+    transition: all 0.2s ease;
+}
+
+.clusterIcon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.clusterBadgeText {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.clusterTypeName {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
+
+.clusterEnName {
+    font-size: 10px;
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+.clusterSummaryText {
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: #475569;
+    margin: 0;
+    padding: 0 2px;
+}
+
+.clusterSectionTitle {
+    font-size: 11px;
+    font-weight: 800;
+    color: #334155;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.clusterFeatureList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.clusterFeatureItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 11px;
+    line-height: 1.45;
+    color: #334155;
+    border-left: 2.5px solid #cbd5e1;
+}
+
+.clusterBullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+}
+
+.clusterFeatureText {
+    flex: 1;
+}
+
+/* 移動プロファイル指標 (4軸ミニバー) */
+.clusterMetricsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 8px;
+    background: #f8fafc;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.metricItem {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.metricLabelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.metricName {
+    color: #64748b;
+}
+
+.metricValue {
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.metricTrack {
+    height: 5px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.metricFill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* 同クラスタ地域タグ */
+.sameClusterSection {
+    margin-top: 2px;
+}
+
+.sameClusterCount {
+    font-size: 10px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.sameClusterTagList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-height: 80px;
+    overflow-y: auto;
+    padding: 2px;
+}
+
+.sameClusterTag {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.sameClusterTag:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #0f172a;
+    transform: translateY(-1px);
+}
+
+.sameClusterTag.active {
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}

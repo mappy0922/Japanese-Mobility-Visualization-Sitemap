@@ -35,6 +35,11 @@ export default function SvgMap({
     prefectureCenter,
     destination,
     selectedLabel,
+
+    clusterViewMode = false,
+    setClusterViewMode,
+    selectedClusters = ["metropolitan", "tourism", "industrial", "resort", "local"],
+    setSelectedClusters,
 }) {
     /*
      * ============================================================
@@ -42,22 +47,29 @@ export default function SvgMap({
      * ============================================================
      */
 
-    const columns = mapWidth > 800 ? 3 : 2;
+    const clusterList = [
+        { id: "metropolitan", name: "大都市圏・通勤型", color: "#8b5cf6", icon: "🏙️" },
+        { id: "tourism", name: "観光・広域型", color: "#0284c7", icon: "✈️" },
+        { id: "industrial", name: "産業・中枢型", color: "#ea580c", icon: "🏭" },
+        { id: "resort", name: "歴史・リゾート型", color: "#059669", icon: "🏯" },
+        { id: "local", name: "地域内自立型", color: "#64748b", icon: "🌾" },
+    ];
 
-    const gap = 10;
-
-    const cardWidth = 115;
+    const currentLegendItems = clusterViewMode ? clusterList : circleSize;
+    const columns = mapWidth > 800 ? (clusterViewMode ? 3 : 3) : 2;
+    const gap = 8;
+    const cardWidth = clusterViewMode ? 122 : 115;
 
     const rows = Math.ceil(
-        circleSize.length / columns
+        currentLegendItems.length / columns
     );
 
     const legendHeight =
         rows * 44 + 10;
 
-    const numCols = Math.min(circleSize.length, columns);
+    const numCols = Math.min(currentLegendItems.length, columns);
     const totalLegendWidth = numCols * cardWidth + (numCols - 1) * gap;
-    const startX = Math.max(20, mapWidth - totalLegendWidth - 20);
+    const startX = Math.max(20, mapWidth - Math.max(totalLegendWidth, 260) - 20);
 
 
     /*
@@ -402,173 +414,176 @@ export default function SvgMap({
 
 
             {/* ============================================================
-                凡例ヘッダー・説明文
+                凡例ヘッダー・モード切り替え & 説明文
                ============================================================ */}
-            <g transform={`translate(${startX}, ${height - legendHeight - 80})`}>
+            <g transform={`translate(${startX}, ${height - legendHeight - 96})`}>
+                {/* モード切り替えタブ */}
+                <foreignObject x="-4" y="0" width={Math.max(totalLegendWidth + 8, 250)} height="32">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml"
+                        style={{
+                            display: "flex",
+                            gap: "4px",
+                            background: "rgba(255, 255, 255, 0.96)",
+                            padding: "3px",
+                            borderRadius: "8px",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                            boxSizing: "border-box",
+                        }}
+                    >
+                        <button
+                            type="button"
+                            onClick={() => setClusterViewMode && setClusterViewMode(false)}
+                            style={{
+                                flex: 1,
+                                padding: "4px 8px",
+                                fontSize: "11px",
+                                fontWeight: "bold",
+                                border: "none",
+                                borderRadius: "6px",
+                                background: !clusterViewMode ? "#1e3a8a" : "transparent",
+                                color: !clusterViewMode ? "#fff" : "#64748b",
+                                cursor: "pointer",
+                                transition: "all 0.15s ease",
+                            }}
+                        >
+                            👥 人流規模別
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setClusterViewMode && setClusterViewMode(true)}
+                            style={{
+                                flex: 1,
+                                padding: "4px 8px",
+                                fontSize: "11px",
+                                fontWeight: "bold",
+                                border: "none",
+                                borderRadius: "6px",
+                                background: clusterViewMode ? "#8b5cf6" : "transparent",
+                                color: clusterViewMode ? "#fff" : "#64748b",
+                                cursor: "pointer",
+                                transition: "all 0.15s ease",
+                            }}
+                        >
+                            🏷️ 地域特性クラスタ
+                        </button>
+                    </div>
+                </foreignObject>
+
+                {/* 説明テキスト */}
                 <rect
-                    x="-6"
-                    y="-4"
-                    width={totalLegendWidth + 12}
-                    height={36}
-                    rx="8"
+                    x="-4"
+                    y="36"
+                    width={Math.max(totalLegendWidth + 8, 250)}
+                    height="32"
+                    rx="6"
                     fill="rgba(255, 255, 255, 0.95)"
                     stroke="none"
                 />
-                <text x="4" y="12" fontSize="11.5" fontWeight="bold" fill="#1e293b">
-                    都道府県の色分け（来訪者数別）
+                <text x="4" y="49" fontSize="11" fontWeight="bold" fill="#1e293b">
+                    {clusterViewMode ? "都道府県の地域特性クラスタ分類" : "都道府県の色分け（来訪者数別）"}
                 </text>
-                <text x="4" y="25" fontSize="9.5" fill="#64748b">
-                    ※クリックで指定した人数範囲の都道府県をハイライト
+                <text x="4" y="61" fontSize="9" fill="#64748b">
+                    {clusterViewMode
+                        ? "※クリックで指定したクラスタの都道府県をハイライト"
+                        : "※クリックで指定した人数範囲の都道府県をハイライト"}
                 </text>
             </g>
 
             {/* ============================================================
-                凡例
+                凡例アイテムカード
                ============================================================ */}
 
-            {circleSize.map((name, i) => {
+            {currentLegendItems.map((item, i) => {
+                const col = i % columns;
+                const row = Math.floor(i / columns);
 
-                const col =
-                    i % columns;
+                const x = startX + col * (cardWidth + gap);
+                const y = height - legendHeight - 20 + row * 44;
 
-                const row =
-                    Math.floor(
-                        i / columns
-                    );
+                const isCluster = clusterViewMode;
+                const itemId = isCluster ? item.id : item;
+                const itemColor = isCluster ? item.color : circleColor(item);
+                const itemLabel = isCluster
+                    ? item.name
+                    : typeof item === "number"
+                    ? item >= 100000000
+                        ? `${(item / 100000000).toLocaleString()}億人以上`
+                        : item >= 10000
+                        ? `${(item / 10000).toLocaleString()}万人以上`
+                        : `${item.toLocaleString()}人以上`
+                    : `${item}`;
 
+                const selected = isCluster
+                    ? selectedClusters.includes(itemId)
+                    : isRangeSelected(itemId);
 
-                const x =
-                    startX +
-                    col *
-                    (cardWidth + gap);
-
-
-                const y =
-                    height -
-                    legendHeight -
-                    40 +
-                    row * 44;
-
-
-                const selected =
-                    isRangeSelected(name);
-
+                const handleClick = () => {
+                    if (isCluster) {
+                        setSelectedClusters((prev) =>
+                            prev.includes(itemId)
+                                ? prev.filter((id) => id !== itemId)
+                                : [...prev, itemId]
+                        );
+                    } else {
+                        toggleRange(itemId);
+                    }
+                };
 
                 return (
-
                     <g
                         key={i}
                         transform={`translate(${x}, ${y})`}
-                        onMouseEnter={() =>
-                            setHoverRange(name)
-                        }
-                        onMouseLeave={() =>
-                            setHoverRange(null)
-                        }
-                        onClick={() =>
-                            toggleRange(name)
-                        }
-                        style={{
-                            cursor: "pointer"
-                        }}
+                        onMouseEnter={() => setHoverRange(itemId)}
+                        onMouseLeave={() => setHoverRange(null)}
+                        onClick={handleClick}
+                        style={{ cursor: "pointer" }}
                     >
-
-                        {/* ====================================================
-                            カード
-                           ==================================================== */}
-
+                        {/* カード背景 */}
                         <rect
-                            x={
-                                hoverRange === name
-                                    ? -4
-                                    : 0
-                            }
-                            y={
-                                hoverRange === name
-                                    ? -3
-                                    : 0
-                            }
-                            width={
-                                hoverRange === name
-                                    ? cardWidth + 8
-                                    : cardWidth
-                            }
-                            height={
-                                hoverRange === name
-                                    ? 46
-                                    : 40
-                            }
+                            x={hoverRange === itemId ? -3 : 0}
+                            y={hoverRange === itemId ? -2 : 0}
+                            width={hoverRange === itemId ? cardWidth + 6 : cardWidth}
+                            height={hoverRange === itemId ? 44 : 40}
                             rx="8"
                             fill="white"
-                            stroke={
-                                selected
-                                    ? circleColor(name)
-                                    : "transparent"
-                            }
-                            strokeWidth={
-                                selected
-                                    ? 2.5
-                                    : 0
-                            }
+                            stroke={selected ? itemColor : "transparent"}
+                            strokeWidth={selected ? 2.5 : 0}
                         />
 
-
-                        {/* ====================================================
-                            チェックボックス
-                           ==================================================== */}
-
+                        {/* チェックボックス */}
                         <rect
-                            x="15"
-                            y="15"
+                            x="10"
+                            y="14"
                             width="12"
                             height="12"
                             rx="2"
                             fill="white"
-                            stroke={
-                                circleColor(name)
-                            }
+                            stroke={itemColor}
                             strokeWidth="2"
                         />
 
-
-                        {/* ====================================================
-                            チェックマーク
-                           ==================================================== */}
-
+                        {/* チェックマーク */}
                         {selected && (
-
                             <path
-                                d="M 18 21 L 21 24 L 25 18"
+                                d="M 13 20 L 16 23 L 20 17"
                                 fill="none"
-                                stroke={
-                                    circleColor(name)
-                                }
+                                stroke={itemColor}
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                             />
-
                         )}
 
-
-                        {/* ====================================================
-                            テキスト
-                           ==================================================== */}
-
+                        {/* テキスト */}
                         <text
-                            x="35"
-                            y="25"
-                            fontSize="11.5"
-                            fontWeight="500"
+                            x="27"
+                            y="23"
+                            fontSize={isCluster ? "10.5" : "11"}
+                            fontWeight="600"
+                            fill="#1e293b"
                         >
-                            {typeof name === "number"
-                                ? name >= 100000000
-                                    ? `${(name / 100000000).toLocaleString()}億人以上`
-                                    : name >= 10000
-                                        ? `${(name / 10000).toLocaleString()}万人以上`
-                                        : `${name.toLocaleString()}人以上`
-                                : `${name}`
-                            }
+                            {itemLabel}
                         </text>
 
                     </g>
