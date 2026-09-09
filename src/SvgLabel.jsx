@@ -19,16 +19,13 @@ export default function SvgLabel({
   return (
     <div
       style={{
-        width: "100%",
-        height: "100%",
+        width: "300px",
+        height: `${height}px`,
         overflow: "hidden",
         boxSizing: "border-box",
       }}
     >
-      <svg
-        viewBox={`0 0 300 ${svgHeight}`}
-        style={{ width: "100%", height: "100%", display: "block" }}
-      >
+      <svg width="300" height={svgHeight}>
         {/* 背景 */}
         <rect
           x="0"
@@ -126,9 +123,9 @@ export default function SvgLabel({
           <foreignObject x="10" y="46" width="280" height={svgHeight - 50}>
             <div
               xmlns="http://www.w3.org/1999/xhtml"
+              className="svgLabelScrollContent"
               style={{
                 height: "100%",
-                overflow: "hidden",
                 boxSizing: "border-box",
               }}
             >
@@ -405,9 +402,9 @@ export default function SvgLabel({
           <foreignObject x="10" y="46" width="280" height={svgHeight - 50}>
             <div
               xmlns="http://www.w3.org/1999/xhtml"
+              className="svgLabelScrollContent"
               style={{
                 height: "100%",
-                overflow: "hidden",
                 boxSizing: "border-box",
               }}
             >

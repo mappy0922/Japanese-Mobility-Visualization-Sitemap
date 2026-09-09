@@ -99,38 +99,26 @@ const createFavoriteState = () => {
 export default function App() {
   /*
    * ============================================================
-   * ウィンドウサイズ (ズーム時SVGサイズ固定)
+   * ウィンドウサイズ
    * ============================================================
    */
-  const [windowSize, setWindowSize] = useState(() => ({
+  const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
-  }));
+  });
 
   useEffect(() => {
     const handleResize = () => {
-      // 画面全体がズームされている時（ピンチズーム等）は SVG の width/height を固定化し、描画領域の崩れを防止
-      if (window.visualViewport && window.visualViewport.scale > 1.01) {
-        return;
-      }
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
     };
-
     window.addEventListener("resize", handleResize);
-    window.addEventListener("orientationchange", () => {
-      setTimeout(() => {
-        setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      }, 100);
-    });
-
+    window.addEventListener("orientationchange", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
     };
   }, []);
 
