@@ -165,9 +165,8 @@ export default function SvgMap({
                    ==================================================== */}
 
                 <g id="lineLayer">
-
-                    {projectionRef.current &&
-
+                    {!clusterViewMode &&
+                        projectionRef.current &&
                         filterData
                             .filter(item =>
                                 item.from === prefecture &&
@@ -347,66 +346,6 @@ export default function SvgMap({
                             })
                     }
 
-
-                    {/* ====================================================
-                        選択地点・目的地
-                       ==================================================== */}
-
-                    {projectionRef.current &&
-                        selectedLabel &&
-                        coord
-                            .filter(name =>
-                                name === prefecture ||
-                                name === destination
-                            )
-                            .map((item, i) => {
-
-                                const positionText =
-                                    prefectureCenter[item];
-
-                                const positionCircle =
-                                    projectionRef.current(
-                                        coords[item]
-                                    );
-
-
-                                if (!positionText) {
-                                    return null;
-                                }
-
-                                if (!positionCircle) {
-                                    return null;
-                                }
-
-
-                                return (
-                                    <g
-                                        key={i}
-                                    >
-
-
-                                        {Scale >= 2 && (
-                                            <text
-                                                className="prefecture"
-                                                x={positionCircle ? positionCircle[0] : positionText[0]}
-                                                y={positionCircle ? positionCircle[1] - 5 : positionText[1]}
-                                                textAnchor="middle"
-                                                dominantBaseline="middle"
-                                                fontSize={
-                                                    8 /
-                                                    (Scale / 2)
-                                                }
-                                                fill="black"
-                                            >
-                                                {item}
-                                            </text>
-                                        )}
-
-                                    </g>
-                                );
-
-                            })
-                    }
 
                 </g>
 

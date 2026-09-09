@@ -874,12 +874,20 @@ export default function App() {
         })
         .attr("stroke", (d) => {
           const name = d.properties.nam_ja.replace(/(都|府|県)$/, "");
+          if (clusterViewMode) {
+            if (name === destination) return "#7c3aed";
+            return "none";
+          }
           if (name === prefecture) return "#f59e0b";
           if (name === destination) return "#7c3aed";
           return "none";
         })
         .attr("stroke-width", (d) => {
           const name = d.properties.nam_ja.replace(/(都|府|県)$/, "");
+          if (clusterViewMode) {
+            if (name === destination) return 2.4;
+            return 0;
+          }
           if (name === prefecture || name === destination) return 2.1;
           return 0;
         });
@@ -904,6 +912,10 @@ export default function App() {
         })
         .on("click", (event, d) => {
           const name = d.properties.nam_ja.replace(/(都|府|県)$/, "");
+          if (clusterViewMode) {
+            setDestination(name);
+            return;
+          }
           if (selectMode === "from") {
             if (name === destination) {
               return; // Silently ignore same location
@@ -1060,50 +1072,66 @@ export default function App() {
             左側統合コントロールパネル (自然な縦並び・スクロール対応)
            ============================================================ */}
         <div className="leftPanel">
-          {/* ① From -> To 地点選択バー (検索機能付きプルダウン) */}
-          <div className="routeSelector">
-            <SearchableSelect
-              label="From"
-              value={prefecture}
-              onChange={(name) => {
-                if (name !== destination) {
-                  setPrefecture(name);
-                }
-              }}
-              type="from"
-              options={coord.filter((c) => c !== destination)}
-              isActiveMode={selectMode === "from"}
-              onSelectMode={() => setSelectMode("from")}
-            />
+          {/* ① 地点選択バー (クラスタ時は対象地域のみ、通常時はFrom->To) */}
+          <div className={`routeSelector ${clusterViewMode ? "single" : ""}`}>
+            {!clusterViewMode ? (
+              <>
+                <SearchableSelect
+                  label="From"
+                  value={prefecture}
+                  onChange={(name) => {
+                    if (name !== destination) {
+                      setPrefecture(name);
+                    }
+                  }}
+                  type="from"
+                  options={coord.filter((c) => c !== destination)}
+                  isActiveMode={selectMode === "from"}
+                  onSelectMode={() => setSelectMode("from")}
+                />
 
-            <button
-              type="button"
-              className="routeSwapBtn"
-              onClick={() => {
-                const prevPref = prefecture;
-                const prevDest = destination;
-                setPrefecture(prevDest);
-                setDestination(prevPref);
-              }}
-              title="出発地と目的地を入れ替える"
-              aria-label="出発地と目的地を入れ替える"
-            >
-              ⇄
-            </button>
+                <button
+                  type="button"
+                  className="routeSwapBtn"
+                  onClick={() => {
+                    const prevPref = prefecture;
+                    const prevDest = destination;
+                    setPrefecture(prevDest);
+                    setDestination(prevPref);
+                  }}
+                  title="出発地と目的地を入れ替える"
+                  aria-label="出発地と目的地を入れ替える"
+                >
+                  ⇄
+                </button>
 
-            <SearchableSelect
-              label="To"
-              value={destination}
-              onChange={(name) => {
-                if (name !== prefecture) {
+                <SearchableSelect
+                  label="To"
+                  value={destination}
+                  onChange={(name) => {
+                    if (name !== prefecture) {
+                      setDestination(name);
+                    }
+                  }}
+                  type="to"
+                  options={coord.filter((c) => c !== prefecture)}
+                  isActiveMode={selectMode === "to"}
+                  onSelectMode={() => setSelectMode("to")}
+                />
+              </>
+            ) : (
+              <SearchableSelect
+                label="対象地域"
+                value={destination}
+                onChange={(name) => {
                   setDestination(name);
-                }
-              }}
-              type="to"
-              options={coord.filter((c) => c !== prefecture)}
-              isActiveMode={selectMode === "to"}
-              onSelectMode={() => setSelectMode("to")}
-            />
+                }}
+                type="to"
+                options={coord}
+                isActiveMode={true}
+                onSelectMode={() => setSelectMode("to")}
+              />
+            )}
           </div>
 
           {/* ② 年度選択 (スマートカード) */}
