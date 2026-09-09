@@ -922,25 +922,23 @@ export default function App() {
           setMousePos({ x: event.offsetX, y: event.offsetY });
           setIsInformation(d.properties.nam_ja);
         })
-        .on("mouseleave", () => {
-          setIsInformation(null);
-        })
         .on("click", (event, d) => {
+          event.stopPropagation();
           const name = d.properties.nam_ja.replace(/(都|府|県)$/, "");
           if (clusterViewMode) {
-            setDestination(name);
+            setDestination((prev) => (prev === name ? "" : name));
             return;
           }
           if (selectMode === "from") {
             if (name === destination) {
-              return; // Silently ignore same location
+              return; // 目的地と同じ場合は選択不可
             }
-            setPrefecture(name);
+            setPrefecture((prev) => (prev === name ? "" : name));
           } else {
             if (name === prefecture) {
-              return; // Silently ignore same location
+              return; // 出発地と同じ場合は選択不可
             }
-            setDestination(name);
+            setDestination((prev) => (prev === name ? "" : name));
           }
         });
     }
@@ -1034,6 +1032,19 @@ export default function App() {
       setUserName(name);
     }
   }, []);
+
+  const handleBackgroundClick = (e) => {
+    if (e && e.defaultPrevented) return;
+    if (clusterViewMode) {
+      setDestination("");
+    } else {
+      if (selectMode === "from") {
+        setPrefecture("");
+      } else {
+        setDestination("");
+      }
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem("isFavorite", JSON.stringify(isFavorite));
@@ -1248,6 +1259,7 @@ export default function App() {
             setClusterViewMode={setClusterViewMode}
             selectedClusters={selectedClusters}
             setSelectedClusters={setSelectedClusters}
+            onBackgroundClick={handleBackgroundClick}
           />
         </div>
 

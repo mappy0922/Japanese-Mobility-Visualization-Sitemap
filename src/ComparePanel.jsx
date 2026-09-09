@@ -84,10 +84,14 @@ export default function ComparePanel({
       <div className="compareCard">
         <div className="compareHeaderTopRow">
           <span className="compareTitle">5年間隔比較</span>
-          <span className="compareFlowBadge">他都道府県→{destination}</span>
+          <span className="compareFlowBadge">
+            他都道府県→{destination || "未選択"}
+          </span>
         </div>
         <div className="compareBody">
-          {year === "1990年度" ? (
+          {!destination ? (
+            <div className="compareNotice">目的地を選択してください</div>
+          ) : year === "1990年度" ? (
             <div className="compareNotice">比較対象の5年前データはありません</div>
           ) : (
             <TextOnlyComparison
@@ -171,7 +175,9 @@ export default function ComparePanel({
         </div>
 
         <div className="compareBody">
-          {year === "1990年度" ? (
+          {!prefecture || !destination ? (
+            <div className="compareNotice">出発地と目的地を選択してください</div>
+          ) : year === "1990年度" ? (
             <div className="compareNotice">比較対象の5年前データはありません</div>
           ) : !selectedLabel ? (
             <div className="compareNotice">ラベルを選択してください</div>

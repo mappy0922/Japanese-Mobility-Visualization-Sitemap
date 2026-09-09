@@ -6,6 +6,21 @@ export default function ClusterPanel({
   setDestination,
   prefecture = "東京",
 }) {
+  if (!destination) {
+    return (
+      <div className="compareCard clusterPanelCard">
+        {/* 1. ヘッダー行 */}
+        <div className="compareHeaderTopRow">
+          <span className="compareTitle">地域特性・クラスタ分析</span>
+          <span className="compareFlowBadge">対象地域: 未選択</span>
+        </div>
+        <div className="clusterEmptyNotice">
+          地図上の都道府県をクリック、または上部の検索から地域を選択してください。
+        </div>
+      </div>
+    );
+  }
+
   const profile = getPrefectureCluster(destination);
   const cluster = profile.cluster;
 

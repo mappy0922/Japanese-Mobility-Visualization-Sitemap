@@ -151,11 +151,26 @@ export default function SvgLabel({
                     移動目的割合
                   </span>
                   <span style={{ fontSize: "11px", color: "#666", fontWeight: "500" }}>
-                    他都道府県 ➔ {destination}
+                    他都道府県 ➔ {destination || "未選択"}
                   </span>
                 </div>
 
                 {(() => {
+                  if (!destination) {
+                    return (
+                      <div
+                        style={{
+                          color: "#888",
+                          fontSize: "12px",
+                          padding: "16px 0",
+                          textAlign: "center",
+                        }}
+                      >
+                        目的地を選択してください
+                      </div>
+                    );
+                  }
+
                   const purposes = [
                     "代_全機関_仕事",
                     "代_全機関_観光",
@@ -274,11 +289,26 @@ export default function SvgLabel({
                     交通手段割合
                   </span>
                   <span style={{ fontSize: "11px", color: "#666", fontWeight: "500" }}>
-                    他都道府県 ➔ {destination}
+                    他都道府県 ➔ {destination || "未選択"}
                   </span>
                 </div>
 
                 {(() => {
+                  if (!destination) {
+                    return (
+                      <div
+                        style={{
+                          color: "#888",
+                          fontSize: "12px",
+                          padding: "16px 0",
+                          textAlign: "center",
+                        }}
+                      >
+                        目的地を選択してください
+                      </div>
+                    );
+                  }
+
                   const methods =
                     year === "2005年度" || year === "2010年度"
                       ? ["航空", "鉄道", "船", "バス", "乗用車等"]
@@ -426,7 +456,9 @@ export default function SvgLabel({
                       color: "#1e293b",
                     }}
                   >
-                    {destination}へ来る人数ランキング TOP10
+                    {destination
+                      ? `${destination}へ来る人数ランキング TOP10`
+                      : "来訪者ランキング TOP10"}
                   </span>
                   <span style={{ fontSize: "10.5px", color: "#64748b" }}>
                     各都道府県からの年間来訪者数
@@ -435,6 +467,21 @@ export default function SvgLabel({
               </div>
 
               {(() => {
+                if (!destination) {
+                  return (
+                    <div
+                      style={{
+                        color: "#888",
+                        textAlign: "center",
+                        padding: "24px 0",
+                        fontSize: "12px",
+                      }}
+                    >
+                      目的地を選択してください
+                    </div>
+                  );
+                }
+
                 const ranking = [];
 
                 coord.forEach((from) => {
