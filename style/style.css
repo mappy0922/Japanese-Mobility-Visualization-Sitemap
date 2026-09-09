@@ -19,7 +19,7 @@ h1 {
 }
 
 .image {
-    cursor: grabbing;
+    cursor: default;
     position: relative;
     width: 100vw;
     height: calc(100vh - 45px);
@@ -746,6 +746,17 @@ h1 {
     width: 100%;
     height: 100%;
     overflow: hidden;
+}
+
+.mapArea svg {
+    cursor: default;
+}
+
+.mapArea svg:active,
+.mapArea svg:active *,
+.mapArea.is-dragging,
+.mapArea.is-dragging * {
+    cursor: grabbing !important;
 }
 
 .mapArea.full {

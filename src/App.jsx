@@ -942,9 +942,14 @@ export default function App() {
     const svg = d3.select(svgRef.current);
     const imageLayer = svg.select("#imageLayer");
 
+    const mapAreaEl = d3.select(".mapArea");
+
     const zoom = d3
       .zoom()
       .scaleExtent([0.5, 14])
+      .on("start", () => {
+        mapAreaEl.classed("is-dragging", true);
+      })
       .on("zoom", (event) => {
         const { x, y, k } = event.transform;
         let displayX = x;
@@ -973,8 +978,16 @@ export default function App() {
         );
       })
       .on("end", (event) => {
+        mapAreaEl.classed("is-dragging", false);
         setScale(Number(event.transform.k.toFixed(1)));
       });
+
+    svg.on("dblclick.cursor", () => {
+      mapAreaEl.classed("is-dragging", true);
+      setTimeout(() => {
+        mapAreaEl.classed("is-dragging", false);
+      }, 400);
+    });
 
     zoomRef.current = zoom;
     resetRef.current = zoom;
