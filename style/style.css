@@ -752,8 +752,6 @@ h1 {
     cursor: default;
 }
 
-.mapArea svg:active,
-.mapArea svg:active *,
 .mapArea.is-dragging,
 .mapArea.is-dragging * {
     cursor: grabbing !important;

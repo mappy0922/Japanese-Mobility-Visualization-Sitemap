@@ -959,10 +959,10 @@ export default function App() {
     const zoom = d3
       .zoom()
       .scaleExtent([0.5, 14])
-      .on("start", () => {
-        mapAreaEl.classed("is-dragging", true);
-      })
       .on("zoom", (event) => {
+        // 実際の移動・ズーム操作時のみ grabbing クラスを付与
+        mapAreaEl.classed("is-dragging", true);
+
         const { x, y, k } = event.transform;
         let displayX = x;
         let displayY = y;
