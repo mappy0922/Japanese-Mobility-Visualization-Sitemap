@@ -40,7 +40,6 @@ export default function SvgMap({
     setClusterViewMode,
     selectedClusters = ["metropolitan", "tourism", "industrial", "resort", "local"],
     setSelectedClusters,
-    onBackgroundClick,
 }) {
     /*
      * ============================================================
@@ -131,14 +130,6 @@ export default function SvgMap({
             width={mapWidth}
             height={height}
         >
-            {/* 背景クリック（キャンセル）検知用レクタングル */}
-            <rect
-                width={mapWidth}
-                height={height}
-                fill="transparent"
-                onClick={onBackgroundClick}
-            />
-
             <defs>
 
                 <filter id="flowGlow">

@@ -1033,18 +1033,7 @@ export default function App() {
     }
   }, []);
 
-  const handleBackgroundClick = (e) => {
-    if (e && e.defaultPrevented) return;
-    if (clusterViewMode) {
-      setDestination("");
-    } else {
-      if (selectMode === "from") {
-        setPrefecture("");
-      } else {
-        setDestination("");
-      }
-    }
-  };
+
 
   useEffect(() => {
     localStorage.setItem("isFavorite", JSON.stringify(isFavorite));
@@ -1259,7 +1248,6 @@ export default function App() {
             setClusterViewMode={setClusterViewMode}
             selectedClusters={selectedClusters}
             setSelectedClusters={setSelectedClusters}
-            onBackgroundClick={handleBackgroundClick}
           />
         </div>
 
