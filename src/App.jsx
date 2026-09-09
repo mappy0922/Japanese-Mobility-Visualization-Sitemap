@@ -99,16 +99,20 @@ const createFavoriteState = () => {
 export default function App() {
   /*
    * ============================================================
-   * ウィンドウサイズ & スマホ画面ズーム制御
+   * ウィンドウサイズ (ズーム時SVGサイズ固定)
    * ============================================================
    */
-  const [windowSize, setWindowSize] = useState({
+  const [windowSize, setWindowSize] = useState(() => ({
     width: window.innerWidth,
     height: window.innerHeight,
-  });
+  }));
 
   useEffect(() => {
     const handleResize = () => {
+      // 画面全体がズームされている時（ピンチズーム等）は SVG の width/height を固定化し、描画領域の崩れを防止
+      if (window.visualViewport && window.visualViewport.scale > 1.01) {
+        return;
+      }
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
@@ -116,22 +120,17 @@ export default function App() {
     };
 
     window.addEventListener("resize", handleResize);
-    window.addEventListener("orientationchange", handleResize);
-
-    // iOS Safari等の画面全体ピンチズーム・ジェスチャー拡大を抑止
-    const preventGesture = (e) => {
-      e.preventDefault();
-    };
-    document.addEventListener("gesturestart", preventGesture, { passive: false });
-    document.addEventListener("gesturechange", preventGesture, { passive: false });
-    document.addEventListener("gestureend", preventGesture, { passive: false });
+    window.addEventListener("orientationchange", () => {
+      setTimeout(() => {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      }, 100);
+    });
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", handleResize);
-      document.removeEventListener("gesturestart", preventGesture);
-      document.removeEventListener("gesturechange", preventGesture);
-      document.removeEventListener("gestureend", preventGesture);
     };
   }, []);
 
