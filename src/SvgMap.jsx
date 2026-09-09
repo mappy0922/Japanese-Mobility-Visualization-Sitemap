@@ -48,17 +48,17 @@ export default function SvgMap({
      */
 
     const clusterList = [
-        { id: "metropolitan", name: "大都市圏・通勤型", color: "#e11d48", icon: "🏙️" },
-        { id: "tourism", name: "観光・広域型", color: "#0284c7", icon: "✈️" },
-        { id: "industrial", name: "産業・中枢型", color: "#ea580c", icon: "🏭" },
-        { id: "resort", name: "歴史・リゾート型", color: "#059669", icon: "🏯" },
-        { id: "local", name: "地域内自立型", color: "#64748b", icon: "🌾" },
+        { id: "metropolitan", name: "大都市圏・通勤型", color: "#e11d48" },
+        { id: "tourism", name: "観光・広域型", color: "#0284c7" },
+        { id: "industrial", name: "産業・中枢型", color: "#ea580c" },
+        { id: "resort", name: "歴史・リゾート型", color: "#059669" },
+        { id: "local", name: "地域内自立型", color: "#64748b" },
     ];
 
     const currentLegendItems = clusterViewMode ? clusterList : circleSize;
-    const columns = mapWidth > 800 ? (clusterViewMode ? 3 : 3) : 2;
+    const columns = mapWidth > 800 ? 3 : 2;
     const gap = 8;
-    const cardWidth = clusterViewMode ? 122 : 115;
+    const cardWidth = 115;
 
     const rows = Math.ceil(
         currentLegendItems.length / columns
@@ -518,7 +518,7 @@ export default function SvgMap({
                         <text
                             x="27"
                             y="23"
-                            fontSize={isCluster ? "10.5" : "11"}
+                            fontSize="11"
                             fontWeight="600"
                             fill="#1e293b"
                         >
