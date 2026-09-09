@@ -19,13 +19,16 @@ export default function SvgLabel({
   return (
     <div
       style={{
-        width: "300px",
-        height: `${height}px`,
+        width: "100%",
+        height: "100%",
         overflow: "hidden",
         boxSizing: "border-box",
       }}
     >
-      <svg width="300" height={svgHeight}>
+      <svg
+        viewBox={`0 0 300 ${svgHeight}`}
+        style={{ width: "100%", height: "100%", display: "block" }}
+      >
         {/* 背景 */}
         <rect
           x="0"

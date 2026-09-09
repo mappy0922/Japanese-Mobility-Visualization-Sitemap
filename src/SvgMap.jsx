@@ -127,8 +127,8 @@ export default function SvgMap({
     return (
         <svg
             ref={svgRef}
-            width={mapWidth}
-            height={height}
+            viewBox={`0 0 ${mapWidth} ${height}`}
+            style={{ width: "100%", height: "100%", display: "block" }}
         >
 
             <defs>
