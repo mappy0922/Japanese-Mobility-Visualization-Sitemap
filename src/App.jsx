@@ -30,6 +30,14 @@ const MapName = ["日本地図", "世界地図"];
 
 const transportation = ["移動目的", "移動手段"];
 
+const ALL_YEARS = [
+  "1990年度",
+  "1995年度",
+  "2000年度",
+  "2005年度",
+  "2010年度",
+];
+
 const yearSelection = [
   "1995年度",
   "2000年度",
@@ -791,6 +799,66 @@ export default function App() {
 
   /*
    * ============================================================
+   * 全年度時系列推移（1990〜2010年）データ計算
+   * ============================================================
+   */
+  const yearlyDestinationTrend = useMemo(() => {
+    if (!destination) return [];
+    return ALL_YEARS.map((y) => {
+      const tData = travelDataMap[y];
+      const trData = transportationDataMap[y];
+      const destMap = createTotalDestinationPeople(tData, trData);
+      const val = destMap[destination] || 0;
+      return {
+        year: y.replace("年度", ""),
+        fullYear: y,
+        value: val,
+      };
+    });
+  }, [destination]);
+
+  const normalizeLabel = (lbl) => {
+    if (!lbl) return "";
+    return lbl.replace("代_全機関_", "").replace("_全目的", "").replace("乗用車等", "自動車");
+  };
+
+  const yearlyLabelTrend = useMemo(() => {
+    if (!prefecture || !destination || !selectedLabel) return [];
+    const targetNorm = normalizeLabel(selectedLabel);
+
+    return ALL_YEARS.map((y) => {
+      const targetFile =
+        traffic === "移動目的"
+          ? travelDataMap[y]
+          : transportationDataMap[y];
+
+      if (!targetFile) {
+        return {
+          year: y.replace("年度", ""),
+          fullYear: y,
+          value: 0,
+        };
+      }
+
+      const val = targetFile
+        .filter(
+          (item) =>
+            item.from === prefecture &&
+            item.to === destination &&
+            normalizeLabel(item.purpose) === targetNorm
+        )
+        .reduce((sum, item) => sum + item.people, 0);
+
+      return {
+        year: y.replace("年度", ""),
+        fullYear: y,
+        value: val,
+      };
+    });
+  }, [prefecture, destination, selectedLabel, traffic]);
+
+  /*
+   * ============================================================
    * 使用するデータ & ラベルリスト
    * ============================================================
    */
@@ -1186,6 +1254,7 @@ export default function App() {
               traffic={traffic}
               setTraffic={setTraffic}
               year={year}
+              setYear={setYear}
               prefecture={prefecture}
               destination={destination}
               currentPeople={currentPeople}
@@ -1199,6 +1268,8 @@ export default function App() {
               previousLabelPeople={previousLabelPeople}
               labelDiff={labelDiff}
               labelRate={labelRate}
+              yearlyDestinationTrend={yearlyDestinationTrend}
+              yearlyLabelTrend={yearlyLabelTrend}
             />
           ) : (
             /* 🏷️ 地域特性クラスタ: 出発地×目的×交通手段の総合分析 */

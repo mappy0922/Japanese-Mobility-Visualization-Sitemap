@@ -739,6 +739,47 @@ h1 {
 }
 
 /* ============================================================
+   全年度時系列トレンドグラフ (YearlyTrendChart - 折れ線グラフ)
+   ============================================================ */
+
+.trendChartWrapper {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+.trendChartHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.trendChartTitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.trendLineChartContainer {
+    width: 100%;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+    padding: 2px 2px 0 2px;
+    box-sizing: border-box;
+}
+
+.trendLineSvg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ============================================================
    地図エリア
    ============================================================ */
 
