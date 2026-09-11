@@ -1,20 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 
 /*
  * ============================================================
  * 全年度時系列折れ線グラフ (YearlyTrendChart)
  * ============================================================
  */
-function YearlyTrendChart({ data = [], currentYear }) {
+function YearlyTrendChart({
+  data = [],
+  currentYear,
+  title = "全年度推移 (1990〜2010年)",
+  onClose,
+}) {
   if (!data || data.length === 0) return null;
 
   const maxVal = Math.max(...data.map((d) => d.value), 1);
-  const width = 236;
-  const height = 74;
-  const paddingLeft = 20;
-  const paddingRight = 20;
-  const paddingTop = 16;
-  const paddingBottom = 16;
+  const width = 250;
+  const height = 88;
+  const paddingLeft = 18;
+  const paddingRight = 18;
+  const paddingTop = 18;
+  const paddingBottom = 18;
   const plotWidth = width - paddingLeft - paddingRight;
   const plotHeight = height - paddingTop - paddingBottom;
 
@@ -37,7 +42,17 @@ function YearlyTrendChart({ data = [], currentYear }) {
   return (
     <div className="trendChartWrapper">
       <div className="trendChartHeader">
-        <span className="trendChartTitle">全年度推移 (1990〜2010年)</span>
+        <span className="trendChartTitle">{title}</span>
+        {onClose && (
+          <button
+            type="button"
+            className="trendFlyoutCloseBtn"
+            onClick={onClose}
+            title="閉じる"
+          >
+            ✕
+          </button>
+        )}
       </div>
 
       <div className="trendLineChartContainer">
@@ -48,7 +63,7 @@ function YearlyTrendChart({ data = [], currentYear }) {
         >
           <defs>
             <linearGradient id="trendAreaGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#1e3a8a" stopOpacity="0.2" />
+              <stop offset="0%" stopColor="#1e3a8a" stopOpacity="0.22" />
               <stop offset="100%" stopColor="#1e3a8a" stopOpacity="0.01" />
             </linearGradient>
           </defs>
@@ -61,7 +76,7 @@ function YearlyTrendChart({ data = [], currentYear }) {
             y2={paddingTop + plotHeight * 0.5}
             stroke="#e2e8f0"
             strokeDasharray="2,2"
-            strokeWidth="1"
+            strokeWidth="0.8"
           />
           <line
             x1={paddingLeft}
@@ -69,7 +84,7 @@ function YearlyTrendChart({ data = [], currentYear }) {
             x2={width - paddingRight}
             y2={height - paddingBottom}
             stroke="#e2e8f0"
-            strokeWidth="1"
+            strokeWidth="0.8"
           />
 
           {/* グラデーションエリア塗り */}
@@ -80,7 +95,7 @@ function YearlyTrendChart({ data = [], currentYear }) {
             d={linePath}
             fill="none"
             stroke="#1e3a8a"
-            strokeWidth="2"
+            strokeWidth="2.2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -101,10 +116,10 @@ function YearlyTrendChart({ data = [], currentYear }) {
                 {/* 数値ラベル */}
                 <text
                   x={p.x}
-                  y={Math.max(10, p.y - 5)}
+                  y={Math.max(11, p.y - 5)}
                   textAnchor="middle"
-                  fontSize={p.isSelected ? "8.5" : "7.5"}
-                  fontWeight={p.isSelected ? "bold" : "600"}
+                  fontSize={p.isSelected ? "9" : "7.8"}
+                  fontWeight={p.isSelected ? "800" : "600"}
                   fill={p.isSelected ? "#1e3a8a" : "#64748b"}
                 >
                   {formattedVal}
@@ -115,7 +130,7 @@ function YearlyTrendChart({ data = [], currentYear }) {
                   <circle
                     cx={p.x}
                     cy={p.y}
-                    r="6.5"
+                    r="7"
                     fill="none"
                     stroke="#1e3a8a"
                     strokeWidth="1.5"
@@ -127,16 +142,16 @@ function YearlyTrendChart({ data = [], currentYear }) {
                 <circle
                   cx={p.x}
                   cy={p.y}
-                  r={p.isSelected ? "4" : "2.8"}
+                  r={p.isSelected ? "4.2" : "3.0"}
                   fill={p.isSelected ? "#1e3a8a" : "#ffffff"}
                   stroke={p.isSelected ? "#ffffff" : "#64748b"}
-                  strokeWidth={p.isSelected ? "1.5" : "1.5"}
+                  strokeWidth={p.isSelected ? "1.5" : "1.2"}
                 />
 
                 {/* 年度テキスト */}
                 <text
                   x={p.x}
-                  y={height - 2}
+                  y={height - 3}
                   textAnchor="middle"
                   fontSize="8.5"
                   fontWeight={p.isSelected ? "bold" : "500"}
@@ -236,20 +251,40 @@ export default function ComparePanel({
   yearlyDestinationTrend = [],
   yearlyLabelTrend = [],
 }) {
+  const [showDestTrend, setShowDestTrend] = useState(false);
+  const [showLabelTrend, setShowLabelTrend] = useState(false);
+
   const selectedLabelDisplayName = selectedLabel
     ? selectedLabel.replace("代_全機関_", "").replace("_全目的", "")
     : "";
 
   return (
     <div className="comparePanel">
-      {/* 1. 5年間隔比較 & 全年度推移 カード */}
-      <div className="compareCard">
+      {/* 1. 5年間隔比較 カード */}
+      <div className="compareCard hasFlyout">
         <div className="compareHeaderTopRow">
-          <span className="compareTitle">5年間隔比較</span>
-          <span className="compareFlowBadge">
-            他都道府県→{destination || "未選択"}
-          </span>
+          <div className="compareHeaderLeftGroup">
+            <span className="compareTitle">5年間隔比較</span>
+            <span className="compareFlowBadge">
+              他都道府県→{destination || "未選択"}
+            </span>
+          </div>
+
+          {/* 全年度推移 表示/非表示トグルボタン */}
+          {destination && yearlyDestinationTrend.length > 0 && (
+            <button
+              type="button"
+              className={`trendToggleBtn ${showDestTrend ? "active" : ""}`}
+              onClick={() => setShowDestTrend(!showDestTrend)}
+              title={showDestTrend ? "推移グラフを閉じる" : "全年度推移グラフを右に展開"}
+              aria-label="全年度推移グラフの表示切替"
+            >
+              <span className="trendToggleText">推移</span>
+              <span className="trendToggleArrow">{showDestTrend ? "◀" : "▶"}</span>
+            </button>
+          )}
         </div>
+
         <div className="compareBody">
           {!destination ? (
             <div className="compareNotice">目的地を選択してください</div>
@@ -265,27 +300,49 @@ export default function ComparePanel({
                   rate={rate}
                 />
               )}
-
-              {/* 全年度時系列折れ線グラフ */}
-              {yearlyDestinationTrend.length > 0 && (
-                <YearlyTrendChart
-                  data={yearlyDestinationTrend}
-                  currentYear={year}
-                />
-              )}
             </>
           )}
         </div>
+
+        {/* 右からスライド出現する全年度推移フライアウトパネル */}
+        {destination && yearlyDestinationTrend.length > 0 && (
+          <div
+            className={`trendFlyoutPanel ${showDestTrend ? "open" : "closed"}`}
+          >
+            <YearlyTrendChart
+              data={yearlyDestinationTrend}
+              currentYear={year}
+              title={`他都道府県→${destination} 推移`}
+              onClose={() => setShowDestTrend(false)}
+            />
+          </div>
+        )}
       </div>
 
-      {/* 2. ラベル比較 & 全年度推移 カード */}
-      <div className="compareCard">
+      {/* 2. ラベル比較 カード */}
+      <div className="compareCard hasFlyout">
         <div className="labelCompareHeader">
           <div className="compareHeaderTopRow">
-            <span className="compareTitle">ラベル比較</span>
-            <span className="compareFlowBadge">
-              {prefecture}({selectedLabelDisplayName || "選択中"})→{destination}
-            </span>
+            <div className="compareHeaderLeftGroup">
+              <span className="compareTitle">ラベル比較</span>
+              <span className="compareFlowBadge">
+                {prefecture}({selectedLabelDisplayName || "選択中"})→{destination}
+              </span>
+            </div>
+
+            {/* 全年度推移 表示/非表示トグルボタン */}
+            {prefecture && destination && selectedLabel && yearlyLabelTrend.length > 0 && (
+              <button
+                type="button"
+                className={`trendToggleBtn ${showLabelTrend ? "active" : ""}`}
+                onClick={() => setShowLabelTrend(!showLabelTrend)}
+                title={showLabelTrend ? "推移グラフを閉じる" : "全年度推移グラフを右に展開"}
+                aria-label="全年度推移グラフの表示切替"
+              >
+                <span className="trendToggleText">推移</span>
+                <span className="trendToggleArrow">{showLabelTrend ? "◀" : "▶"}</span>
+              </button>
+            )}
           </div>
 
           {/* 交通目的別 / 交通手段別 切り替えボタングループ */}
@@ -365,17 +422,23 @@ export default function ComparePanel({
                   rate={labelRate === "新規" ? null : labelRate}
                 />
               )}
-
-              {/* 全年度時系列折れ線グラフ */}
-              {yearlyLabelTrend.length > 0 && (
-                <YearlyTrendChart
-                  data={yearlyLabelTrend}
-                  currentYear={year}
-                />
-              )}
             </>
           )}
         </div>
+
+        {/* 右からスライド出現する全年度推移フライアウトパネル */}
+        {prefecture && destination && selectedLabel && yearlyLabelTrend.length > 0 && (
+          <div
+            className={`trendFlyoutPanel ${showLabelTrend ? "open" : "closed"}`}
+          >
+            <YearlyTrendChart
+              data={yearlyLabelTrend}
+              currentYear={year}
+              title={`${selectedLabelDisplayName} 推移`}
+              onClose={() => setShowLabelTrend(false)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
